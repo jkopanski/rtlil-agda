@@ -2,4 +2,5 @@
 
 module Everything where
 
+import RTLIL.Word.Base
 import RTLIL.Word.Width
