@@ -46,3 +46,17 @@ _*2 {w} word = Fin.fromℕ< (begin-strict
   ⊤ w * 2 ≡⟨ ⊤-suc-comm w ⟨
   ⊤ (suc w) ∎)
   where open ≤-Reasoning
+
+_+_ : ∀ {v w} → Word v → Word w → Word (suc (v ℕ.⊔ w))
+_+_ {v} {w} a b = word< {_} {toℕ a ℕ.+ toℕ b} (begin-strict
+  toℕ a ℕ.+ toℕ b   <⟨ +-mono-< (toℕ<⊤ a) (toℕ<⊤ b) ⟩
+  ⊤ v ℕ.+ ⊤ w       ≤⟨ +-mono-≤ lemma₁ lemma₂ ⟩
+  ⊤ v⊔w ℕ.+ (⊤ v⊔w) ≡⟨ cong (⊤ v⊔w ℕ.+_) (+-identityʳ (⊤ v⊔w)) ⟨
+  2 * ⊤ v⊔w         ≡⟨ ⊤-suc v⊔w ⟨
+  ⊤ (suc v⊔w)       ∎)
+  where open ≤-Reasoning
+        v⊔w = v ℕ.⊔ w
+        lemma₁ : ⊤ v ≤ ⊤ (v ℕ.⊔ w)
+        lemma₁ = ⊤-mono-≤ (m≤m⊔n v w)
+        lemma₂ : ⊤ w ≤ ⊤ (v ℕ.⊔ w)
+        lemma₂ = ⊤-mono-≤ (m≤n⊔m v w)
