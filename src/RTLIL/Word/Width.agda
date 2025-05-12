@@ -38,6 +38,14 @@ instance
   ⊤-nonTrivial : ∀ {w} → .⦃ _ : NonZero w ⦄ → NonTrivial (⊤ w)
   ⊤-nonTrivial {w} = ⊤>1 w
 
+⊤-mono-< : ⊤ Rel₂.Preserves _<_ ⟶ _<_
+⊤-mono-< {x} {y} x<y rewrite ⊤-def x | ⊤-def y =
+  ^-monoʳ-< 2 (s≤s (s≤s z≤n)) x<y
+
+⊤-mono-≤ : ⊤ Rel₂.Preserves _≤_ ⟶ _≤_
+⊤-mono-≤ {x} {y} x≤y rewrite ⊤-def x | ⊤-def y =
+  ^-monoʳ-≤ 2 x≤y
+
 2∣⊤ :
   (w : ℕ.t) → .⦃ _ : NonZero w ⦄ →
   2 ∣ ⊤ w
