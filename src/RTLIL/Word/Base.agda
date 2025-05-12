@@ -26,3 +26,23 @@ zero w = word< (>-nonZero⁻¹ (⊤ w))
 
 last : (w : ℕ.t) → Word w
 last w = word< (≤-reflexive (sym (suc-pred-⊤ w)))
+
+infixl 7 _/2 _*2 2*_
+_/2 : ∀ {w} → Word w → Word (w ∸ 1)
+_/2 {ℕ.zero} _ = zero 0
+_/2 w@{suc w-1} word = Fin.quotient 2 (Fin.cast (⊤-suc-comm w-1) word)
+
+2*_ : ∀ {w} → Word w → Word (suc w)
+2*_ {w} word = word< (begin-strict
+  2 * toℕ word <⟨ *-monoʳ-< 2 (toℕ<⊤ word) ⟩
+  2 * ⊤ w ≡⟨ ⊤-suc w ⟨
+  ⊤ (suc w) ∎)
+  where open ≤-Reasoning
+
+_*2 : ∀ {w} → Word w → Word (suc w)
+_*2 {w} word = Fin.fromℕ< (begin-strict
+  2 * (toℕ word) <⟨ *-monoʳ-< 2 (toℕ<⊤ word) ⟩
+  2 * ⊤ w ≡⟨ *-comm 2 (⊤ w) ⟩
+  ⊤ w * 2 ≡⟨ ⊤-suc-comm w ⟨
+  ⊤ (suc w) ∎)
+  where open ≤-Reasoning
