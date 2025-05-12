@@ -1,0 +1,7 @@
+name: rtlil
+depend: standard-library cheshire
+include: src
+
+flags:
+  --cubical-compatible
+  --exact-split
