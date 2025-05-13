@@ -7,6 +7,7 @@ module RTLIL.Word.Base where
 import RTLIL.Word.Width as Width
 
 open ℕ hiding (zero; _+_; _*_; t)
+open ℤ using (+_; -[1+_])
 open Width
 
 Word : ℕ.t → Set
@@ -14,6 +15,13 @@ Word = Fin.t ∘ ⊤
 
 word< : ∀ {w v} → .(v < ⊤ w) → Word w
 word< v<⊤ = Fin.fromℕ< v<⊤
+
+infix 10 _#b_
+-- kind of a similar to verilog 8'b4,
+-- which means 4 encoded in 8 bits
+_#b_ : ∀ w m {m<⊤ : Rel₀.True (m <? 2 ^ w)} → Word w
+_#b_ w m {m<⊤} rewrite ⊤-def w = Fin.#_ m {2 ^ w} {m<⊤}
+-- word< {w} {m} (Rel₀.toWitness m<w)
 
 toℕ : ∀ {w} → Word w → ℕ.t
 toℕ = Fin.toℕ
@@ -26,6 +34,50 @@ zero w = word< (>-nonZero⁻¹ (⊤ w))
 
 last : (w : ℕ.t) → Word w
 last w = word< (≤-reflexive (sym (suc-pred-⊤ w)))
+
+-- | Unsigned interpretation
+module Unsigned where
+  from : ∀ {w n} → .(n < ⊤ w) → Word w
+  from = word<
+
+  from′ : ∀ {w} n → .(n <″ ⊤ w) → Word w
+  from′ n = Fin.fromℕ<″ n
+
+  to : ∀ {w} → Word w → ℕ.t
+  to = toℕ
+
+-- | Signed interpretation
+module Signed where
+  fromNeg : ∀ {w n} → .⦃ _ : NonZero w ⦄ → n < ½ w → Word w
+  fromNeg {w} {n} n<½ = word< top-[1+n]<top
+    where
+      m = ⊤ w ∸ (1 ℕ.+ n)
+      top-[1+n]<top : m < ⊤ w
+      top-[1+n]<top = ∸-monoʳ-< z<s (≤-trans n<½ (<⇒≤ (½<⊤ w)))
+
+  fromPos : ∀ {w n} → .⦃ _ : ℕ.NonZero w ⦄ → n ℕ.< ½ w → Word w
+  fromPos {w} n<½ = word< (<-trans n<½ (½<⊤ w))
+
+  from :
+    ∀ {w} {z} → .⦃ _ : NonZero w ⦄ →
+    z ℤ.< + ½ w →
+    z ℤ.> -[1+ ½ w ] →
+    Word w
+  from {z = + _}     (n<½) _     = fromPos (ℤ.drop‿+<+ n<½)
+  from {z = -[1+ _ ]} _    (n<½) = fromNeg (ℤ.drop‿-<- n<½)
+
+  to : ∀ {w} → .⦃ _ : NonZero w ⦄ → Word w → ℤ.t
+  to {w} word
+    rewrite Rel₂.sym (⌊n/2⌋+⌈n/2⌉≡n (⊤ w))
+    with Fin.splitAt (⌊ ⊤ w /2⌋) word
+  … | inj₁ n = + Fin.toℕ n
+  … | inj₂ n = -[1+ Fin.toℕ $ Fin.opposite n ]
+
+  opaque
+    unfolding ⊤
+
+    test : to (3 #b 4) ≡ -[1+ 3 ]
+    test = refl
 
 infixl 7 _/2 _*2 2*_
 _/2 : ∀ {w} → Word w → Word (w ∸ 1)

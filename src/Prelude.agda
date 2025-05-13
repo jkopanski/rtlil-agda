@@ -27,7 +27,9 @@ module Fin where
   open import Data.Fin renaming (Fin to t) public
   open import Data.Fin.Properties          public
 
-module ℤ where open import Data.Integer renaming (ℤ to t) public
+module ℤ where
+  open import Data.Integer renaming (ℤ to t) public
+  open import Data.Integer.Properties        public
 
 module String where
   open import Data.String renaming (String to t) public

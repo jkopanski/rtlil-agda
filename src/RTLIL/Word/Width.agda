@@ -10,6 +10,9 @@ opaque
   ⊤ : ℕ.t → ℕ.t
   ⊤ = 2 ^_
 
+  ⊤-def : ∀ w → ⊤ w ≡ 2 ^ w
+  ⊤-def _ = refl
+
   ⊤-zero : ⊤ 0 ≡ 1
   ⊤-zero = refl
 
