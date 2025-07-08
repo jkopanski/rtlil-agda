@@ -21,15 +21,15 @@ open Width
 open Rel₀ using (no; yes)
 open Rel₂ using (_≗_; _⇒_)
 
-≡⇒toℕ≡toℕ : ∀ {w} → _≡_ {A = Word w} ⇒ (_≡_ on toℕ)
-≡⇒toℕ≡toℕ = cong toℕ
+toℕ-cong : ∀ {w} → Function.Congruent _≡_ _≡_ (toℕ {w})
+toℕ-cong = cong toℕ
 
-toℕ≡toℕ⇒≡ : ∀ {w} → (_≡_ on toℕ) ⇒ _≡_ {A = Word w}
-toℕ≡toℕ⇒≡ refl = refl
+toℕ-injective : ∀ {w} → Function.Injective _≡_ _≡_ (toℕ {w})
+toℕ-injective refl = refl
 
 infix 4 _≟_
 _≟_ : ∀ {w} → Rel₂.DecidableEquality (Word w)
-i ≟ j = Rel₀.map′ toℕ≡toℕ⇒≡ ≡⇒toℕ≡toℕ (toℕ i ℕ.≟ toℕ j)
+i ≟ j = Rel₀.map′ toℕ-injective toℕ-cong (toℕ i ℕ.≟ toℕ j)
 
 ------------------------------------------------------------------------
 -- Bundles
@@ -38,7 +38,7 @@ toFin∘fromFin≐id : ∀ {w : ℕ.t} → toFin {w} ∘ fromFin ≗ Function.id
 toFin∘fromFin≐id {w} i = Fin.fromℕ<-toℕ i (Fin.toℕ<n i)
 
 fromFin∘toFin≐id : ∀ {w : ℕ.t} → fromFin ∘ toFin {w} ≗ Function.id
-fromFin∘toFin≐id (⟦ value ⟧< value<⊤) = toℕ≡toℕ⇒≡ (Fin.toℕ-fromℕ< (⊤⇒2ʷ ≤-isPreorder value<⊤))
+fromFin∘toFin≐id (⟦ value ⟧< value<⊤) = toℕ-injective (Fin.toℕ-fromℕ< (⊤⇒2ʷ ≤-isPreorder value<⊤))
 
 Word⤖Fin : ∀ {w} → Word w ⤖ Fin.t (2 ^ w)
 Word⤖Fin {w} = Func.mk⤖ $ inverseᵇ⇒bijective
@@ -94,7 +94,7 @@ split-1-extend {w} word
           ⊤ w ℕ.+ toℕ word      ≡⟨ toℕ-1-extend′ word ⟨
           toℕ (1-extend 1 word) ∎
           where open ≤-Reasoning
-… | no  v≮⊤ = cong inj₂ $ toℕ≡toℕ⇒≡ $ begin
+… | no  v≮⊤ = cong inj₂ $ toℕ-injective $ begin
   toℕ (1-extend 1 word) ∸ ⊤ w ≡⟨ cong! (toℕ-1-extend′ word) ⟩
   ⊤ w ℕ.+ toℕ word ∸ ⊤ w      ≡⟨ m+n∸m≡n (⊤ w) (toℕ word) ⟩
   toℕ word                    ∎
@@ -108,7 +108,7 @@ split-join (inj₂ i) = split-1-extend i
 join-split : ∀ {w} → (i : Word (suc w)) → join (split i) ≡ i
 join-split {w} i with toℕ i <? ⊤ w
 … | yes _  = refl
-… | no i≮⊤ = toℕ≡toℕ⇒≡ $ begin
+… | no i≮⊤ = toℕ-injective $ begin
   (⊤ 1 ∸ 1) * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w) ≡⟨ cong! (⊤-def 1) ⟩
   (2 ∸ 1) * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)   ≡⟨ refl ⟩
   1 * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
