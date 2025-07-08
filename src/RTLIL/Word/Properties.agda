@@ -115,3 +115,12 @@ join-split {w} i with toℕ i <? ⊤ w
   ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)             ≡⟨ m+[n∸m]≡n (≮⇒≥ i≮⊤) ⟩
   toℕ i ∎
   where open Rel₂.≡-Reasoning
+
+opposite-involutive : ∀ {w} → (i : Word w) → opposite (opposite i) ≡ i
+opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin
+  ⊤ w ∸ suc (⊤ w ∸ suc i)   ≡⟨ cong (⊤ w ∸_) (+-∸-assoc 1 i<⊤) ⟨
+  ⊤ w ∸ (suc (⊤ w) ∸ suc i) ≡⟨ refl ⟩
+  ⊤ w ∸ (⊤ w ∸ i)           ≡⟨ m∸[m∸n]≡n (<⇒≤ i<⊤) ⟩
+  i                         ∎
+  where open Rel₂.≡-Reasoning
+        i<⊤ = toℕ<⊤ word
