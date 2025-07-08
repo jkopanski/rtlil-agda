@@ -106,11 +106,6 @@ width<⊤ w@(suc w-1) = begin-strict
   2 * ⊤ w-1     ≡⟨ ⊤-suc w-1 ⟨
   ⊤ (suc w-1)   ∎
   where open ≤-Reasoning
--- width<⊤ zero rewrite ⊤-zero  = s≤s z≤n
--- width<⊤ (suc w-1)
---   rewrite ⊤-suc w-1
---         | +-identityʳ (⊤ w-1)
---         = +-mono-≤-< (>-nonZero⁻¹ (⊤ w-1)) (width<⊤ w-1)
 
 w≢0⇒⊤[w]≡⊤[w-1]*2 : ∀ w → .⦃ _ : NonZero w ⦄ → ⊤ w ≡ ⊤ (w ∸ 1) * 2
 w≢0⇒⊤[w]≡⊤[w-1]*2 w@(suc w-1) = ⊤-suc-comm w-1
@@ -146,7 +141,6 @@ instance
   2 * ⊤ w-1 ≡⟨ cong (2 *_) (½≡⊤[w-1] w) ⟨
   2 * ½ w   ∎
   where open Rel₂.≡-Reasoning
--- rewrite ½≡⊤[w-1] w ⦃ w≢0 ⦄ = ⊤≡2*⊤[w-1] w
 
 ⊤≡⊤[w-1]+⊤[w-1] :
   (w : ℕ.t) → .⦃ _ : NonZero w ⦄ →
@@ -154,11 +148,6 @@ instance
 ⊤≡⊤[w-1]+⊤[w-1] w@(suc w-1) = trans
   (⊤-suc w-1)
   (cong (⊤ w-1 +_) (+-identityʳ (⊤ w-1)))
-  -- trans displays much nicer in goals
-  -- ⊤ (suc w-1)   ≡⟨ ⊤-suc w-1 ⟩
-  -- 2 * ⊤ w-1     ≡⟨ cong (⊤ w-1 +_) (+-identityʳ (⊤ w-1)) ⟩
-  -- ⊤ w-1 + ⊤ w-1 ∎
-  -- where open Rel₂.≡-Reasoning
 
 ⊤≡½+½ :
   (w : ℕ.t) → .⦃ _ : NonZero w ⦄ →
@@ -177,10 +166,6 @@ instance
   2 ^ w * 2 ^ v ≡⟨ Rel₂.cong₂ _*_ (⊤-def w) (⊤-def v) ⟨
   ⊤ w * ⊤ v     ∎
   where open Rel₂.≡-Reasoning
-  -- rewrite ⊤-def (w + v)
-  --       | ⊤-def w
-  --       | ⊤-def v
-  --       = ℕ.^-distribˡ-+-* 2 w v
 
 ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] : (w v : ℕ.t) → ⊤ (w + v) ≡ ⊤ w + (⊤ v ∸ 1) * ⊤ w
 ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w zero = begin
@@ -190,10 +175,7 @@ instance
   ⊤ w + (1 ∸ 1) * ⊤ w          ≡⟨ cong! ⊤-zero ⟨
   ⊤ w + (⌞ ⊤ zero ⌟ ∸ 1) * ⊤ w ∎
   where open Rel₂.≡-Reasoning
-  -- rewrite ℕ.+-identityʳ w
-  --       | ⊤-def zero
-  --       | ℕ.+-identityʳ (⊤ w)
-  --       = refl
+
 ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w v@(suc v-1) = begin
   ⊤ (w + suc v-1)   ≡⟨ cong ⊤ (+-suc w v-1) ⟩
   ⊤ (suc (w + v-1)) ≡⟨ ⊤-suc (w + v-1) ⟩
@@ -212,22 +194,6 @@ instance
   ⊤ w + (⊤ (suc v-1) ∸ 1) * ⊤ w ∎
   where
     open Rel₂.≡-Reasoning
-  --      -- lhs
-  -- rewrite ℕ.+-suc w v-1
-  --       | ⊤-suc (w + v-1)
-  --       | ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w v-1
-  --       | ℕ.+-identityʳ (⊤ w + (⊤ v-1 ∸ 1) * ⊤ w)
-  --       -- rhs
-  --       | ⊤-suc v-1
-  --       | ℕ.+-identityʳ (⊤ v-1)
-  --       | ℕ.+-∸-assoc (⊤ v-1) (>-nonZero⁻¹ (⊤ v-1))
-  --       | ℕ.+-comm (⊤ v-1) (⊤ v-1 ∸ 1)
-  --       | ℕ.*-distribʳ-+ (⊤ w) (⊤ v-1 ∸ 1) (⊤ v-1)
-  --       | ℕ.*-comm (⊤ v-1) (⊤ w)
-  --       | sym (⊤[w+v]≡⊤[w]*⊤[v] w v-1)
-  --       | ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w v-1
-  --       | ℕ.+-assoc (⊤ w) ((⊤ v-1 ∸ 1) * ⊤ w) (⊤ w + (⊤ v-1 ∸ 1) * ⊤ w)
-  --       = refl
 
 ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] : (v w : ℕ.t) → ⊤ (v + w) ≡ (⊤ v ∸ 1) * ⊤ w + ⊤ w
 ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v w = begin
@@ -236,9 +202,6 @@ instance
   ⊤ w + (⊤ v ∸ 1) * ⊤ w ≡⟨ +-comm (⊤ w) ((⊤ v ∸ 1) * ⊤ w) ⟩
   (⊤ v ∸ 1) * ⊤ w + ⊤ w ∎
   where open Rel₂.≡-Reasoning
-  -- rewrite ℕ.+-comm v w
-  --       | ℕ.+-comm ((⊤ v ∸ 1) * ⊤ w) (⊤ w)
-  --       = ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w v
 
 ½≡⌈⊤/2⌉ : ∀ w → .⦃ _ : NonZero w ⦄ → ½ w ≡ ⌈ ⊤ w /2⌉
 ½≡⌈⊤/2⌉ w@(suc w-1) = begin
