@@ -50,10 +50,11 @@ module Function where
 open × using (Σ; ∃; ∃-syntax; _,_; proj₁; proj₂) public
 open ⊎ using (_⊎_; inj₁; inj₂) public
 open 𝕃 using (_⊔_) public
-open Function using (_∘_; _$_; _on_) public
+open Function using (_∘_; _$_; _on_; case_of_; case_returning_of_) public
 
 module Rel₀ where
   open import Relation.Nullary public
+  open import Relation.Nullary.Decidable public
 
 module Rel₁ where
   open import Relation.Unary hiding (∅; U) public
