@@ -20,6 +20,7 @@ open ℕ hiding (zero; t; _+_; _≟_)
 open Width
 open Rel₀ using (no; yes)
 open Rel₂ using (_≗_; _⇒_)
+open ≤-Reasoning
 
 toℕ-cong : ∀ {w} → Function.Congruent _≡_ _≡_ (toℕ {w})
 toℕ-cong = cong toℕ
@@ -66,12 +67,11 @@ toℕ-1-extend v {w} (⟦ value ⟧< value<⊤) = refl
 toℕ-1-extend′ :
   ∀ {w} → (word : Word w) →
   toℕ (1-extend 1 word) ≡ ⊤ w ℕ.+ toℕ word
-toℕ-1-extend′ {w} word = begin
+toℕ-1-extend′ {w} word = begin-equality
   (⊤ 1 ∸ 1) * ⊤ w ℕ.+ toℕ word ≡⟨ cong! (⊤-def 1) ⟩
   (2 ∸ 1) * ⊤ w ℕ.+ toℕ word   ≡⟨ refl ⟩
   1 * ⊤ w ℕ.+ toℕ word         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
   ⊤ w ℕ.+ toℕ word             ∎
-  where open Rel₂.≡-Reasoning
 
 split-0-extend :
   ∀ {w} → (word : Word w) →
@@ -94,11 +94,10 @@ split-1-extend {w} word
           ⊤ w ℕ.+ toℕ word      ≡⟨ toℕ-1-extend′ word ⟨
           toℕ (1-extend 1 word) ∎
           where open ≤-Reasoning
-… | no  v≮⊤ = cong inj₂ $ toℕ-injective $ begin
+… | no  v≮⊤ = cong inj₂ $ toℕ-injective $ begin-equality
   toℕ (1-extend 1 word) ∸ ⊤ w ≡⟨ cong! (toℕ-1-extend′ word) ⟩
   ⊤ w ℕ.+ toℕ word ∸ ⊤ w      ≡⟨ m+n∸m≡n (⊤ w) (toℕ word) ⟩
   toℕ word                    ∎
-  where open Rel₂.≡-Reasoning
 
 split-join :
   ∀ {w} → (i : Word w ⊎ Word w) → split (join i) ≡ i
@@ -108,19 +107,17 @@ split-join (inj₂ i) = split-1-extend i
 join-split : ∀ {w} → (i : Word (suc w)) → join (split i) ≡ i
 join-split {w} i with toℕ i <? ⊤ w
 … | yes _  = refl
-… | no i≮⊤ = toℕ-injective $ begin
+… | no i≮⊤ = toℕ-injective $ begin-equality
   (⊤ 1 ∸ 1) * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w) ≡⟨ cong! (⊤-def 1) ⟩
   (2 ∸ 1) * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)   ≡⟨ refl ⟩
   1 * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
   ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)             ≡⟨ m+[n∸m]≡n (≮⇒≥ i≮⊤) ⟩
   toℕ i ∎
-  where open Rel₂.≡-Reasoning
 
 opposite-involutive : ∀ {w} → (i : Word w) → opposite (opposite i) ≡ i
-opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin
+opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin-equality
   ⊤ w ∸ suc (⊤ w ∸ suc i)   ≡⟨ cong (⊤ w ∸_) (+-∸-assoc 1 i<⊤) ⟨
   ⊤ w ∸ (suc (⊤ w) ∸ suc i) ≡⟨ refl ⟩
   ⊤ w ∸ (⊤ w ∸ i)           ≡⟨ m∸[m∸n]≡n (<⇒≤ i<⊤) ⟩
   i                         ∎
-  where open Rel₂.≡-Reasoning
-        i<⊤ = toℕ<⊤ word
+  where i<⊤ = toℕ<⊤ word

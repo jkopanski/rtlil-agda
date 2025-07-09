@@ -14,6 +14,7 @@ open ℤ using (+_; -[1+_])
 open Width
 open Refinement using (Refinement-syntax; _,_)
 open Rel₀ using (no; yes)
+open ≤-Reasoning
 
 Word : ℕ.t → Set
 Word w = [ value ∈ ℕ.t ∣ value < ⊤ w ]
@@ -59,7 +60,6 @@ last w = word< (≤-reflexive (sym (suc-pred-⊤ w)))
     (⊤ v ∸ 1) * ⊤ w ℕ.+ value <⟨ +-monoʳ-< _ value<⊤ ⟩
     (⊤ v ∸ 1) * ⊤ w ℕ.+ ⊤ w   ≡⟨ ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v w ⟨
     ⊤ (v ℕ.+ w)               ∎)
-  where open ≤-Reasoning
 
 -- | Split the word at half.
 -- split {w} "word" = inj₁ "word"       if word < ½ w
@@ -77,7 +77,6 @@ split w@{suc w-1} (⟦ value ⟧< v<⊤ ) with value <? ⊤ (w ∸ 1)
   ⊤ w-1 ℕ.+ (⊤ w-1 ∸ ⊤ w-1) ≡⟨ cong (⊤ w-1 ℕ.+_) (n∸n≡0 (⊤ w-1)) ⟩
   ⊤ w-1 ℕ.+ 0               ≡⟨ +-identityʳ (⊤ w-1) ⟩
   ⊤ w-1 ∎)
-  where open ≤-Reasoning
 
 join : ∀ {w} → Word w ⊎ Word w → Word (suc w)
 join {w} = ⊎.[ 0-extend 1 , 1-extend 1 ]
@@ -94,7 +93,6 @@ opposite {w} (⟦ value ⟧< v<⊤) = word< {value = ⊤ w ∸ suc value} (begin
   pred (⊤ w)         ≡⟨ refl ⟩
   ⊤ w ∸ 1            <⟨ ∸-monoʳ-< z<s (>-nonZero⁻¹ (⊤ w)) ⟩
   ⊤ w ∸ 0            ∎)
-  where open ≤-Reasoning
 
 -- -- _+_ : ∀ {w} → Word w → Word w → Word (suc w)
 -- -- _+_ {w} (word< {a} a<⊤) (word< {b} b<⊤) = word< {word = a ℕ.+ b} {!!}
