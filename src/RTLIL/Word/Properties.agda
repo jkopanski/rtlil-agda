@@ -54,6 +54,18 @@ toℕ-#b :
   toℕ (_#b_ w m {witness}) ≡ m
 toℕ-#b {w} {m} {witness} rewrite sym (⊤-def w) = refl
 
+w∸½<½ :
+  ∀ {w} → .⦃ _ : NonZero w ⦄ → (word : Word w) → toℕ word ≥ ⊤ (w ∸ 1) →
+  toℕ word ∸ ⊤ (w ∸ 1) < ⊤ (w ∸ 1)
+w∸½<½ w@{suc w-1} word v≥½ = begin-strict
+  toℕ word ∸ ⊤ w-1          <⟨ ∸-monoˡ-< (toℕ<⊤ word) v≥½ ⟩
+  ⊤ w ∸ ⊤ w-1               ≡⟨ cong (_∸ ⊤ w-1) (⊤≡⊤[w-1]+⊤[w-1] w) ⟩
+  ⊤ w-1 ℕ.+ ⊤ w-1 ∸ ⊤ w-1   ≡⟨ +-∸-assoc (⊤ w-1) {n = ⊤ w-1} (≤-reflexive refl) ⟩
+  ⊤ w-1 ℕ.+ (⊤ w-1 ∸ ⊤ w-1) ≡⟨ cong (⊤ w-1 ℕ.+_) (n∸n≡0 (⊤ w-1)) ⟩
+  ⊤ w-1 ℕ.+ 0               ≡⟨ +-identityʳ (⊤ w-1) ⟩
+  ⊤ w-1 ∎
+  where open ≤-Reasoning
+
 toℕ-0-extend :
   (v : ℕ.t) → ∀ {w} → (word : Word w) →
   toℕ (0-extend v word) ≡ toℕ word
@@ -72,6 +84,22 @@ toℕ-1-extend′ {w} word = begin-equality
   (2 ∸ 1) * ⊤ w ℕ.+ toℕ word   ≡⟨ refl ⟩
   1 * ⊤ w ℕ.+ toℕ word         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
   ⊤ w ℕ.+ toℕ word             ∎
+
+split-< :
+  ∀ {w} → .⦃ _ : NonZero w ⦄ →
+  (word : Word w) → (v<½ : toℕ word < ⊤ (w ∸ 1)) →
+  split word ≡ inj₁ (⟦ toℕ word ⟧< v<½)
+split-< {suc w-1} word v<½ with toℕ word <? ⊤ w-1
+… | yes _   = refl
+… | no  v≮½ = Rel₀.contradiction v<½ v≮½
+
+split-≥ :
+  ∀ {w} → .⦃ _ : NonZero w ⦄ →
+  (word : Word w) → (v≥½ : toℕ word ≥ ⊤ (w ∸ 1)) →
+  split word ≡ inj₂ (⟦ toℕ word ∸ ⊤ (w ∸ 1) ⟧< w∸½<½ word v≥½)
+split-≥ {suc w-1} word v≥½ with toℕ word <? ⊤ w-1
+… | yes v<½ = Rel₀.contradiction v≥½ (<⇒≱ v<½)
+… | no  v≮½ = refl
 
 split-0-extend :
   ∀ {w} → (word : Word w) →
