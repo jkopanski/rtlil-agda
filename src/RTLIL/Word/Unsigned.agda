@@ -8,7 +8,8 @@ open import RTLIL.Word.Base
 open import RTLIL.Word.Width
 open import RTLIL.Word.Properties
 
-open ℕ hiding (t)
+open ℕ hiding (t; _+_)
+open ≤-Reasoning
 
 from : ∀ {w n} → .(n < ⊤ w) → Word w
 from = word<
@@ -32,7 +33,6 @@ extend-mono-≤ v {_} {x} {y} x≤y = begin
   to x            ≤⟨ x≤y ⟩
   to y            ≡⟨ to-extend v y ⟨
   to (extend v y) ∎
-  where open ≤-Reasoning
 
 extend-mono-< :
   (v : ℕ.t) → ∀ {w} →
@@ -42,4 +42,6 @@ extend-mono-< v {_} {x} {y} x<y = begin-strict
   to x            <⟨ x<y ⟩
   to y            ≡⟨ to-extend v y ⟨
   to (extend v y) ∎
-  where open ≤-Reasoning
+
++-correct : ∀ {w} → (a b : Word w) → to (a + b) ≡ to a ℕ.+ to b
++-correct a b = refl

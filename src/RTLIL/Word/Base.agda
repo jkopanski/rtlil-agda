@@ -94,5 +94,14 @@ opposite {w} (⟦ value ⟧< v<⊤) = word< {value = ⊤ w ∸ suc value} (begin
   ⊤ w ∸ 1            <⟨ ∸-monoʳ-< z<s (>-nonZero⁻¹ (⊤ w)) ⟩
   ⊤ w ∸ 0            ∎)
 
--- -- _+_ : ∀ {w} → Word w → Word w → Word (suc w)
--- -- _+_ {w} (word< {a} a<⊤) (word< {b} b<⊤) = word< {word = a ℕ.+ b} {!!}
+infixl 6 _+_
+-- Addition is deliberately chosen to accept the same width
+-- operands. It's up to the user to perform appropriate extension
+-- (signed or not).  The same goes for the resulting type, there is no
+-- information loss, it's user responsibility to truncate the result
+-- if needed.
+_+_ : ∀ {w} → Word w → Word w → Word (suc w)
+_+_ {w} x y = word< {value = toℕ x ℕ.+ toℕ y} (begin-strict
+  toℕ x ℕ.+ toℕ y <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
+  ⊤ w ℕ.+ ⊤ w     ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc w) ⟨
+  ⊤ (suc w) ∎)
