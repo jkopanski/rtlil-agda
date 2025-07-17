@@ -53,6 +53,10 @@ zero w = word< (>-nonZero⁻¹ (⊤ w))
 last : (w : ℕ.t) → Word w
 last w = word< (≤-reflexive (sym (suc-pred-⊤ w)))
 
+cast : ∀ {w v} → .(w ≡ v) → Word w → Word v
+cast {w} {v} w≡v (⟦ value ⟧< v<⊤) =
+  ⟦ value ⟧< <-≤-trans v<⊤ (≤-reflexive (cong ⊤ w≡v))
+
 0-extend : (v : ℕ.t) → ∀ {w} → Word w → Word (v ℕ.+ w)
 0-extend v {w} (⟦ word ⟧< word<⊤ ) =
   word< {v ℕ.+ w} (≤-trans word<⊤ (⊤[w]≤⊤[v+w] w v))

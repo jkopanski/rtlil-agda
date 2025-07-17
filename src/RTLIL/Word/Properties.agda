@@ -22,6 +22,9 @@ open Rel₀ using (no; yes)
 open Rel₂ using (_≗_; _⇒_)
 open ≤-Reasoning
 
+------------------------------------------------------------------------
+-- Properties of _≡_
+
 toℕ-cong : ∀ {w} → Function.Congruent _≡_ _≡_ (toℕ {w})
 toℕ-cong = cong toℕ
 
@@ -49,22 +52,50 @@ Word⤖Fin {w} = Func.mk⤖ $ inverseᵇ⇒bijective
 Word↔Fin : ∀ {w} → Word w ↔ Fin.t (2 ^ w)
 Word↔Fin {w} = Func.mk↔ₛ′ toFin fromFin (toFin∘fromFin≐id {w}) fromFin∘toFin≐id
 
-toℕ-#b :
-  ∀ {w m} {witness : Rel₀.True (m <? 2 ^ w)} →
-  toℕ (_#b_ w m {witness}) ≡ m
-toℕ-#b {w} {m} {witness} rewrite sym (⊤-def w) = refl
+------------------------------------------------------------------------
+-- misc properties
 
 w∸½<½ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ → (word : Word w) → toℕ word ≥ ⊤ (w ∸ 1) →
   toℕ word ∸ ⊤ (w ∸ 1) < ⊤ (w ∸ 1)
 w∸½<½ w@{suc w-1} word v≥½ = begin-strict
-  toℕ word ∸ ⊤ w-1          <⟨ ∸-monoˡ-< (toℕ<⊤ word) v≥½ ⟩
-  ⊤ w ∸ ⊤ w-1               ≡⟨ cong (_∸ ⊤ w-1) (⊤≡⊤[w-1]+⊤[w-1] w) ⟩
-  ⊤ w-1 ℕ.+ ⊤ w-1 ∸ ⊤ w-1   ≡⟨ +-∸-assoc (⊤ w-1) {n = ⊤ w-1} (≤-reflexive refl) ⟩
-  ⊤ w-1 ℕ.+ (⊤ w-1 ∸ ⊤ w-1) ≡⟨ cong (⊤ w-1 ℕ.+_) (n∸n≡0 (⊤ w-1)) ⟩
-  ⊤ w-1 ℕ.+ 0               ≡⟨ +-identityʳ (⊤ w-1) ⟩
-  ⊤ w-1 ∎
-  where open ≤-Reasoning
+  toℕ word ∸ ⊤ w-1 <⟨ ∸-monoˡ-< (toℕ<⊤ word) v≥½ ⟩
+  ⊤ w ∸ ⊤ w-1      ≡⟨ ⊤∸⊤[w-1]≡⊤[w-1] w ⟩
+  ⊤ w-1            ∎
+
+------------------------------------------------------------------------
+-- Properties of _#b_
+
+toℕ-#b :
+  ∀ {w m} {witness : Rel₀.True (m <? 2 ^ w)} →
+  toℕ (_#b_ w m {witness}) ≡ m
+toℕ-#b {w} {m} {witness} rewrite sym (⊤-def w) = refl
+
+------------------------------------------------------------------------
+-- Properties of cast
+
+toℕ-cast :
+  ∀ {w v} → .(eq : w ≡ v) → (word : Word w) →
+  toℕ (cast eq word) ≡ toℕ word
+toℕ-cast _ _ = refl
+
+cast-irrelevant :
+  ∀ {w v} → .(eq : w ≡ v) → (word : Word w) →
+  cast eq word ≡ ⟦ toℕ word ⟧< <-≤-trans (toℕ<⊤ word) (≤-reflexive (cong ⊤ eq))
+cast-irrelevant _ _ = refl
+
+cast-is-id :
+  ∀ {w} → .(eq : w ≡ w) → (word : Word w) →
+  cast eq word ≡ word
+cast-is-id _ _ = refl
+
+subst-is-cast :
+  ∀ {w v} → (eq : w ≡ v) (word : Word w) →
+  Rel₂.subst Word eq word ≡ cast eq word
+subst-is-cast refl _ = refl
+
+------------------------------------------------------------------------
+-- Properties of extend
 
 toℕ-0-extend :
   (v : ℕ.t) → ∀ {w} → (word : Word w) →
@@ -84,6 +115,9 @@ toℕ-1-extend′ {w} word = begin-equality
   (2 ∸ 1) * ⊤ w ℕ.+ toℕ word   ≡⟨ refl ⟩
   1 * ⊤ w ℕ.+ toℕ word         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
   ⊤ w ℕ.+ toℕ word             ∎
+
+------------------------------------------------------------------------
+-- Properties of split
 
 split-< :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
@@ -141,6 +175,9 @@ join-split {w} i with toℕ i <? ⊤ w
   1 * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
   ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)             ≡⟨ m+[n∸m]≡n (≮⇒≥ i≮⊤) ⟩
   toℕ i ∎
+
+------------------------------------------------------------------------
+-- Properties of opposite
 
 opposite-involutive : ∀ {w} → (i : Word w) → opposite (opposite i) ≡ i
 opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin-equality
