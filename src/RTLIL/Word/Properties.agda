@@ -186,3 +186,44 @@ opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin-equality
   ⊤ w ∸ (⊤ w ∸ i)           ≡⟨ m∸[m∸n]≡n (<⇒≤ i<⊤) ⟩
   i                         ∎
   where i<⊤ = toℕ<⊤ word
+
+------------------------------------------------------------------------
+-- Properties of truncate
+
+truncate-< :
+  ∀ {v w} → (word : Word w) →
+  (w<⊤[w-v] : toℕ word < ⊤ (w ∸ v)) →
+  truncate v word ≡ ⟦ toℕ word ⟧< w<⊤[w-v]
+truncate-< {v} {w} word w<⊤[w-v] = toℕ-injective $ m<n⇒m%n≡m w<⊤[w-v]
+
+truncate-0 :
+  ∀ {w} → (word : Word w) →
+  truncate 0 word ≡ word
+truncate-0 word = toℕ-injective (m<n⇒m%n≡m (toℕ<⊤ word))
+
+truncate-1-≥ :
+  ∀ {w} → (word : Word w) → .⦃ _ : NonZero w ⦄ →
+  (w≥⊤[w-1] : toℕ word ≥ ⊤ (w ∸ 1)) →
+  truncate 1 word ≡ ⟦ toℕ word ∸ ⊤ (w ∸ 1) ⟧< w∸½<½ word w≥⊤[w-1]
+truncate-1-≥ {w} word w≥⊤[w-1] = toℕ-injective $ begin-equality
+  toℕ word % ⊤ (w ∸ 1)               ≡⟨ m≤n⇒[n∸m]%m≡n%m w≥⊤[w-1] ⟨
+  (toℕ word ∸ ⊤ (w ∸ 1)) % ⊤ (w ∸ 1) ≡⟨ m<n⇒m%n≡m (w∸½<½ word w≥⊤[w-1]) ⟩
+  toℕ word ∸ ⊤ (w ∸ 1)               ∎
+
+truncate-cast-eq : ∀ w v → .⦃ NonZero v ⦄ → w ∸ 1 ∸ (v ∸ 1) ≡ w ∸ v
+truncate-cast-eq w v = begin-equality
+  w ∸ 1 ∸ (v ∸ 1)   ≡⟨ ∸-+-assoc w 1 (v ∸ 1) ⟩
+  w ∸ (suc (v ∸ 1)) ≡⟨ cong (w ∸_) (suc-pred v) ⟩
+  w ∸ v             ∎
+
+truncate-suc :
+  ∀ {v w} → (word : Word w) → ⦃ _ : NonZero v ⦄ →
+  truncate v word ≡ cast (truncate-cast-eq w v) (truncate (v ∸ 1) (truncate 1 word))
+truncate-suc {v} {w} word = toℕ-injective $ begin-equality
+    toℕ word % ⊤ (w ∸ v)
+  ≡⟨ m∣n⇒o%n%m≡o%m (⊤ (w ∸ v)) (⊤ (w ∸ 1)) (toℕ word) (v≤⊤⇒⊤v|⊤w (w ∸ v) (w ∸ 1) w-v≤w-1) ⟨
+    (toℕ word % ⊤ (w ∸ 1)) % ⊤ (w ∸ v)
+  ≡⟨ %-congʳ (cong ⊤ (truncate-cast-eq w v)) ⟨
+    toℕ word % ⊤ (w ∸ 1) % ⊤ (w ∸ 1 ∸ (v ∸ 1))
+  ∎ where w-v≤w-1 : w ∸ v ≤ w ∸ 1
+          w-v≤w-1 = ∸-monoʳ-≤ w (>-nonZero⁻¹ v)
