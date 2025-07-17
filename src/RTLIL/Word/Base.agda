@@ -22,6 +22,9 @@ Word w = [ value ∈ ℕ.t ∣ value < ⊤ w ]
 
 pattern ⟦_⟧<_ v v<⊤ = v , [ v<⊤ ]
 
+{-# DISPLAY Irrelevant.[_] t = t #-}
+{-# DISPLAY Refinement._,_ v v<⊤ = ⟦ v ⟧< v<⊤ #-}
+
 word< : ∀ {w value} → .(value < ⊤ w) → Word w
 word< {_} {value} <⊤ = ⟦ value ⟧< <⊤
 
@@ -87,12 +90,16 @@ join′ :
 join′ {w} word rewrite sym (suc-pred w) = join word
 
 opposite : ∀ {w} → Word w → Word w
-opposite {w} (⟦ value ⟧< v<⊤) = word< {value = ⊤ w ∸ suc value} (begin-strict
+opposite {w} (⟦ value ⟧< v<⊤) = ⟦ ⊤ w ∸ suc value ⟧< (begin-strict
   ⊤ w ∸ suc value    ≡⟨ pred[m∸n]≡m∸[1+n] (⊤ w) value ⟨
   pred (⊤ w ∸ value) ≤⟨ pred-mono-≤ (m∸n≤m (⊤ w) value) ⟩
   pred (⊤ w)         ≡⟨ refl ⟩
   ⊤ w ∸ 1            <⟨ ∸-monoʳ-< z<s (>-nonZero⁻¹ (⊤ w)) ⟩
   ⊤ w ∸ 0            ∎)
+
+truncate : (v : ℕ.t) → ∀ {w} → Word w → Word (w ∸ v)
+truncate v {w} word =
+  ⟦ toℕ word % ⊤ (w ∸ v) ⟧< m%n<n (toℕ word) (⊤ (w ∸ v))
 
 infixl 6 _+_
 -- Addition is deliberately chosen to accept the same width
@@ -101,7 +108,7 @@ infixl 6 _+_
 -- information loss, it's user responsibility to truncate the result
 -- if needed.
 _+_ : ∀ {w} → Word w → Word w → Word (suc w)
-_+_ {w} x y = word< {value = toℕ x ℕ.+ toℕ y} (begin-strict
+_+_ {w} x y = ⟦ toℕ x ℕ.+ toℕ y ⟧< (begin-strict
   toℕ x ℕ.+ toℕ y <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
   ⊤ w ℕ.+ ⊤ w     ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc w) ⟨
   ⊤ (suc w) ∎)
