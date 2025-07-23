@@ -31,15 +31,25 @@ module ℤ where
   open import Data.Integer renaming (ℤ to t) public
   open import Data.Integer.Properties        public
 
+module Char where
+  open import Data.Char renaming (Char to t) public
+  open import Data.Char.Properties           public
+
 module String where
   open import Data.String renaming (String to t) public
   open import Data.String.Properties public
+  open import Data.String.Literals public
 
 module Maybe where
   open import Data.Maybe renaming (Maybe to t) public
 
 module List where
   open import Data.List renaming (List to t) public
+  open import Data.List.Properties           public
+
+module NonEmpty where
+  open import Data.List.NonEmpty renaming (List⁺ to t) public
+  open import Data.List.NonEmpty.Properties            public
 
 module Vec where
   open import Data.Vec renaming (Vec to t) public
