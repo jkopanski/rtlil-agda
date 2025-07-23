@@ -1,4 +1,4 @@
-{-# OPTIONS --safe #-}
+{-# OPTIONS --safe --cubical-compatible #-}
 
 -- A lot of this stuff came from James McKinna draft PR#2257 to add
 -- Data.Nat.Bounded to agda-stdlib. See:

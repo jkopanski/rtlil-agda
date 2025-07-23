@@ -1,8 +1,7 @@
 name: rtlil
-depend: standard-library cheshire
+depend: standard-library prettyprint cheshire
 include: src
 
 flags:
-  --cubical-compatible
   --exact-split
   -WnoUnsupportedIndexedMatch

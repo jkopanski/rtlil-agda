@@ -56,6 +56,23 @@
         "type": "github"
       }
     },
+    "prettyprint": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1750862492,
+        "narHash": "sha256-R+4PCp1yZUpMuahi1IrUXgjp6n6/QnrZATVYVdaDEKg=",
+        "owner": "agda",
+        "repo": "agda-pretty",
+        "rev": "71606c47ceb1044c24fbadcd0992031e4878e6d4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "agda",
+        "ref": "v1.0",
+        "repo": "agda-pretty",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "cheshire": "cheshire",
@@ -63,6 +80,7 @@
           "cheshire",
           "nixpkgs"
         ],
+        "prettyprint": "prettyprint",
         "utils": [
           "cheshire",
           "utils"
