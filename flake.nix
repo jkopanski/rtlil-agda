@@ -43,25 +43,43 @@
           buildInputs = [
             agdaWithLibraries
             pkgs.haskellPackages.fix-whitespace
+            pkgs.yosys
+            self.outputs.packages.${system}.convert2il
           ];
         };
 
-        packages.default = pkgs.agdaPackages.mkDerivation {
-          pname = "rtlil";
-          version = "0.0.1";
-          src = ./.;
+        packages = {
+          default = pkgs.agdaPackages.mkDerivation {
+            pname = "rtlil";
+            version = "0.0.1";
+            src = ./.;
 
-          everythingFile = "./src/Everything.agda";
+            everythingFile = "./src/Everything.agda";
 
-          buildInputs = with pkgs.agdaPackages; [
-            standard-library
-            inputs.cheshire.outputs.packages.${system}.default
-          ];
+            buildInputs = with pkgs.agdaPackages; [
+              standard-library
+              inputs.cheshire.outputs.packages.${system}.default
+            ];
 
-          meta = {
-            description = "Yosys RTL Intermediate Language for Agda";
-            homepage = "https://git.sr.ht/~madnat/rtlil";
+            meta = {
+              description = "Yosys RTL Intermediate Language for Agda";
+              homepage = "https://git.sr.ht/~madnat/rtlil";
+            };
           };
+
+          convert2il = pkgs.runCommand "convert2il" {
+            buildInputs = [ pkgs.fish ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            meta.mainPropgram = "convert2il";
+            src = ./.;
+          } ''
+            mkdir -p $out/bin
+            install -m +x ${./scripts/convert2il.fish} $out/bin/convert2il
+            patchShebangs $out/bin/convert2il
+
+            wrapProgram $out/bin/convert2il \
+              --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.yosys ]}
+          '';
         };
       }
     )) // {
