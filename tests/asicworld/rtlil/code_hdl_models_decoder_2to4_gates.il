@@ -1,0 +1,99 @@
+autoidx 7
+attribute \cells_not_processed 1
+attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:1.1-14.10"
+module \decoder_2to4_gates
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:10.5-10.17"
+  wire $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:10$2_Y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:11.5-11.17"
+  wire $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:11$3_Y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:12.5-12.16"
+  wire $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:12$4_Y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:9.5-9.18"
+  wire $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:9$1_Y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0.0-0.0"
+  wire $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$5_Y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0.0-0.0"
+  wire $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$6_Y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:3.8-3.10"
+  wire output 3 \f0
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:3.11-3.13"
+  wire output 4 \f1
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:3.14-3.16"
+  wire output 5 \f2
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:3.17-3.19"
+  wire output 6 \f3
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:5.6-5.8"
+  wire \n1
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:5.9-5.11"
+  wire \n2
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:2.7-2.8"
+  wire input 1 \x
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:2.9-2.10"
+  wire input 2 \y
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:10.5-10.17"
+  cell $and $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:10$2
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 1
+    parameter \B_SIGNED 0
+    parameter \B_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \n1
+    connect \B \y
+    connect \Y $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:10$2_Y
+  end
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:11.5-11.17"
+  cell $and $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:11$3
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 1
+    parameter \B_SIGNED 0
+    parameter \B_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \x
+    connect \B \n2
+    connect \Y $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:11$3_Y
+  end
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:12.5-12.16"
+  cell $and $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:12$4
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 1
+    parameter \B_SIGNED 0
+    parameter \B_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \x
+    connect \B \y
+    connect \Y $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:12$4_Y
+  end
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:9.5-9.18"
+  cell $and $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:9$1
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 1
+    parameter \B_SIGNED 0
+    parameter \B_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \n1
+    connect \B \n2
+    connect \Y $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:9$1_Y
+  end
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0.0-0.0"
+  cell $not $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$5
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \x
+    connect \Y $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$5_Y
+  end
+  attribute \src "asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0.0-0.0"
+  cell $not $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$6
+    parameter \A_SIGNED 0
+    parameter \A_WIDTH 1
+    parameter \Y_WIDTH 1
+    connect \A \y
+    connect \Y $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$6_Y
+  end
+  connect \f0 $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:9$1_Y
+  connect \f1 $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:10$2_Y
+  connect \f2 $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:11$3_Y
+  connect \f3 $and$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:12$4_Y
+  connect \n1 $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$5_Y
+  connect \n2 $not$asicworld/verilog/code_hdl_models_decoder_2to4_gates.v:0$6_Y
+end
