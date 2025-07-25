@@ -1,5 +1,5 @@
 name: rtlil
-depend: standard-library prettyprint cheshire
+depend: standard-library prettyprint
 include: src
 
 flags:
