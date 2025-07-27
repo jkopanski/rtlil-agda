@@ -1,0 +1,35 @@
+{-# OPTIONS --safe --cubical-compatible #-}
+open import Prelude
+
+module RTLIL.Syntax.Module where
+
+open import RTLIL.Syntax.Base
+
+import RTLIL.Syntax.Attributes as Attributes renaming (Attributes to t)
+import RTLIL.Syntax.Cell       as Cell       renaming (Cell       to t)
+import RTLIL.Syntax.Parameters as Parameters renaming (Parameters to t)
+import RTLIL.Syntax.Signal     as Signal     renaming (Signal     to t)
+import RTLIL.Syntax.Wire       as Wire       renaming (Wire       to t)
+
+record Module : Set where
+  field
+    name : Identifier
+    attributes : Attributes.t
+    parameters : Parameters.t
+    connections : Map.t Signal.t
+
+    wires : Map.t Wire.t
+    cells : Map.t Cell.t
+
+    -- TODO:
+    -- memories : Map.t Memory
+    -- processes : Map.t Process
+
+instance
+  ModuleHasAttributes : Attributes.Has Module
+  ModuleHasAttributes .Attributes.Has.get = Module.attributes
+  ModuleHasAttributes .Attributes.Has.set a m = record m { attributes = a }
+
+  ModuleHasParameters : Parameters.Has Module
+  ModuleHasParameters .Parameters.Has.get = Module.parameters
+  ModuleHasParameters .Parameters.Has.set a m = record m { parameters = a }

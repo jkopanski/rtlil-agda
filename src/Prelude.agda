@@ -22,6 +22,7 @@ module ℕ where
   open import Data.Nat.Properties        public
   open import Data.Nat.Divisibility      public
   open import Data.Nat.DivMod            public
+  open import Data.Nat.Literals          public
 
 module Fin where
   open import Data.Fin renaming (Fin to t) public
@@ -88,6 +89,3 @@ module Func where
   open import Function.Relation.Binary.Setoid.Equality public
 
 open Func using (_⟨$⟩_; _⟶ₛ_; _⇨_) public
-
-module Map where
-  open import Data.Tree.AVL.Map String.<-strictTotalOrder-≈ as Map renaming (Map to t) public
