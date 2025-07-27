@@ -11,11 +11,12 @@ import RTLIL.Syntax.Attributes as Attributes renaming (Attributes to t)
 data BitNumbering : Set where
   MSB LSB : BitNumbering
 
--- TODO: I have no idea what the nat is here for
-data Direction : Set where
-  input  : ℕ.t → Direction
-  output : ℕ.t → Direction
-  inout  : ℕ.t → Direction
+-- The natural number is the index of the input/output port that this
+-- wire corresponds to
+data InOut : Set where
+  input  : ℕ.t → InOut
+  output : ℕ.t → InOut
+  inout  : ℕ.t → InOut
 
   -- "offset": <the lowest bit index in use, if non-0>
   -- "upto": <1 if the port bit indexing is MSB-first>
@@ -28,7 +29,7 @@ record Wire : Set where
   field
     attributes : Attributes.t
     name       : Identifier
-    direction  : Direction
+    io         : Maybe.t InOut
     width      : Width
     offset     : ℕ.t
     upto       : BitNumbering
@@ -44,47 +45,91 @@ instance
   WireHasAttributes .Attributes.Has.set a m = record m { attributes = a }
 
 module msb where
-  wire : Identifier → Direction → Wire
-  wire i d = record
+  wire : Identifier → Wire
+  wire i = record
     { attributes = Attributes.empty
     ; name       = i
-    ; direction  = d
+    ; io         = Maybe.nothing
     ; width      = 1
     ; offset     = 0
     ; upto       = MSB
     ; signed     = Unsigned
     }
 
-  bus : Identifier → Direction → Width → Wire
-  bus i d w = record
+  iowire : Identifier → InOut → Wire
+  iowire i io = record
     { attributes = Attributes.empty
     ; name       = i
-    ; direction  = d
+    ; io         = Maybe.just io
+    ; width      = 1
+    ; offset     = 0
+    ; upto       = MSB
+    ; signed     = Unsigned
+    }
+
+
+  bus : Identifier → Width → Wire
+  bus i w = record
+    { attributes = Attributes.empty
+    ; name       = i
+    ; io         = Maybe.nothing
     ; width      = w
     ; offset     = 0
     ; upto       = MSB
     ; signed     = Unsigned
     }
 
-wire : Identifier → Direction → Wire
-wire i d = record
+  iobus : Identifier → Width → InOut → Wire
+  iobus i w io = record
+    { attributes = Attributes.empty
+    ; name       = i
+    ; io         = Maybe.just io
+    ; width      = w
+    ; offset     = 0
+    ; upto       = MSB
+    ; signed     = Unsigned
+    }
+
+wire : Identifier → Wire
+wire i = record
   { attributes = Attributes.empty
   ; name       = i
-  ; direction  = d
+  ; io         = Maybe.nothing
   ; width      = 1
   ; offset     = 0
   ; upto       = LSB
   ; signed     = Unsigned
   }
 
-bus : Identifier → Direction → Width → Wire
-bus i d w = record
+iowire : Identifier → InOut → Wire
+iowire i io = record
   { attributes = Attributes.empty
   ; name       = i
-  ; direction  = d
+  ; io         = Maybe.just io
+  ; width      = 1
+  ; offset     = 0
+  ; upto       = LSB
+  ; signed     = Unsigned
+  }
+
+bus : Identifier → Width → Wire
+bus i w = record
+  { attributes = Attributes.empty
+  ; name       = i
+  ; io         = Maybe.nothing
   ; width      = w
   ; offset     = 0
   ; upto       = LSB
   ; signed     = Unsigned
   }
 
+iobus : Identifier → Width → InOut → Wire
+iobus i w io = record
+  { attributes = Attributes.empty
+  ; name       = i
+  ; io         = Maybe.just io
+  ; width      = w
+  ; offset     = 0
+  ; upto       = LSB
+  ; signed     = Unsigned
+  }

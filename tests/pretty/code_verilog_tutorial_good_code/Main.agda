@@ -35,7 +35,7 @@ dut = Design.mk (Maybe.just 1) $
             ( "\\src"
             , "asicworld/verilog/code_verilog_tutorial_good_code.v:7.23-7.24"
             )
-            (Wire.wire n (Wire.input 1))
+            (Wire.iowire n (Wire.input 1))
           )
     ∷ let n = "\\b"
       in ( n
@@ -43,7 +43,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_good_code.v:8.23-8.24"
            )
-           (Wire.wire n (Wire.input 2))
+           (Wire.iowire n (Wire.input 2))
          )
     ∷ let n = "\\ci"
       in ( n
@@ -51,7 +51,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_good_code.v:9.23-9.25"
            )
-           (Wire.wire n (Wire.input 3))
+           (Wire.iowire n (Wire.input 3))
          )
     ∷ let n = "\\co"
       in ( n
@@ -59,7 +59,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_good_code.v:11.22-11.24"
            )
-           (Wire.wire n (Wire.output 5))
+           (Wire.iowire n (Wire.output 5))
          )
     ∷ let n = "\\sum"
       in ( n
@@ -67,7 +67,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_good_code.v:10.22-10.25"
            )
-           (Wire.wire n (Wire.output 4))
+           (Wire.iowire n (Wire.output 4))
          )
     ∷ []
   ; cells = Map.empty

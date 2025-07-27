@@ -36,7 +36,7 @@ dut = Design.mk (Maybe.just 1) $
             ( "\\src"
             , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.10-11.14"
             )
-            (Wire.wire n (Wire.input 4))
+            (Wire.iowire n (Wire.input 4))
           )
     ∷ let n = "\\d"
       in ( n
@@ -44,7 +44,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.7-11.8"
            )
-           (Wire.wire n (Wire.input 3))
+           (Wire.iowire n (Wire.input 3))
          )
     ∷ let n = "\\q"
       in ( n
@@ -52,7 +52,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_escape_id.v:12.8-12.9"
            )
-           (Wire.wire n (Wire.output 1))
+           (Wire.iowire n (Wire.output 1))
          )
     ∷ let n = "\\q~"
       in ( n
@@ -60,7 +60,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_escape_id.v:12.11-12.14"
            )
-           (Wire.wire n (Wire.output 2))
+           (Wire.iowire n (Wire.output 2))
          )
     ∷ let n = "\\reset*"
       in ( n
@@ -68,7 +68,7 @@ dut = Design.mk (Maybe.just 1) $
            ( "\\src"
            , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.16-11.23"
            )
-           (Wire.wire n (Wire.input 5))
+           (Wire.iowire n (Wire.input 5))
          )
     ∷ []
   ; cells = Map.empty

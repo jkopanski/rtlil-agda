@@ -88,10 +88,16 @@ instance
   PrettyBitNumbering .pPrintPrec _ _ MSB = "upto"
   PrettyBitNumbering .pPrintPrec _ _ LSB = Doc.Empty
 
-  PrettyDirection : Pretty ann Direction
-  PrettyDirection .pPrintPrec _ _ (input  d) = "input"  <+> Doc.nat d
-  PrettyDirection .pPrintPrec _ _ (output d) = "output" <+> Doc.nat d
-  PrettyDirection .pPrintPrec _ _ (inout  d) = "inout"  <+> Doc.nat d
+  PrettyInOut : Pretty ann InOut
+  PrettyInOut .pPrintPrec _ _ (input  d) = "input"  <+> Doc.nat d
+  PrettyInOut .pPrintPrec _ _ (output d) = "output" <+> Doc.nat d
+  PrettyInOut .pPrintPrec _ _ (inout  d) = "inout"  <+> Doc.nat d
+
+  PrettyMaybeInOut : Pretty ann (Maybe.t InOut)
+  PrettyMaybeInOut .pPrintPrec l p (Maybe.just io) = pPrintPrec l p io
+  PrettyMaybeInOut .pPrintPrec _ _ (Maybe.nothing) = Doc.empty
+  {-# OVERLAPS PrettyMaybeInOut #-}
+  -- overlaps Pretty ann (Maybe A) from agda-pretty
 
   PrettySignedness : Pretty ann Signedness
   PrettySignedness .pPrintPrec _ _ Signed = "signed"
@@ -110,7 +116,7 @@ instance
   PrettyWire : Pretty ann Wire
   PrettyWire .pPrintPrec l p wire = pPrintPrec l p attributes $+$
     "wire" <+> pPrintPrec l p width
-           <+> pPrintPrec l p direction
+           <+> pPrintPrec l p io
            <+> pOffset offset
            <+> pPrintPrec l p upto
            <+> pPrintPrec l p (wire .Wire.signed)
