@@ -57,6 +57,9 @@ instance
 ------------------------------------------------------------------------
 -- RTLIL.Syntax.Signal
 
+spaceOut : Doc.t ann → Doc.t ann
+spaceOut p = Doc.space <> p <> Doc.space
+
 instance
   PrettySelection : Pretty ann Selection
   PrettySelection .pPrintPrec _ _ All         = Doc.empty
@@ -68,8 +71,8 @@ instance
   PrettySignal .pPrintPrec l p (const c)    = pPrintPrec l p c
   PrettySignal .pPrintPrec l p (refer id s) = pPrintPrec l p id <+> pPrintPrec l p s
   PrettySignal .pPrintPrec l p (concat s)   =
-    Doc.braces $ Doc.fsep
-               $ Doc.punctuate Doc.comma
+    Doc.braces $ spaceOut
+               $ Doc.hsep
                $ List.map (pPrintPrec l p)
                $ NonEmpty.toList s
 
@@ -131,12 +134,11 @@ instance
   PrettyCell .pPrintPrec l p c = pPrint attributes
     $+$ "cell" <+> pPrint type <+> pPrint name
     </> (pPrint parameters
-      $+$ Doc.hsep (List.map pPrint conns))
+      $+$ Doc.vcat (List.map pPrint connections))
     $+$ "end"
     where open Cell c
           pPrint : ∀ {ℓ} {A : Set ℓ} → ⦃ Pretty ann A ⦄ → A → Doc.t ann
           pPrint = pPrintPrec l p
-          conns = List.map sigSpec $ Map.toList connections
 
 ------------------------------------------------------------------------
 -- RTLIL.Syntax.Cell
@@ -148,12 +150,11 @@ instance
     </> (pPrint parameters
       $+$ pMap (pPrint ∘ ×.proj₂) wires
       $+$ pMap (pPrint ∘ ×.proj₂) cells
-      $+$ Doc.hsep (List.map pPrint conns))
+      $+$ Doc.hsep (List.map pPrint connections))
     $+$ "end"
     where open Module m
           pPrint : ∀ {ℓ} {A : Set ℓ} → ⦃ Pretty ann A ⦄ → A → Doc.t ann
           pPrint = pPrintPrec l p
-          conns = List.map sigSpec $ Map.toList connections
 
 ------------------------------------------------------------------------
 -- RTLIL.Syntax.Design

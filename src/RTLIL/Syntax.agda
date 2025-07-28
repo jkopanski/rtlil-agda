@@ -15,6 +15,8 @@ module Cell where
 module Connection where
   open import RTLIL.Syntax.Connection renaming (Connection to t) public
 
+open Connection using (_⇐_) public
+
 module Design where
   open import RTLIL.Syntax.Design renaming (Design to t) public
 

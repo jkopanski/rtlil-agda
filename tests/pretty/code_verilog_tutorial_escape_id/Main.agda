@@ -28,7 +28,7 @@ dut = Design.mk (Maybe.just 1) $
     ∷ ("\\src" , "asicworld/verilog/code_verilog_tutorial_escape_id.v:3.1-14.10")
     ∷ []
   ; parameters = Parameters.empty
-  ; connections = Map.empty
+  ; connections = []
   ; wires = Map.fromList
     $ let n = "\\cl$k"
        in ( n

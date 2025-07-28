@@ -14,6 +14,7 @@ prettyTests : TestPool
 prettyTests = mkTestPool "Pretty printing"
   $ "code_verilog_tutorial_escape_id"
   ∷ "code_verilog_tutorial_good_code"
+  ∷ "code_verilog_tutorial_addbit"
   ∷ []
 
 main : Main

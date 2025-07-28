@@ -27,7 +27,7 @@ dut = Design.mk (Maybe.just 1) $
     ∷ ("\\src" , "asicworld/verilog/code_verilog_tutorial_good_code.v:1.7-18.16")
     ∷ []
   ; parameters = Parameters.empty
-  ; connections = Map.empty
+  ; connections = []
   ; wires = Map.fromList
     $ let n = "\\a"
        in ( n
