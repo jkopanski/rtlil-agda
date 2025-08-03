@@ -8,6 +8,9 @@ import Data.Refinement as Refinement renaming (Refinement to t)
 import Data.Irrelevant as Irrelevant renaming (Irrelevant to t)
 import RTLIL.Word.Width as Width
 
+open import Tactic.Cong using (cong!; ⌞_⌟)
+
+open × using (_×_)
 open Irrelevant using ([_])
 open ℕ hiding (zero; t; _+_)
 open ℤ using (+_; -[1+_])
@@ -107,6 +110,22 @@ truncate v {w} word =
 
 [_]ₜ_ : ∀ {w} → Word w → (v : ℕ.t) → Word (w ∸ v)
 [ w ]ₜ v = truncate v w
+
+combine : ∀ {w v} → Word w → Word v → Word (w ℕ.+ v)
+combine {w} {v} x y = ⟦ toℕ x ℕ.* ⊤ v ℕ.+ toℕ y ⟧< (begin-strict
+  toℕ x ℕ.* ⊤ v ℕ.+ toℕ y       <⟨ +-monoʳ-< (toℕ x * ⊤ v) (toℕ<⊤ y) ⟩
+  toℕ x ℕ.* ⊤ v ℕ.+ ⊤ v         ≡⟨ cong! (+-identityʳ (⊤ v)) ⟨
+  toℕ x ℕ.* ⊤ v ℕ.+ (⊤ v ℕ.+ 0) ≡⟨ *-distribʳ-+ (⊤ v) (toℕ x) 1 ⟨
+  ⌞ toℕ x ℕ.+ 1 ⌟ ℕ.* ⊤ v       ≡⟨ cong! (+-comm (toℕ x) 1) ⟩
+  (1 ℕ.+ toℕ x) ℕ.* ⊤ v         ≤⟨ *-monoˡ-≤ (⊤ v) {1 ℕ.+ toℕ x} {⊤ w} (toℕ<⊤ x) ⟩
+  ⊤ w ℕ.* ⊤ v                   ≡⟨ ⊤[w+v]≡⊤[w]*⊤[v] w v ⟨
+  ⊤ (w ℕ.+ v)                   ∎)
+
+remQuot : ∀ {w} v → .⦃ NonZero v ⦄ → Word (w ℕ.+ v) → Word w × Word v
+remQuot {w} v x .proj₁ = ⟦ toℕ x ℕ./ ⊤ v ⟧<
+  m<n*o⇒m/o<n (<-≤-trans (toℕ<⊤ x) (≤-reflexive (⊤[w+v]≡⊤[w]*⊤[v] w v)))
+remQuot {w} v x .proj₂ = ⟦ toℕ x ℕ.% ⊤ v ⟧<
+  m%n<n (toℕ x) (⊤ v)
 
 infixl 6 _+_
 -- Addition is deliberately chosen to accept the same width
