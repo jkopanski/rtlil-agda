@@ -1,5 +1,4 @@
 {-# OPTIONS --guardedness #-}
-
 open import Prelude
 
 module runtests where
@@ -17,9 +16,15 @@ prettyTests = mkTestPool "Pretty printing"
   ∷ "code_verilog_tutorial_addbit"
   ∷ []
 
+semanticTests : TestPool
+semanticTests = mkTestPool "Operational semantics"
+  $ "unsigned_add"
+  ∷ []
+
 main : Main
 main = run $ ignore $ runner
   $ testPaths "pretty" prettyTests
+  ∷ testPaths "semantics" semanticTests
   ∷ [] where
 
   testPaths : String.t → TestPool → TestPool

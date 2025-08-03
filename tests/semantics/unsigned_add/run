@@ -1,0 +1,12 @@
+$1 --compile-dir=../../_build -c Main.agda > log
+./../../_build/Main > output
+
+yosys -Q -T \
+  -p "eval -table M -table N" \
+  --frontend rtlil dut.il \
+  | tail -n +11 \
+  | sed 's/^[[:space:]]//g' | grep -v '^-' | sed 's/ |//g' | tr -s '\n' \
+  > expected
+
+rm ../../_build/Main
+rm ../../_build/MAlonzo/Code/Main*

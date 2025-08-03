@@ -1,0 +1,57 @@
+{-# OPTIONS --guardedness #-}
+open import Prelude
+
+module Main where
+
+module IO where
+  open import IO.Base   public
+  open import IO.Finite public
+  open import IO.Handle public
+
+module Table where
+  open import Text.Tabular.Base public
+  open import Text.Tabular.List public
+
+  open TabularConfig public
+  open TabularLine   public
+
+import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
+
+open import RTLIL.Syntax
+open import RTLIL.Syntax.PrettyPrint using (PrettyWord)
+open import RTLIL.Word.Test
+open IO using (_>>_)
+open List using (_∷_; []; [_])
+
+module Word where
+  open import RTLIL.Word.Base public
+
+import RTLIL.Library as Lib
+
+dut = Lib.Unsigned.add 4
+
+design : Design.t
+design = Design.mk Maybe.nothing List.[ dut ]
+
+instance _ = PrettyWord
+
+pretty : ∀ {A : Set} → ⦃ _ : Doc.Pretty 𝟙.0ℓ.⊤ A ⦄ → A → String.t
+pretty = Doc.render ∘ Doc.pPrint
+
+main : IO.Main
+main = IO.run $ do
+  IO.writeFile "dut.il" $ pretty design
+  -- TODO: should this be in the pretty print somewhere?
+  IO.appendFile "dut.il" "\n"
+
+  let words = all 8
+      input = List.map (Word.remQuot {4} 4) words
+      tt = Function.flip List.map input $ λ where
+        (a , b) → pretty a
+                ∷ pretty b
+                ∷ (pretty $ a Word.+ b)
+                ∷ []
+      header = "\\N" ∷ "\\M" ∷ "\\OUT" ∷ []
+      table = header ∷ tt
+
+  IO.putStrLn ∘ String.unlines $ Table.display Table.whitespace (List.replicate 3 Table.Right) table
