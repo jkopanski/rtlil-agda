@@ -11,6 +11,9 @@ data Selection : Set where
   Single : ℕ.t       → Selection
   Range  : ℕ.t → ℕ.t → Selection
 
+[_,_] : ℕ.t → ℕ.t → Selection
+[_,_] = Range
+
 -- | SigSpec in the spec
 data Signal : Set where
   const  : Constant               → Signal

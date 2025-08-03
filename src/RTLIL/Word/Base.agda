@@ -105,6 +105,9 @@ truncate : (v : ℕ.t) → ∀ {w} → Word w → Word (w ∸ v)
 truncate v {w} word =
   ⟦ toℕ word % ⊤ (w ∸ v) ⟧< m%n<n (toℕ word) (⊤ (w ∸ v))
 
+[_]ₜ_ : ∀ {w} → Word w → (v : ℕ.t) → Word (w ∸ v)
+[ w ]ₜ v = truncate v w
+
 infixl 6 _+_
 -- Addition is deliberately chosen to accept the same width
 -- operands. It's up to the user to perform appropriate extension
