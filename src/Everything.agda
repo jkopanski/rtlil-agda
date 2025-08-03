@@ -8,3 +8,4 @@ import RTLIL.Word.Signed
 import RTLIL.Word.Unsigned
 import RTLIL.Word.Width
 
+import RTLIL.Syntax

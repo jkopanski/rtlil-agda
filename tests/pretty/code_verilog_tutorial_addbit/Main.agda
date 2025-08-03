@@ -32,111 +32,84 @@ dut = Design.mk (Maybe.just 3) $
         ("\\co" ∷ "\\sum" ∷ [])
         ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2_Y"
     ∷ []
-  ; wires = Map.fromList
-    $ let n = "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1_Y"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.24"
-           )
-           (Wire.bus n 2)
-         )
-    ∷ let n = "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2_Y"
-      in ( n
-          , Attributes.insert
-            ( "\\src"
-            , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.29"
-            )
-            (Wire.bus n 2)
-          )
-    ∷ let n = "\\a"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_addbit.v:9.7-9.8"
-           )
-           (Wire.iowire n (Wire.input 1))
-         )
-    ∷ let n = "\\b"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_addbit.v:10.7-10.8"
-           )
-           (Wire.iowire n (Wire.input 2))
-         )
-    ∷ let n = "\\ci"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_addbit.v:11.7-11.9"
-           )
-           (Wire.iowire n (Wire.input 3))
-         )
-    ∷ let n = "\\co"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_addbit.v:14.8-14.10"
-           )
-           (Wire.iowire n (Wire.output 5))
-         )
-    ∷ let n = "\\sum"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_addbit.v:13.8-13.11"
-           )
-           (Wire.iowire n (Wire.output 4))
-         )
+  ; wires =
+      Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.24"
+        )
+        (Wire.bus "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1_Y" 2)
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.29"
+        )
+        (Wire.bus "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2_Y" 2)
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:9.7-9.8"
+        )
+        (Wire.iowire "\\a" (Wire.input 1))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:10.7-10.8"
+        )
+        (Wire.iowire "\\b" (Wire.input 2))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:11.7-11.9"
+        )
+        (Wire.iowire "\\ci" (Wire.input 3))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:14.8-14.10"
+        )
+        (Wire.iowire "\\co" (Wire.output 5))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_addbit.v:13.8-13.11"
+        )
+        (Wire.iowire "\\sum" (Wire.output 4))
     ∷ []
-  ; cells = Map.fromList
-    $ let n = "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1"
-      in ( n
-         , record
-           { attributes = Attributes.mk $
-             ( "\\src"
-             , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.24"
-             ) ∷ []
-           ; type = "$add"
-           ; name = n
-           ; parameters = Parameters.mk
-             $ ("\\A_SIGNED" , 0)
-             ∷ ("\\A_WIDTH"  , 1)
-             ∷ ("\\B_SIGNED" , 0)
-             ∷ ("\\B_WIDTH"  , 1)
-             ∷ ("\\Y_WIDTH"  , 2)
-             ∷ []
-           ; connections =
-               "\\A" ⇐ "\\a"
-             ∷ "\\B" ⇐ "\\b"
-             ∷ "\\Y" ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1_Y"
-             ∷ []
-           }
-         )
-    ∷ let n = "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2"
-      in ( n
-         , record
-           { attributes = Attributes.mk $
-             ( "\\src"
-             , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.29"
-             ) ∷ []
-           ; type = "$add"
-           ; name = n
-           ; parameters = Parameters.mk
-             $ ("\\A_SIGNED" , 0)
-             ∷ ("\\A_WIDTH"  , 2)
-             ∷ ("\\B_SIGNED" , 0)
-             ∷ ("\\B_WIDTH"  , 1)
-             ∷ ("\\Y_WIDTH"  , 2)
-             ∷ []
-           ; connections =
-               "\\A" ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1_Y"
-             ∷ "\\B" ⇐ "\\ci"
-             ∷ "\\Y" ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2_Y"
-             ∷ []
-           }
-         )
+  ; cells =
+      record
+        { attributes = Attributes.mk $
+          ( "\\src"
+          , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.24"
+          ) ∷ []
+        ; type = "$add"
+        ; name = "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1"
+        ; parameters = Parameters.mk
+          $ ("\\A_SIGNED" , 0)
+          ∷ ("\\A_WIDTH"  , 1)
+          ∷ ("\\B_SIGNED" , 0)
+          ∷ ("\\B_WIDTH"  , 1)
+          ∷ ("\\Y_WIDTH"  , 2)
+          ∷ []
+        ; connections =
+            "\\A" ⇐ "\\a"
+          ∷ "\\B" ⇐ "\\b"
+          ∷ "\\Y" ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1_Y"
+          ∷ []
+        }
+    ∷ record
+        { attributes = Attributes.mk $
+          ( "\\src"
+          , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.29"
+          ) ∷ []
+        ; type = "$add"
+        ; name = "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2"
+        ; parameters = Parameters.mk
+          $ ("\\A_SIGNED" , 0)
+          ∷ ("\\A_WIDTH"  , 2)
+          ∷ ("\\B_SIGNED" , 0)
+          ∷ ("\\B_WIDTH"  , 1)
+          ∷ ("\\Y_WIDTH"  , 2)
+          ∷ []
+        ; connections =
+            "\\A" ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$1_Y"
+          ∷ "\\B" ⇐ "\\ci"
+          ∷ "\\Y" ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2_Y"
+          ∷ []
+        }
     ∷ []
   }
   ∷ []

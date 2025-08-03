@@ -28,49 +28,34 @@ dut = Design.mk (Maybe.just 1) $
     ∷ []
   ; parameters = Parameters.empty
   ; connections = []
-  ; wires = Map.fromList
-    $ let n = "\\a"
-       in ( n
-          , Attributes.insert
-            ( "\\src"
-            , "asicworld/verilog/code_verilog_tutorial_good_code.v:7.23-7.24"
-            )
-            (Wire.iowire n (Wire.input 1))
-          )
-    ∷ let n = "\\b"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_good_code.v:8.23-8.24"
-           )
-           (Wire.iowire n (Wire.input 2))
-         )
-    ∷ let n = "\\ci"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_good_code.v:9.23-9.25"
-           )
-           (Wire.iowire n (Wire.input 3))
-         )
-    ∷ let n = "\\co"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_good_code.v:11.22-11.24"
-           )
-           (Wire.iowire n (Wire.output 5))
-         )
-    ∷ let n = "\\sum"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_good_code.v:10.22-10.25"
-           )
-           (Wire.iowire n (Wire.output 4))
-         )
+  ; wires =
+      Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_good_code.v:7.23-7.24"
+        )
+        (Wire.iowire "\\a" (Wire.input 1))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_good_code.v:8.23-8.24"
+        )
+        (Wire.iowire "\\b" (Wire.input 2))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_good_code.v:9.23-9.25"
+        )
+        (Wire.iowire "\\ci" (Wire.input 3))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_good_code.v:11.22-11.24"
+        )
+        (Wire.iowire "\\co" (Wire.output 5))
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_good_code.v:10.22-10.25"
+        )
+        (Wire.iowire "\\sum" (Wire.output 4))
     ∷ []
-  ; cells = Map.empty
+  ; cells = []
   }
   ∷ []
 

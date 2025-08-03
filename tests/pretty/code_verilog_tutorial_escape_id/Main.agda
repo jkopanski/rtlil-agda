@@ -29,49 +29,38 @@ dut = Design.mk (Maybe.just 1) $
     ∷ []
   ; parameters = Parameters.empty
   ; connections = []
-  ; wires = Map.fromList
-    $ let n = "\\cl$k"
-       in ( n
-          , Attributes.insert
-            ( "\\src"
-            , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.10-11.14"
-            )
-            (Wire.iowire n (Wire.input 4))
-          )
-    ∷ let n = "\\d"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.7-11.8"
-           )
-           (Wire.iowire n (Wire.input 3))
-         )
-    ∷ let n = "\\q"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_escape_id.v:12.8-12.9"
-           )
-           (Wire.iowire n (Wire.output 1))
-         )
-    ∷ let n = "\\q~"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_escape_id.v:12.11-12.14"
-           )
-           (Wire.iowire n (Wire.output 2))
-         )
-    ∷ let n = "\\reset*"
-      in ( n
-         , Attributes.insert
-           ( "\\src"
-           , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.16-11.23"
-           )
-           (Wire.iowire n (Wire.input 5))
-         )
+  ; wires =
+      Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.10-11.14"
+        )
+        (Wire.iowire "\\cl$k" (Wire.input 4))
+
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.7-11.8"
+        )
+        (Wire.iowire "\\d" (Wire.input 3))
+
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_escape_id.v:12.8-12.9"
+        )
+        (Wire.iowire "\\q" (Wire.output 1))
+
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_escape_id.v:12.11-12.14"
+        )
+        (Wire.iowire "\\q~" (Wire.output 2))
+
+    ∷ Attributes.insert
+        ( "\\src"
+        , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.16-11.23"
+        )
+        (Wire.iowire "\\reset*" (Wire.input 5))
     ∷ []
-  ; cells = Map.empty
+  ; cells = []
   }
   ∷ []
 

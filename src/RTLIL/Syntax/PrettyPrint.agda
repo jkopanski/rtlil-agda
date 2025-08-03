@@ -141,15 +141,15 @@ instance
           pPrint = pPrintPrec l p
 
 ------------------------------------------------------------------------
--- RTLIL.Syntax.Cell
+-- RTLIL.Syntax.Module
 
 instance
   PrettyModule : Pretty ann Module
   PrettyModule .pPrintPrec l p m = pPrint attributes
     $+$ "module" <+> pPrint name
     </> (pPrint parameters
-      $+$ pMap (pPrint ∘ ×.proj₂) wires
-      $+$ pMap (pPrint ∘ ×.proj₂) cells
+      $+$ Doc.vcat (List.map pPrint wires)
+      $+$ Doc.vcat (List.map pPrint cells)
       $+$ Doc.hsep (List.map pPrint connections))
     $+$ "end"
     where open Module m

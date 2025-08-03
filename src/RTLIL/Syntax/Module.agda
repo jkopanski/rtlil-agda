@@ -18,8 +18,8 @@ record Module : Set where
     parameters : Parameters.t
     connections : List.t Connection.t
 
-    wires : Map.t Wire.t
-    cells : Map.t Cell.t
+    wires : List.t Wire.t
+    cells : List.t Cell.t
 
     -- TODO:
     -- memories : Map.t Memory
