@@ -116,3 +116,19 @@ _+_ {w} x y = ⟦ toℕ x ℕ.+ toℕ y ⟧< (begin-strict
   toℕ x ℕ.+ toℕ y <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
   ⊤ w ℕ.+ ⊤ w     ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc w) ⟨
   ⊤ (suc w) ∎)
+
+infixl 6 _+′_
+-- This one is more general but it will require casting of the word
+-- width. I'm not sure if this is a good trade-off.
+_+′_ : ∀ {w v} → Word w → Word v → Word (suc (w ℕ.⊔ v))
+_+′_ {w} {v} x y = ⟦ toℕ x ℕ.+ toℕ y ⟧<
+  (begin-strict
+    toℕ x ℕ.+ toℕ y
+  <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
+    ⊤ w ℕ.+ ⊤ v
+  ≤⟨ +-mono-≤ (⊤-mono-≤ (m≤m⊔n w v)) (⊤-mono-≤ (m≤n⊔m w v)) ⟩
+    ⊤ (w ℕ.⊔ v) ℕ.+ ⊤ (w ℕ.⊔ v)
+  ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc (w ℕ.⊔ v)) ⟨
+    ⊤ (suc (w ℕ.⊔ v))
+  ∎)
+
