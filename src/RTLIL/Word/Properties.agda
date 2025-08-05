@@ -20,10 +20,12 @@ open ℕ hiding (zero; t; _+_; _≟_)
 open Width
 open Rel₀ using (no; yes)
 open Rel₂ using (_≗_; _⇒_)
+open × using (_×_)
 open ≤-Reasoning
 
 ------------------------------------------------------------------------
 -- Properties of _≡_
+------------------------------------------------------------------------
 
 toℕ-cong : ∀ {w} → Function.Congruent _≡_ _≡_ (toℕ {w})
 toℕ-cong = cong toℕ
@@ -65,6 +67,7 @@ w∸½<½ w@{suc w-1} word v≥½ = begin-strict
 
 ------------------------------------------------------------------------
 -- Properties of _#b_
+------------------------------------------------------------------------
 
 toℕ-#b :
   ∀ {w m} {witness : Rel₀.True (m <? 2 ^ w)} →
@@ -73,6 +76,7 @@ toℕ-#b {w} {m} {witness} rewrite sym (⊤-def w) = refl
 
 ------------------------------------------------------------------------
 -- Properties of cast
+------------------------------------------------------------------------
 
 toℕ-cast :
   ∀ {w v} → .(eq : w ≡ v) → (word : Word w) →
@@ -96,6 +100,7 @@ subst-is-cast refl _ = refl
 
 ------------------------------------------------------------------------
 -- Properties of extend
+------------------------------------------------------------------------
 
 toℕ-0-extend :
   (v : ℕ.t) → ∀ {w} → (word : Word w) →
@@ -118,6 +123,7 @@ toℕ-1-extend′ {w} word = begin-equality
 
 ------------------------------------------------------------------------
 -- Properties of split
+------------------------------------------------------------------------
 
 split-< :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
@@ -178,6 +184,7 @@ join-split {w} i with toℕ i <? ⊤ w
 
 ------------------------------------------------------------------------
 -- Properties of opposite
+------------------------------------------------------------------------
 
 opposite-involutive : ∀ {w} → (i : Word w) → opposite (opposite i) ≡ i
 opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin-equality
@@ -189,6 +196,7 @@ opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin-equality
 
 ------------------------------------------------------------------------
 -- Properties of truncate
+------------------------------------------------------------------------
 
 truncate-< :
   ∀ {v w} → (word : Word w) →
@@ -227,3 +235,45 @@ truncate-suc {v} {w} word = toℕ-injective $ begin-equality
     toℕ word % ⊤ (w ∸ 1) % ⊤ (w ∸ 1 ∸ (v ∸ 1))
   ∎ where w-v≤w-1 : w ∸ v ≤ w ∸ 1
           w-v≤w-1 = ∸-monoʳ-≤ w (>-nonZero⁻¹ v)
+
+------------------------------------------------------------------------
+-- remQuot
+------------------------------------------------------------------------
+-- Word (w * v) ↔ Word w × Word v
+
+remQuot-combine :
+  ∀ {w v} → .⦃ _ : NonZero v ⦄ →
+  (x : Word w) (y : Word v) →
+  remQuot v (combine x y) ≡ (x , y)
+remQuot-combine {w} {v} x y = ×.×-≡,≡→≡
+  ( toℕ-injective
+      (begin-equality
+        (toℕ x ℕ.* ⊤ v ℕ.+ toℕ y) / ⊤ v
+      ≡⟨ +-distrib-/-∣ˡ {toℕ x ℕ.* ⊤ v} (toℕ y) {⊤ v} (n∣m*n (toℕ x)) ⟩
+        toℕ x ℕ.* ⊤ v / ⊤ v ℕ.+ toℕ y / ⊤ v
+      ≡⟨ Rel₂.cong₂ ℕ._+_ (m*n/n≡m (toℕ x) (⊤ v)) (m<n⇒m/n≡0 (toℕ<⊤ y)) ⟩
+        toℕ x ℕ.+ 0
+      ≡⟨ +-identityʳ (toℕ x) ⟩
+        toℕ x
+      ∎)
+  , toℕ-injective (begin-equality
+      (toℕ x * ⊤ v ℕ.+ toℕ y) % ⊤ v ≡⟨ %-remove-+ˡ (toℕ y) {⊤ v} (n∣m*n (toℕ x)) ⟩
+      toℕ y % ⊤ v                   ≡⟨ m<n⇒m%n≡m (toℕ<⊤ y) ⟩
+      toℕ y                         ∎)
+  )
+
+combine-remQuot : ∀ {w} v → .⦃ _ : NonZero v ⦄ →
+  (x : Word (w ℕ.+ v)) →
+  ×.uncurry combine (remQuot v x) ≡ x
+combine-remQuot {w} v (⟦ x ⟧< _) = toℕ-injective $ begin-equality
+  x / ⊤ v ℕ.* ⊤ v ℕ.+ x % ⊤ v ≡⟨ +-comm (x / ⊤ v ℕ.* ⊤ v) (x % ⊤ v) ⟩
+  x % ⊤ v ℕ.+ x / ⊤ v ℕ.* ⊤ v ≡⟨ m≡m%n+[m/n]*n x (⊤ v) ⟨
+  x                           ∎
+
+------------------------------------------------------------------------
+-- Bundles
+
++↔× : ∀ {w v} → .⦃ NonZero v ⦄ → Word (w ℕ.+ v) ↔ (Word w × Word v)
++↔× {w} {v} = Function.mk↔ₛ′ (remQuot {w} v) (×.uncurry combine)
+  (×.uncurry remQuot-combine)
+  (combine-remQuot {w} v)

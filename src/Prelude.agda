@@ -14,7 +14,10 @@ module 𝟙 where
 
 module 𝟚 where open import Data.Bool renaming (Bool to t) public
 
-module × where open import Data.Product public
+module × where
+  open import Data.Product            public
+  open import Data.Product.Properties public
+
 module ⊎ where open import Data.Sum     public
 
 module ℕ where
