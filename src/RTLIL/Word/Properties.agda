@@ -101,6 +101,7 @@ subst-is-cast refl _ = refl
 ------------------------------------------------------------------------
 -- Properties of extend
 ------------------------------------------------------------------------
+-- toℕ-extend
 
 toℕ-0-extend :
   (v : ℕ.t) → ∀ {w} → (word : Word w) →
@@ -120,6 +121,44 @@ toℕ-1-extend′ {w} word = begin-equality
   (2 ∸ 1) * ⊤ w ℕ.+ toℕ word   ≡⟨ refl ⟩
   1 * ⊤ w ℕ.+ toℕ word         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
   ⊤ w ℕ.+ toℕ word             ∎
+
+0-extend-by-0 : ∀ {w} → (word : Word w) → 0-extend 0 word ≡ word
+0-extend-by-0 {w} word = toℕ-injective refl
+
+1-extend-by-0 : ∀ {w} → (word : Word w) → 1-extend 0 word ≡ word
+1-extend-by-0 {w} word rewrite ⊤-zero = toℕ-injective refl
+
+------------------------------------------------------------------------
+-- truncate-extend
+
+truncate-zero :
+  ∀ {w} → (word : Word w) →
+  truncate 0 word ≡ word
+truncate-zero word = toℕ-injective (m<n⇒m%n≡m (toℕ<⊤ word))
+
+truncate-0-extend :
+  (v : ℕ.t) → ∀ {w} → (word : Word w) →
+  truncate v (0-extend v word) ≡ cast (sym $ m+n∸m≡n v w) word
+truncate-0-extend v {w} word = toℕ-injective $ begin-equality
+  toℕ word % ⊤ (v ℕ.+ w ∸ v) ≡⟨ %-congʳ (cong ⊤ (m+n∸m≡n v w)) ⟩
+  toℕ word % ⊤ w             ≡⟨ m<n⇒m%n≡m (toℕ<⊤ word) ⟩
+  toℕ word                   ∎
+
+truncate-1-extend :
+  (v : ℕ.t) → ∀ {w} → (word : Word w) →
+  truncate v (1-extend v word) ≡ cast (sym $ m+n∸m≡n v w) word
+truncate-1-extend v {w} word = toℕ-injective $
+  begin-equality
+    ((⊤ v ∸ 1) * ⊤ w ℕ.+ toℕ word) % ⊤ (v ℕ.+ w ∸ v)
+  ≡⟨ %-congʳ (cong ⊤ (m+n∸m≡n v w)) ⟩
+    ((⊤ v ∸ 1) * ⊤ w ℕ.+ toℕ word) % ⊤ w
+  ≡⟨ %-congˡ (+-comm ((⊤ v ∸ 1) * ⊤ w) (toℕ word)) ⟩
+    (toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w) % ⊤ w
+  ≡⟨ [m+kn]%n≡m%n (toℕ word) (⊤ v ∸ 1) (⊤ w) ⟩
+    toℕ word % ⊤ w
+  ≡⟨ m<n⇒m%n≡m (toℕ<⊤ word) ⟩
+    toℕ word
+  ∎
 
 ------------------------------------------------------------------------
 -- Properties of split

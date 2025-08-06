@@ -70,6 +70,13 @@ cast {w} {v} w≡v (⟦ value ⟧< v<⊤) =
     (⊤ v ∸ 1) * ⊤ w ℕ.+ ⊤ w   ≡⟨ ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v w ⟨
     ⊤ (v ℕ.+ w)               ∎)
 
+truncate : (v : ℕ.t) → ∀ {w} → Word w → Word (w ∸ v)
+truncate v {w} word =
+  ⟦ toℕ word % ⊤ (w ∸ v) ⟧< m%n<n (toℕ word) (⊤ (w ∸ v))
+
+[_]ₜ_ : ∀ {w} → Word w → (v : ℕ.t) → Word (w ∸ v)
+[ w ]ₜ v = truncate v w
+
 -- | Split the word at half.
 -- split {w} "word" = inj₁ "word"       if word < ½ w
 --                    inj₂ "word - ½ w" if word ≥ ½ w
@@ -102,13 +109,6 @@ opposite {w} (⟦ value ⟧< v<⊤) = ⟦ ⊤ w ∸ suc value ⟧< (begin-strict
   pred (⊤ w)         ≡⟨ refl ⟩
   ⊤ w ∸ 1            <⟨ ∸-monoʳ-< z<s (>-nonZero⁻¹ (⊤ w)) ⟩
   ⊤ w ∸ 0            ∎)
-
-truncate : (v : ℕ.t) → ∀ {w} → Word w → Word (w ∸ v)
-truncate v {w} word =
-  ⟦ toℕ word % ⊤ (w ∸ v) ⟧< m%n<n (toℕ word) (⊤ (w ∸ v))
-
-[_]ₜ_ : ∀ {w} → Word w → (v : ℕ.t) → Word (w ∸ v)
-[ w ]ₜ v = truncate v w
 
 combine : ∀ {w v} → Word w → Word v → Word (w ℕ.+ v)
 combine {w} {v} x y = ⟦ toℕ x ℕ.* ⊤ v ℕ.+ toℕ y ⟧< (begin-strict
