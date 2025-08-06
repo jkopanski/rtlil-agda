@@ -226,7 +226,7 @@ instance
 v≤⊤⇒⊤v|⊤w : ∀ v w → v ≤ w → ⊤ v ∣ ⊤ w
 v≤⊤⇒⊤v|⊤w v w v≤w = divides (⊤ (w ∸ v)) $ begin-equality
   ⊤ w             ≡⟨ cong ⊤ (m∸n+n≡m v≤w) ⟨
-  ⊤ (w ∸ v + v)   ≡⟨ ⊤[w+v]≡⊤[w]*⊤[v] (w ∸ v) v ⟩ 
+  ⊤ (w ∸ v + v)   ≡⟨ ⊤[w+v]≡⊤[w]*⊤[v] (w ∸ v) v ⟩
   ⊤ (w ∸ v) * ⊤ v ∎
 
 ½≡⌈⊤/2⌉ : ∀ w → .⦃ _ : NonZero w ⦄ → ½ w ≡ ⌈ ⊤ w /2⌉

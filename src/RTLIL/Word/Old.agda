@@ -192,7 +192,7 @@ split-0-extend {w} word = begin
     ≡⟨ cong (λ i → Fin.splitAt (⊤ w) i) (Fin.cast-trans eq₁∘eq₂ eq₀ word↑) ⟩
   Fin.splitAt (⊤ w) (Fin.cast eq₀∘eq₁∘eq₂ word↑)
     ≡⟨ {!Fin.splitAt-↑ˡ!} ⟩
-  -- inj₁ (Fin.cast eq₀∘eq₁∘eq₂ word) ≡⟨ ? ⟩ 
+  -- inj₁ (Fin.cast eq₀∘eq₁∘eq₂ word) ≡⟨ ? ⟩
   inj₁ word ∎
   -- rewrite trans (⊤-suc w) (cong (_+_ (⊤ w)) (+-identityʳ (⊤ w)))
   -- rewrite ⊤≡⊤[w-1]+⊤[w-1] (suc w) ⦃ _ ⦄
@@ -401,7 +401,7 @@ opposite-prop word = Fin.opposite-prop word
 --   --   with toℕ word <? ⊤ (w ∸ 1)
 --   -- … | Rel₀.yes w<½
 --   --        -- lhs
---   --   rewrite extend-< v word w<½ 
+--   --   rewrite extend-< v word w<½
 --   --         | split-< (Unsigned.extend v word) (lemma₃ w<½ v)
 --   --        -- rhs
 --   --         | split-< word w<½

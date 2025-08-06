@@ -1,5 +1,4 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-
 open import Prelude
 
 module RTLIL.Word.Base where
@@ -62,10 +61,10 @@ cast {w} {v} w≡v (⟦ value ⟧< v<⊤) =
 
 0-extend : (v : ℕ.t) → ∀ {w} → Word w → Word (v ℕ.+ w)
 0-extend v {w} (⟦ word ⟧< word<⊤ ) =
-  word< {v ℕ.+ w} (≤-trans word<⊤ (⊤[w]≤⊤[v+w] w v))
+  ⟦ word ⟧< ≤-trans word<⊤ (⊤[w]≤⊤[v+w] w v)
 
 1-extend : (v : ℕ.t) → ∀ {w} → Word w → Word (v ℕ.+ w)
-1-extend v {w} (⟦ value ⟧< value<⊤ ) = word< {value = (⊤ v ∸ 1) * ⊤ w ℕ.+ value}
+1-extend v {w} (⟦ value ⟧< value<⊤ ) = ⟦ (⊤ v ∸ 1) * ⊤ w ℕ.+ value ⟧<
   (begin-strict
     (⊤ v ∸ 1) * ⊤ w ℕ.+ value <⟨ +-monoʳ-< _ value<⊤ ⟩
     (⊤ v ∸ 1) * ⊤ w ℕ.+ ⊤ w   ≡⟨ ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v w ⟨
@@ -86,7 +85,7 @@ split w@{suc w-1} (⟦ value ⟧< v<⊤ ) with value <? ⊤ (w ∸ 1)
   ⊤ w-1 ℕ.+ ⊤ w-1 ∸ ⊤ w-1   ≡⟨ +-∸-assoc (⊤ w-1) {n = ⊤ w-1} (≤-reflexive refl) ⟩
   ⊤ w-1 ℕ.+ (⊤ w-1 ∸ ⊤ w-1) ≡⟨ cong (⊤ w-1 ℕ.+_) (n∸n≡0 (⊤ w-1)) ⟩
   ⊤ w-1 ℕ.+ 0               ≡⟨ +-identityʳ (⊤ w-1) ⟩
-  ⊤ w-1 ∎)
+  ⊤ w-1                     ∎)
 
 join : ∀ {w} → Word w ⊎ Word w → Word (suc w)
 join {w} = ⊎.[ 0-extend 1 , 1-extend 1 ]
@@ -137,7 +136,7 @@ _+_ : ∀ {w} → Word w → Word w → Word (suc w)
 _+_ {w} x y = ⟦ toℕ x ℕ.+ toℕ y ⟧< (begin-strict
   toℕ x ℕ.+ toℕ y <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
   ⊤ w ℕ.+ ⊤ w     ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc w) ⟨
-  ⊤ (suc w) ∎)
+  ⊤ (suc w)       ∎)
 
 infixl 6 _+′_
 -- This one is more general but it will require casting of the word
