@@ -110,23 +110,23 @@ toℕ-0-extend _ _ = refl
 
 toℕ-1-extend :
   (v : ℕ.t) → ∀ {w} → (word : Word w) →
-  toℕ (1-extend v word) ≡ (⊤ v ∸ 1) * ⊤ w ℕ.+ toℕ word
+  toℕ (1-extend v word) ≡ toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w
 toℕ-1-extend v {w} (⟦ value ⟧< value<⊤) = refl
 
 toℕ-1-extend′ :
   ∀ {w} → (word : Word w) →
-  toℕ (1-extend 1 word) ≡ ⊤ w ℕ.+ toℕ word
+  toℕ (1-extend 1 word) ≡ toℕ word ℕ.+ ⊤ w
 toℕ-1-extend′ {w} word = begin-equality
-  (⊤ 1 ∸ 1) * ⊤ w ℕ.+ toℕ word ≡⟨ cong! (⊤-def 1) ⟩
-  (2 ∸ 1) * ⊤ w ℕ.+ toℕ word   ≡⟨ refl ⟩
-  1 * ⊤ w ℕ.+ toℕ word         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
-  ⊤ w ℕ.+ toℕ word             ∎
+  toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ≡⟨ cong! (⊤-def 1) ⟩
+  toℕ word ℕ.+ (2 ∸ 1) * ⊤ w   ≡⟨ refl ⟩
+  toℕ word ℕ.+ 1 * ⊤ w         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
+  toℕ word ℕ.+ ⊤ w             ∎
 
 0-extend-by-0 : ∀ {w} → (word : Word w) → 0-extend 0 word ≡ word
 0-extend-by-0 {w} word = toℕ-injective refl
 
 1-extend-by-0 : ∀ {w} → (word : Word w) → 1-extend 0 word ≡ word
-1-extend-by-0 {w} word rewrite ⊤-zero = toℕ-injective refl
+1-extend-by-0 {w} word rewrite ⊤-zero = toℕ-injective (+-identityʳ (toℕ word))
 
 ------------------------------------------------------------------------
 -- truncate-extend
@@ -149,10 +149,8 @@ truncate-1-extend :
   truncate v (1-extend v word) ≡ cast (sym $ m+n∸m≡n v w) word
 truncate-1-extend v {w} word = toℕ-injective $
   begin-equality
-    ((⊤ v ∸ 1) * ⊤ w ℕ.+ toℕ word) % ⊤ (v ℕ.+ w ∸ v)
+    (toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w) % ⊤ (v ℕ.+ w ∸ v)
   ≡⟨ %-congʳ (cong ⊤ (m+n∸m≡n v w)) ⟩
-    ((⊤ v ∸ 1) * ⊤ w ℕ.+ toℕ word) % ⊤ w
-  ≡⟨ %-congˡ (+-comm ((⊤ v ∸ 1) * ⊤ w) (toℕ word)) ⟩
     (toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w) % ⊤ w
   ≡⟨ [m+kn]%n≡m%n (toℕ word) (⊤ v ∸ 1) (⊤ w) ⟩
     toℕ word % ⊤ w
@@ -192,18 +190,18 @@ split-1-extend :
   split (1-extend 1 word) ≡ inj₂ word
 split-1-extend {w} word
   with ex@(⟦ value ⟧< ex<⊤[1+w]) ← 1-extend 1 word
-     | (⊤ 1 ∸ 1) * ⊤ w ℕ.+ toℕ word <? ⊤ w
+     | toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w <? ⊤ w
 … | yes v<⊤ = Rel₀.contradiction v<⊤ v≮⊤
-  where v≮⊤ : (⊤ 1 ∸ 1) * ⊤ w ℕ.+ toℕ word ≮ ⊤ w
+  where v≮⊤ : toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ≮ ⊤ w
         v≮⊤ = ≤⇒≯ $ begin
-          ⊤ w                   ≡⟨ +-identityʳ (⊤ w) ⟨
-          ⊤ w ℕ.+ 0             ≤⟨ +-monoʳ-≤ (⊤ w) z≤n ⟩
-          ⊤ w ℕ.+ toℕ word      ≡⟨ toℕ-1-extend′ word ⟨
+          ⊤ w                   ≡⟨ +-identityˡ (⊤ w) ⟨
+          0 ℕ.+ ⊤ w             ≤⟨ +-monoˡ-≤ (⊤ w) z≤n ⟩
+          toℕ word ℕ.+ ⊤ w      ≡⟨ toℕ-1-extend′ word ⟨
           toℕ (1-extend 1 word) ∎
           where open ≤-Reasoning
 … | no  v≮⊤ = cong inj₂ $ toℕ-injective $ begin-equality
   toℕ (1-extend 1 word) ∸ ⊤ w ≡⟨ cong! (toℕ-1-extend′ word) ⟩
-  ⊤ w ℕ.+ toℕ word ∸ ⊤ w      ≡⟨ m+n∸m≡n (⊤ w) (toℕ word) ⟩
+  toℕ word ℕ.+ ⊤ w ∸ ⊤ w      ≡⟨ m+n∸n≡m (toℕ word) (⊤ w) ⟩
   toℕ word                    ∎
 
 split-join :
@@ -215,11 +213,11 @@ join-split : ∀ {w} → (i : Word (suc w)) → join (split i) ≡ i
 join-split {w} i with toℕ i <? ⊤ w
 … | yes _  = refl
 … | no i≮⊤ = toℕ-injective $ begin-equality
-  (⊤ 1 ∸ 1) * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w) ≡⟨ cong! (⊤-def 1) ⟩
-  (2 ∸ 1) * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)   ≡⟨ refl ⟩
-  1 * ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
-  ⊤ w ℕ.+ (toℕ i ∸ ⊤ w)             ≡⟨ m+[n∸m]≡n (≮⇒≥ i≮⊤) ⟩
-  toℕ i ∎
+  toℕ i ∸ ⊤ w ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ≡⟨ cong! (⊤-def 1) ⟩
+  toℕ i ∸ ⊤ w ℕ.+ (2 ∸ 1) * ⊤ w   ≡⟨ refl ⟩
+  toℕ i ∸ ⊤ w ℕ.+ 1 * ⊤ w         ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
+  toℕ i ∸ ⊤ w ℕ.+ ⊤ w             ≡⟨ m∸n+n≡m (≮⇒≥ i≮⊤) ⟩
+  toℕ i                           ∎
 
 ------------------------------------------------------------------------
 -- Properties of opposite

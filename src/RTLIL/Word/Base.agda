@@ -64,10 +64,11 @@ cast {w} {v} w≡v (⟦ value ⟧< v<⊤) =
   ⟦ word ⟧< ≤-trans word<⊤ (⊤[w]≤⊤[v+w] w v)
 
 1-extend : (v : ℕ.t) → ∀ {w} → Word w → Word (v ℕ.+ w)
-1-extend v {w} (⟦ value ⟧< value<⊤ ) = ⟦ (⊤ v ∸ 1) * ⊤ w ℕ.+ value ⟧<
+1-extend v {w} (⟦ value ⟧< value<⊤ ) = ⟦ value ℕ.+ (⊤ v ∸ 1) * ⊤ w ⟧<
   (begin-strict
-    (⊤ v ∸ 1) * ⊤ w ℕ.+ value <⟨ +-monoʳ-< _ value<⊤ ⟩
-    (⊤ v ∸ 1) * ⊤ w ℕ.+ ⊤ w   ≡⟨ ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v w ⟨
+    value ℕ.+ (⊤ v ∸ 1) * ⊤ w <⟨ +-monoˡ-< _ value<⊤ ⟩
+    ⊤ w ℕ.+ (⊤ v ∸ 1) * ⊤ w   ≡⟨ ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w v ⟨
+    ⊤ (w ℕ.+ v)               ≡⟨ cong ⊤ (+-comm w v) ⟩
     ⊤ (v ℕ.+ w)               ∎)
 
 truncate : (v : ℕ.t) → ∀ {w} → Word w → Word (w ∸ v)
