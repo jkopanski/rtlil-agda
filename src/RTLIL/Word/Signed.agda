@@ -10,7 +10,7 @@ open import RTLIL.Word.Properties
 
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
-open ℕ hiding (t)
+open ℕ hiding (t; _+_)
 open Rel₀ using (no; yes)
 open ℤ using (+_; -[1+_])
 open ≤-Reasoning
@@ -18,7 +18,7 @@ open ≤-Reasoning
 fromNeg : ∀ {w n} → .⦃ _ : NonZero w ⦄ → n < ½ w → Word w
 fromNeg {w} {n} n<½ = word< top-[1+n]<top
   where
-    m = ⊤ w ∸ (1 + n)
+    m = ⊤ w ∸ (1 ℕ.+ n)
     top-[1+n]<top : m < ⊤ w
     top-[1+n]<top = ∸-monoʳ-< z<s (≤-trans n<½ (<⇒≤ (½<⊤ w)))
 
@@ -63,9 +63,9 @@ m∸[n∸m]≡2m∸n : ∀ {m n} → m ≤ n → m ∸ (n ∸ m) ≡ 2 * m ∸ n
 m∸[n∸m]≡2m∸n {m} {n} m≤n with k ← n ∸ m in n∸m≡k = begin-equality
     m ∸ k
   ≡⟨ [m+n]∸[m+o]≡n∸o m m k ⟨
-    (m + m) ∸ (m + k)
+    (m ℕ.+ m) ∸ (m ℕ.+ k)
   ≡⟨ Rel₂.cong₂ _∸_ (cong (m ℕ.+_) (+-identityʳ m)) (cong (m ℕ.+_) n∸m≡k) ⟨
-    2 * m ∸ (m + (n ∸ m))
+    2 * m ∸ (m ℕ.+ (n ∸ m))
   ≡⟨ cong! (m+[n∸m]≡n m≤n) ⟩
     2 * m ∸ n
   ∎
@@ -80,11 +80,11 @@ to-≥ w@{suc w-1} word v≥½ rewrite split-≥ word v≥½ = cong -[1+_] $ beg
   pred (⊤ w ∸ toℕ word)             ∎
 
 instance
-  extend-nonZero : ∀ {w v} → .⦃ _ : NonZero w ⦄ → NonZero (v + w)
+  extend-nonZero : ∀ {w v} → .⦃ _ : NonZero w ⦄ → NonZero (v ℕ.+ w)
   extend-nonZero {w} {v} = >-nonZero $ begin-strict
-    0     <⟨ >-nonZero⁻¹ _ ⟩
-    w     ≤⟨ m≤n+m w v ⟩
-    v + w ∎
+    0       <⟨ >-nonZero⁻¹ _ ⟩
+    w       ≤⟨ m≤n+m w v ⟩
+    v ℕ.+ w ∎
 
 extend : ∀ {w} → .⦃ _ : NonZero w ⦄ → (v : ℕ.t) → Word w → Word (v ℕ.+ w)
 extend w@{suc _} v word with toℕ word <? ⊤ (w ∸ 1)
@@ -102,12 +102,12 @@ extend-< w@{suc w-1} ⦃ w≢0 ⦄ v word w<½ with toℕ word <? ⊤ w-1
 extend-<-⊤ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
   (v : ℕ.t) → (word : Word w) → (w<½ : toℕ word < ⊤ (w ∸ 1)) →
-  toℕ (extend v word) < ⊤ (v + w ∸ 1)
+  toℕ (extend v word) < ⊤ (v ℕ.+ w ∸ 1)
 extend-<-⊤ {w} v word w<½ rewrite extend-< v word w<½ = begin-strict
-  toℕ word <⟨ w<½ ⟩
-  ⊤ (w ∸ 1) ≤⟨ ⊤[w]≤⊤[v+w] (w ∸ 1) v ⟩
-  ⊤ (v + (w ∸ 1)) ≡⟨ cong ⊤ (+-∸-assoc v (>-nonZero⁻¹ w)) ⟨
-  ⊤ (v + w ∸ 1) ∎
+  toℕ word          <⟨ w<½ ⟩
+  ⊤ (w ∸ 1)         ≤⟨ ⊤[w]≤⊤[v+w] (w ∸ 1) v ⟩
+  ⊤ (v ℕ.+ (w ∸ 1)) ≡⟨ cong ⊤ (+-∸-assoc v (>-nonZero⁻¹ w)) ⟨
+  ⊤ (v ℕ.+ w ∸ 1)   ∎
 
 extend-≥ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
@@ -120,17 +120,19 @@ extend-≥ w@{suc w-1} ⦃ w≢0 ⦄ v word w≥½ with toℕ word <? ⊤ w-1
 extend-≥-⊤ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
   (v : ℕ.t) → (word : Word w) → (w≥½ : toℕ word ≥ ⊤ (w ∸ 1)) →
-  toℕ (extend v word) ≥ ⊤ (v + w ∸ 1)
+  toℕ (extend v word) ≥ ⊤ (v ℕ.+ w ∸ 1)
 extend-≥-⊤ {w} ⦃ w≢0 ⦄ v word w≥½ rewrite extend-≥ v word w≥½ = begin
-    ⊤ (v + w ∸ 1)
+    ⊤ (v ℕ.+ w ∸ 1)
   ≡⟨ cong ⊤ (+-∸-assoc v (>-nonZero⁻¹ w)) ⟩
-    ⊤ (v + (w ∸ 1))
-  ≡⟨ ⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v (w ∸ 1) ⟩
-    (⊤ v ∸ 1) * ⊤ (w ∸ 1) + ⊤ (w ∸ 1)
-  ≤⟨ +-monoˡ-≤ (⊤ (w ∸ 1)) (*-monoʳ-≤ (⊤ v ∸ 1) (<⇒≤ $ ≤-<-trans (≤-reflexive (sym (½≡⊤[w-1] w))) (½<⊤ w)) )⟩
-    (⊤ v ∸ 1) * ⊤ w + ⊤ (w ∸ 1)
-  ≤⟨ +-monoʳ-≤ ((⊤ v ∸ 1) * ⊤ w) w≥½ ⟩
-    (⊤ v ∸ 1) * ⊤ w + toℕ word
+    ⊤ (v ℕ.+ (w ∸ 1))
+  ≡⟨ cong ⊤ (+-comm v (w ∸ 1)) ⟩
+    ⊤ (w ∸ 1 ℕ.+ v)
+  ≡⟨ ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] (w ∸ 1) v ⟩
+    ⊤ (w ∸ 1) ℕ.+ (⊤ v ∸ 1) * ⊤ (w ∸ 1)
+  ≤⟨ +-monoʳ-≤ (⊤ (w ∸ 1)) (*-monoʳ-≤ (⊤ v ∸ 1) (<⇒≤ $ ≤-<-trans (≤-reflexive (sym (½≡⊤[w-1] w))) (½<⊤ w))) ⟩
+    ⊤ (w ∸ 1) ℕ.+ (⊤ v ∸ 1) * ⊤ w
+ ≤⟨ +-monoˡ-≤ ((⊤ v ∸ 1) * ⊤ w) w≥½ ⟩
+    toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w
   ∎
 
 to-extend :
@@ -149,12 +151,20 @@ to-extend v {w} ⦃ w≢0 ⦄ word
         | extend-≥ v word (≮⇒≥ w≮½)
         | to-≥ word (≮⇒≥ w≮½)
         = cong (-[1+_] ∘ pred) $ begin-equality
-          ⊤ (v + w) ∸ ((⊤ v ∸ 1) * ⊤ w + toℕ word) ≡⟨ cong! (*-distribʳ-∸ (⊤ w) (⊤ v) 1) ⟩
-          ⊤ (v + w) ∸ (⊤ v * ⊤ w ∸ 1 * ⊤ w + toℕ word) ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
-          ⊤ (v + w) ∸ (⊤ v * ⊤ w ∸ ⊤ w + toℕ word) ≡⟨ cong! (⊤[w+v]≡⊤[w]*⊤[v] v w) ⟨
-          ⊤ (v + w) ∸ (⊤ (v + w) ∸ ⊤ w + toℕ word) ≡⟨ ∸-+-assoc (⊤ (v + w)) (⊤ (v + w) ∸ ⊤ w) (toℕ word) ⟨
-          ⊤ (v + w) ∸ (⊤ (v + w) ∸ ⊤ w) ∸ toℕ word ≡⟨ cong! (m∸[m∸n]≡n (⊤[w]≤⊤[v+w] w v)) ⟩ 
-          ⊤ w ∸ toℕ word ∎
+            ⊤ (v ℕ.+ w) ∸ (toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w)
+          ≡⟨ cong! (*-distribʳ-∸ (⊤ w) (⊤ v) 1) ⟩
+            ⊤ (v ℕ.+ w) ∸ (toℕ word ℕ.+ (⊤ v * ⊤ w ∸ 1 * ⊤ w))
+          ≡⟨ cong! (*-identityˡ (⊤ w)) ⟩
+            ⊤ (v ℕ.+ w) ∸ (toℕ word ℕ.+ (⊤ v * ⊤ w ∸ ⊤ w))
+          ≡⟨ cong! (⊤[w+v]≡⊤[w]*⊤[v] v w) ⟨
+            ⊤ (v ℕ.+ w) ∸ ⌞ toℕ word ℕ.+ (⊤ (v ℕ.+ w) ∸ ⊤ w) ⌟
+          ≡⟨ cong! (+-comm (toℕ word) (⊤ (v ℕ.+ w) ∸ ⊤ w)) ⟩
+            ⊤ (v ℕ.+ w) ∸ (⊤ (v ℕ.+ w) ∸ ⊤ w ℕ.+ toℕ word)
+          ≡⟨ ∸-+-assoc (⊤ (v ℕ.+ w)) (⊤ (v ℕ.+ w) ∸ ⊤ w) (toℕ word) ⟨
+            ⊤ (v ℕ.+ w) ∸ (⊤ (v ℕ.+ w) ∸ ⊤ w) ∸ toℕ word
+          ≡⟨ cong! (m∸[m∸n]≡n (⊤[w]≤⊤[v+w] w v)) ⟩
+            ⊤ w ∸ toℕ word
+          ∎
 
 opaque
   unfolding ⊤

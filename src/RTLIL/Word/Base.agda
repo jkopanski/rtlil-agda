@@ -95,13 +95,60 @@ split w@{suc w-1} (⟦ value ⟧< v<⊤ ) with value <? ⊤ (w ∸ 1)
   ⊤ w-1 ℕ.+ 0               ≡⟨ +-identityʳ (⊤ w-1) ⟩
   ⊤ w-1                     ∎)
 
-join : ∀ {w} → Word w ⊎ Word w → Word (suc w)
-join {w} = ⊎.[ 0-extend 1 , 1-extend 1 ]
+join-1 : ∀ {w} → Word w ⊎ Word w → Word (suc w)
+join-1 {w} = ⊎.[ 0-extend 1 , 1-extend 1 ]
 
-join′ :
+join-1′ :
   ∀ {w} → ⦃ _ : NonZero w ⦄ →
   Word (w ∸ 1) ⊎ Word (w ∸ 1) → Word w
-join′ {w} word rewrite sym (suc-pred w) = join word
+join-1′ {w} word rewrite sym (suc-pred w) = join-1 word
+
+-- TODO: upstream to agda-stdlib
+m⊔n≡m∸n+n : ∀ m n → m ℕ.⊔ n ≡ m ℕ.∸ n ℕ.+ n
+m⊔n≡m∸n+n m n with m ≤? n
+… | yes m≤n = begin-equality
+  m ℕ.⊔ n       ≡⟨ m≤n⇒m⊔n≡n m≤n ⟩
+  n             ≡⟨ +-identityˡ n ⟨
+  0 ℕ.+ n       ≡⟨ cong (ℕ._+ n) (m≤n⇒m∸n≡0 m≤n) ⟨
+  m ℕ.∸ n ℕ.+ n ∎
+… | no  m≰n = begin-equality
+  m ℕ.⊔ n       ≡⟨ m≥n⇒m⊔n≡m (≰⇒≥ m≰n) ⟩
+  m             ≡⟨ m∸n+n≡m (≰⇒≥ m≰n) ⟨
+  m ℕ.∸ n ℕ.+ n ∎
+
+m⊔n∸[m∸n]≡n : ∀ m n → m ℕ.⊔ n ℕ.∸ (m ℕ.∸ n) ≡ n
+m⊔n∸[m∸n]≡n m n with m ≤? n
+… | yes m≤n rewrite m≤n⇒m⊔n≡n m≤n | m≤n⇒m∸n≡0 m≤n = refl
+… | no  m≰n rewrite m≥n⇒m⊔n≡m (≰⇒≥ m≰n) = m∸[m∸n]≡n (≰⇒≥ m≰n)
+
+join : ∀ w v → Word w ⊎ Word v → Word (suc (w ℕ.⊔ v))
+join w v =
+  ⊎.[ cast (cong suc v-w+w≡w⊔v) ∘ 0-extend (suc v-w)
+    , cast (cong suc w-v+v≡w⊔v) ∘ 1-extend (suc w-v)
+    ]
+  where
+    w-v = w ℕ.∸ v
+    v-w = v ℕ.∸ w
+    w-v+v≡w⊔v : w-v ℕ.+ v ≡ w ℕ.⊔ v
+    w-v+v≡w⊔v = sym (m⊔n≡m∸n+n w v)
+    v-w+w≡w⊔v : v-w ℕ.+ w ≡ w ℕ.⊔ v
+    v-w+w≡w⊔v = trans (sym (m⊔n≡m∸n+n v w)) (⊔-comm v w)
+
+splitAt :
+  ∀ w {v} → Word (suc (w ℕ.⊔ v)) →
+  Word w ⊎ Word v
+splitAt w {v} word with toℕ word <? ⊤ (w ℕ.⊔ v)
+… | yes x<w⊔v = inj₁ $ cast eq $ [ word ]ₜ (suc v-w)
+  where v-w = v ∸ w
+        eq : w ℕ.⊔ v ∸ v-w ≡ w
+        eq = begin-equality
+          w ⊔ v ∸ v-w ≡⟨ cong (_∸ v-w) (⊔-comm w v) ⟩
+          v ⊔ w ∸ v-w ≡⟨ m⊔n∸[m∸n]≡n v w ⟩
+          w           ∎
+… | no  x≮w⊔v = inj₂ $ cast eq $ [ word ]ₜ (suc w-v)
+  where w-v = w ∸ v
+        eq : w ℕ.⊔ v ∸ w-v ≡ v
+        eq = m⊔n∸[m∸n]≡n w v
 
 opposite : ∀ {w} → Word w → Word w
 opposite {w} (⟦ value ⟧< v<⊤) = ⟦ ⊤ w ∸ suc value ⟧< (begin-strict
@@ -117,7 +164,7 @@ combine {w} {v} x y = ⟦ toℕ x ℕ.* ⊤ v ℕ.+ toℕ y ⟧< (begin-strict
   toℕ x ℕ.* ⊤ v ℕ.+ ⊤ v         ≡⟨ cong! (+-identityʳ (⊤ v)) ⟨
   toℕ x ℕ.* ⊤ v ℕ.+ (⊤ v ℕ.+ 0) ≡⟨ *-distribʳ-+ (⊤ v) (toℕ x) 1 ⟨
   ⌞ toℕ x ℕ.+ 1 ⌟ ℕ.* ⊤ v       ≡⟨ cong! (+-comm (toℕ x) 1) ⟩
-  (1 ℕ.+ toℕ x) ℕ.* ⊤ v         ≤⟨ *-monoˡ-≤ (⊤ v) {1 ℕ.+ toℕ x} {⊤ w} (toℕ<⊤ x) ⟩
+  (1 ℕ.+ toℕ x) ℕ.* ⊤ v         ≤⟨ *-monoˡ-≤ (⊤ v) (toℕ<⊤ x) ⟩
   ⊤ w ℕ.* ⊤ v                   ≡⟨ ⊤[w+v]≡⊤[w]*⊤[v] w v ⟨
   ⊤ (w ℕ.+ v)                   ∎)
 

@@ -1,5 +1,4 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-
 open import Prelude
 
 module RTLIL.Word.Width where
@@ -11,6 +10,7 @@ open ℕ hiding (t)
 open List using ([]; _∷_; [_])
 
 open ≤-Reasoning
+open Rel₀ using (no; yes)
 
 opaque
   ⊤ : ℕ.t → ℕ.t
@@ -30,6 +30,9 @@ opaque
 
 ⊤-suc-comm : (w : ℕ.t) → ⊤ (suc w) ≡ ⊤ w * 2
 ⊤-suc-comm w = trans (⊤-suc w) (*-comm 2 (⊤ w))
+
+⊤1∸1≡1 : ⊤ 1 ∸ 1 ≡ 1
+⊤1∸1≡1 rewrite ⊤-def 1 = refl
 
 ⊤≢0 : (w : ℕ.t) → NonZero (⊤ w)
 ⊤≢0 w rewrite ⊤-def w = m^n≢0 2 w
@@ -118,6 +121,10 @@ instance
     ⊤*2≢0 : NonZero (2 * ⊤ v-1)
     ⊤*2≢0  = m*n≢0 2 (⊤ v-1) ⦃ _ ⦄ ⦃ ⊤≢0 v-1 ⦄
 
+⊤w≡⊤[w+1]∸⊤w : ∀ w → ⊤ w ≡ ⊤ (suc w) ∸ ⊤ w
+⊤w≡⊤[w+1]∸⊤w w rewrite ⊤-suc w | +-identityʳ (⊤ w) =
+  sym $ m+n∸n≡m (⊤ w) (⊤ w)
+
 width<⊤ : (w : ℕ.t) → w < ⊤ w
 width<⊤ zero = >-nonZero⁻¹ (⊤ 0)
 width<⊤ w@(suc w-1) = begin-strict
@@ -191,6 +198,7 @@ instance
   2 ^ w * 2 ^ v ≡⟨ Rel₂.cong₂ _*_ (⊤-def w) (⊤-def v) ⟨
   ⊤ w * ⊤ v     ∎
 
+
 ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] : (w v : ℕ.t) → ⊤ (w + v) ≡ ⊤ w + (⊤ v ∸ 1) * ⊤ w
 ⊤[w+v]≡⊤[w]+[⊤v∸1]*⊤[w] w zero = begin-equality
   ⊤ (w + zero)                 ≡⟨ cong ⊤ (+-identityʳ w) ⟩
@@ -223,6 +231,16 @@ instance
   ⊤ w + (⊤ v ∸ 1) * ⊤ w ≡⟨ +-comm (⊤ w) ((⊤ v ∸ 1) * ⊤ w) ⟩
   (⊤ v ∸ 1) * ⊤ w + ⊤ w ∎
 
+⊤[w+v]∸⊤[w]-distribʳ : ∀ w v → ⊤ (w + v) ∸ ⊤ w ≡ (⊤ v ∸ 1) * ⊤ w
+⊤[w+v]∸⊤[w]-distribʳ w v = begin-equality
+  ⊤ ⌞ w + v ⌟ ∸ ⊤ w           ≡⟨ cong! (+-comm w v) ⟩
+  ⊤ ⌞ v + w ⌟ ∸ ⊤ w           ≡⟨ cong! (⊤[v+w]≡[⊤v∸1]*⊤[w]+⊤[w] v w) ⟩
+  (⊤ v ∸ 1) * ⊤ w + ⊤ w ∸ ⊤ w ≡⟨ m+n∸n≡m ((⊤ v ∸ 1) * ⊤ w) (⊤ w) ⟩
+  (⊤ v ∸ 1) * ⊤ w             ∎
+
+⊤[w+v]∸⊤[w]-distribˡ : ∀ w v → ⊤ (w + v) ∸ ⊤ w ≡ ⊤ w * (⊤ v ∸ 1)
+⊤[w+v]∸⊤[w]-distribˡ w v rewrite *-comm (⊤ w) (⊤ v ∸ 1) = ⊤[w+v]∸⊤[w]-distribʳ w v
+
 v≤⊤⇒⊤v|⊤w : ∀ v w → v ≤ w → ⊤ v ∣ ⊤ w
 v≤⊤⇒⊤v|⊤w v w v≤w = divides (⊤ (w ∸ v)) $ begin-equality
   ⊤ w             ≡⟨ cong ⊤ (m∸n+n≡m v≤w) ⟨
@@ -245,3 +263,47 @@ v≤⊤⇒⊤v|⊤w v w v≤w = divides (⊤ (w ∸ v)) $ begin-equality
 
 ⌈⊤/2⌉≡⌊⊤/2⌋ : ∀ w → .⦃ NonZero w ⦄ → ⌈ ⊤ w /2⌉ ≡ ⌊ ⊤ w /2⌋
 ⌈⊤/2⌉≡⌊⊤/2⌋ w = trans (sym (½≡⌈⊤/2⌉ w)) (½≡⌊⊤/2⌋ w)
+
+⊤w≤2*⊤w∸1 : ∀ w → ⊤ w ≤ ⊤ (suc w) ∸ 1
+⊤w≤2*⊤w∸1 ℕ.zero rewrite ⊤-zero | ⊤-def 1 = s≤s z≤n
+⊤w≤2*⊤w∸1 w@(suc w-1) = begin
+  ⊤ (suc w-1)           ≡⟨ ⊤-suc w-1 ⟩
+  2 * ⊤ w-1             ≤⟨ *-monoʳ-≤ 2 (⊤w≤2*⊤w∸1 w-1) ⟩
+  2 * (⊤ (suc w-1) ∸ 1) ≡⟨ *-distribˡ-∸ 2 (⊤ (suc w-1)) 1 ⟩
+  2 * ⊤ (suc w-1) ∸ 2   ≡⟨ cong (_∸ 2) (⊤-suc (suc w-1)) ⟨
+  ⊤ (suc w) ∸ 2         ≤⟨ ∸-monoʳ-≤ (⊤ (suc w)) (s≤s z≤n) ⟩
+  ⊤ (suc w) ∸ 1         ∎
+
+m<⊤[w⊔v]⇒m<⊤w⊎m<⊤v : ∀ {m} w v → m < ⊤ (w ⊔ v) → m < ⊤ w ⊎ m < ⊤ v
+m<⊤[w⊔v]⇒m<⊤w⊎m<⊤v {m} w v m<⊤ with w ≤? v
+… | yes w≤v rewrite m≤n⇒m⊔n≡n w≤v       = inj₂ m<⊤
+… | no  w≰v rewrite m≥n⇒m⊔n≡m (≰⇒≥ w≰v) = inj₁ m<⊤
+
+⊤-distrib-⊔ : ∀ m n → ⊤ (m ⊔ n) ≡ ⊤ m ⊔ ⊤ n
+⊤-distrib-⊔ = mono-≤-distrib-⊔ ⊤-mono-≤
+
+m<⊤w⇒m<⊤[w⊔v] : ∀ {m} {w} v → m < ⊤ w → m < ⊤ (w ⊔ v)
+m<⊤w⇒m<⊤[w⊔v] {_} {w} v m<⊤ = <-≤-trans
+  (m<n⇒m<n⊔o (⊤ v) m<⊤)
+  (≤-reflexive (sym (⊤-distrib-⊔ w v)))
+
+m<⊤v⇒m<⊤[w⊔v] : ∀ {m} w {v} → m < ⊤ v → m < ⊤ (w ⊔ v)
+m<⊤v⇒m<⊤[w⊔v] {_} w {v} m<⊤ = <-≤-trans
+  (m<n⇒m<o⊔n (⊤ w) m<⊤)
+  (≤-reflexive (sym (⊤-distrib-⊔ w v)))
+
+⊤[w⊔v]<m⇒⊤w<m : ∀ w v {m} → ⊤ (w ⊔ v) < m → ⊤ w < m
+⊤[w⊔v]<m⇒⊤w<m w v {m} ⊤<m =
+  m⊔n<o⇒m<o (⊤ w) (⊤ v) (≤-<-trans (≤-reflexive (sym (⊤-distrib-⊔ w v))) ⊤<m)
+
+⊤[w⊔v]≤m⇒⊤w≤m : ∀ w v {m} → ⊤ (w ⊔ v) ≤ m → ⊤ w ≤ m
+⊤[w⊔v]≤m⇒⊤w≤m w v {m} ⊤≤m =
+  m⊔n≤o⇒m≤o (⊤ w) (⊤ v) (≤-trans (≤-reflexive (sym (⊤-distrib-⊔ w v))) ⊤≤m)
+
+⊤[w⊔v]<m⇒⊤v<m : ∀ w v {m} → ⊤ (w ⊔ v) < m → ⊤ v < m
+⊤[w⊔v]<m⇒⊤v<m w v {m} ⊤<m =
+  m⊔n<o⇒n<o (⊤ w) (⊤ v) (≤-<-trans (≤-reflexive (sym (⊤-distrib-⊔ w v))) ⊤<m)
+
+⊤[w⊔v]≤m⇒⊤v≤m : ∀ w v {m} → ⊤ (w ⊔ v) ≤ m → ⊤ v ≤ m
+⊤[w⊔v]≤m⇒⊤v≤m w v {m} ⊤≤m =
+  m⊔n≤o⇒n≤o (⊤ w) (⊤ v) (≤-trans (≤-reflexive (sym (⊤-distrib-⊔ w v))) ⊤≤m)
