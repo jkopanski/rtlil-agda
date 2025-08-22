@@ -1,5 +1,4 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-
 -- A lot of this stuff came from James McKinna draft PR#2257 to add
 -- Data.Nat.Bounded to agda-stdlib. See:
 -- https://github.com/agda/agda-stdlib/pull/2257
@@ -245,44 +244,12 @@ join-1-split {w} i with toℕ i <? ⊤ w
   toℕ i ∸ ⊤ w ℕ.+ ⊤ w             ≡⟨ m∸n+n≡m (≮⇒≥ i≮⊤) ⟩
   toℕ i                           ∎
 
-w-v+v≡w⊔v : ∀ w v → w ∸ v ℕ.+ v ≡ w ℕ.⊔ v
-w-v+v≡w⊔v w v = sym (m⊔n≡m∸n+n w v)
-
-v-w+w≡w⊔v : ∀ w v → v ∸ w ℕ.+ w ≡ w ℕ.⊔ v
-v-w+w≡w⊔v w v = trans (sym (m⊔n≡m∸n+n v w)) (⊔-comm v w)
-
-splitAt-0-extend :
-  ∀ w v → (word : Word w) →
-  splitAt w (cast (cong suc (v-w+w≡w⊔v w v)) $ 0-extend (suc (v ∸ w)) word) ≡ inj₁ word
-splitAt-0-extend w v word
-  with toℕ (cast (cong suc (v-w+w≡w⊔v w v)) $ 0-extend (suc (v ∸ w)) word) <? ⊤ (w ⊔ v)
-… | yes word<⊤ rewrite truncate-0-extend (suc (v ∸ w)) word = cong inj₁ $ toℕ-injective $ begin-equality
-  toℕ word % ⊤ (w ⊔ v ∸ (v ∸ w)) ≡⟨ %-congʳ (cong ⊤ (cong (_∸ (v ∸ w)) (⊔-comm w v))) ⟩
-  toℕ word % ⊤ (v ⊔ w ∸ (v ∸ w)) ≡⟨ %-congʳ (cong ⊤ (m⊔n∸[m∸n]≡n v w)) ⟩
-  toℕ word % ⊤ w                 ≡⟨ m<n⇒m%n≡m (toℕ<⊤ word) ⟩
-  toℕ word                       ∎
-… | no  word≮⊤ = Rel₀.contradiction (0-extend<⊤[w⊔v] v word) word≮⊤
-  where module ≡ = Rel₂.≡-Reasoning
-
-splitAt-1-extend :
-  ∀ w v → (word : Word v) →
-  splitAt w (cast (cong suc (w-v+v≡w⊔v w v)) $ 1-extend (suc (w ∸ v)) word) ≡ inj₂ word
-splitAt-1-extend w v word
-  with toℕ (cast (cong suc (w-v+v≡w⊔v w v)) $ 1-extend (suc (w ∸ v)) word) <? ⊤ (w ⊔ v)
-… | yes word<⊤ = Rel₀.contradiction word<⊤ (≤⇒≯ (1-extend≥⊤[w⊔v] w v word))
-… | no  word≮⊤ rewrite truncate-1-extend (suc (w ∸ v)) word = cong inj₂ $ toℕ-injective $ begin-equality
-    (toℕ word ℕ.+ (⊤ (suc w-v) ∸ 1) * ⊤ v) % ⊤ (w ⊔ v ∸ w-v)
-  ≡⟨ %-congʳ (cong ⊤ (m⊔n∸[m∸n]≡n w v)) ⟩
-    (toℕ word ℕ.+ (⊤ (suc w-v) ∸ 1) * ⊤ v) % ⊤ v
-  ≡⟨ [m+kn]%n≡m%n (toℕ word) (⊤ (suc w-v) ∸ 1) (⊤ v) ⟩
-    toℕ word % ⊤ v
-  ≡⟨ m<n⇒m%n≡m (toℕ<⊤ word) ⟩
-    toℕ word
-  ∎ where w-v = w ∸ v
-
-splitAt-join : ∀ w v i → splitAt w (join w v i) ≡ i
-splitAt-join w v (inj₁ i) = splitAt-0-extend w v i
-splitAt-join w v (inj₂ i) = splitAt-1-extend w v i
+join-is-join-1 : ∀ {w} → (i : Word w ⊎ Word w) → join w w i ≡ cast (cong suc (sym $ ⊔-idem w)) (join-1 i)
+join-is-join-1 {w} (inj₁ i) = toℕ-injective refl
+join-is-join-1 {w} (inj₂ i) = toℕ-injective $ begin-equality
+  toℕ i ℕ.+ (⊤ (suc (w ∸ w)) ∸ 1) * ⊤ w ≡⟨ cong! (n∸n≡0 w) ⟩
+  toℕ i ℕ.+ (⊤ (suc 0) ∸ 1) * ⊤ w       ≡⟨⟩
+  toℕ i ℕ.+ (⊤ 1 ∸ 1) * ⊤ w             ∎
 
 ------------------------------------------------------------------------
 -- Properties of opposite
