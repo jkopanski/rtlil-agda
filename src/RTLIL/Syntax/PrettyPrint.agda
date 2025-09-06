@@ -14,6 +14,9 @@ open import RTLIL.Syntax.Module
 open import RTLIL.Syntax.Parameters
 open import RTLIL.Syntax.Signal
 open import RTLIL.Syntax.Wire
+open import RTLIL.Word.Base
+
+import RTLIL.Word.Bits as Bits
 
 open × using (_×_; _,_)
 open Doc using (Pretty; _<>_; _<+>_; _</>_; _$+$_; pPrintPrec)
@@ -21,6 +24,23 @@ open Doc using (Pretty; _<>_; _<+>_; _</>_; _$+$_; pPrintPrec)
 private
   variable
     ann : Set
+
+------------------------------------------------------------------------
+-- RTLIL.Word.Base
+
+PrettyBool : Pretty ann 𝟚.t
+PrettyBool .pPrintPrec _ _ 𝟚.false = Doc.nat 0
+PrettyBool .pPrintPrec _ _ 𝟚.true  = Doc.nat 1
+
+PrettyWord : ∀ {w} → Pretty ann (Word w)
+PrettyWord {ann} {w = w} .pPrintPrec _ _ word =
+  let bits = Bits.to word
+      width = Doc.nat w <> "'"
+  in Vec.foldr (λ _ → Doc.t ann) (λ bit acc → acc <> pBit bit) width bits
+  where
+      pBit : 𝟚.t → Doc.t ann
+      pBit 𝟚.false = Doc.nat 0
+      pBit 𝟚.true  = Doc.nat 1
 
 ------------------------------------------------------------------------
 -- RTLIL.Syntax.Base
