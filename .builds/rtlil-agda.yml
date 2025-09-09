@@ -1,0 +1,34 @@
+image: nixos/latest
+packages:
+  - nixos.git
+  - nixos.gnumake
+  - nixos.cachix
+environment:
+  NIX_CONFIG: "experimental-features = nix-command flakes"
+sources:
+  - git@git.sr.ht:~madnat/rtlil-agda
+secrets:
+  - c67bd09e-31cc-4974-8255-2fe9b4e8c2bb
+  - bf387dfb-e183-4fc1-bd6e-01b16c209101
+  - 7a4d12b4-8878-4e27-83dd-cf6fe0045ffb
+  - 0874a36e-e2ce-4a7b-8bf3-3ddbfe3dcfff
+tasks:
+  - setup-user: |
+      git config --global user.name 'Sourcehut build'
+      git config --global user.email 'build@sr.ht'
+      git config --global credential.helper store
+  - dependencies: |
+      cd rtlil-agda
+      cachix use famisoft
+      nix develop --profile devenv -c true
+      cachix push famisoft devenv
+  - typecheck: |
+      cd rtlil-agda
+      cachix use famisoft
+      nix build .#rtlil-agda
+  - tests: |
+      cd rtlil-agda
+      cachix use famisoft
+      nix develop
+      cd tests
+      make test
