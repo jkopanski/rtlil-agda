@@ -2,6 +2,7 @@
 
 module Everything where
 
+import RTLIL.Word
 import RTLIL.Word.Base
 import RTLIL.Word.Properties
 import RTLIL.Word.Signed

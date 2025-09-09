@@ -45,3 +45,8 @@ extend-mono-< v {_} {x} {y} x<y = begin-strict
 
 +-correct : ∀ {w} → (a b : Word w) → to (a + b) ≡ to a ℕ.+ to b
 +-correct a b = refl
+
+-- ∸-correct : ∀ {w} → (a b : Word w) → to (a - b) ≡ to a ℕ.∸ to b
+-- ∸-correct {w} a b = begin-equality
+--   (toℕ a ℕ.+ (⊤ w ∸ suc (toℕ b))) % ⊤ w ≡⟨ {!!} ⟩
+--   toℕ a ∸ toℕ b ∎

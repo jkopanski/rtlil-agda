@@ -43,20 +43,22 @@
             agdaWithLibraries
             pkgs.haskellPackages.fix-whitespace
             pkgs.yosys
+            pkgs.xdot
             self.outputs.packages.${system}.convert2il
           ];
         };
 
         packages = {
-          default = pkgs.agdaPackages.mkDerivation {
-            pname = "rtlil";
+          rtlil-agda = pkgs.agdaPackages.mkDerivation {
+            pname = "rtlil-agda";
             version = "0.0.1";
-            src = ./.;
+            src = ./rtlil-agda;
 
             everythingFile = "./src/Everything.agda";
 
             buildInputs = with pkgs.agdaPackages; [
               standard-library
+              prettyprint
             ];
 
             meta = {

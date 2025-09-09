@@ -1,4 +1,4 @@
-name: rtlil
+name: rtlil-agda
 depend: standard-library prettyprint
 include: src
 

@@ -186,3 +186,21 @@ opaque
 
   _ : to (extend 2 (3 #b 4)) ≡ -[1+ 3 ]
   _ = refl
+
+-- a+b-<-< : ∀ {w} → (a b : Word w) → toℕ a < ⊤ (w ∸ 1) → toℕ b < ⊤ (w ∸ 1) → toℕ a ℕ.+ toℕ b < ⊤ w
+-- a+b-<-< {w} a b a<½ b<½ = begin-strict
+--   toℕ a ℕ.+ toℕ b <⟨ {!!} ⟩
+--   ⊤ w ∎
+
+-- +-correct : ∀ {w} → .⦃ _ : NonZero w ⦄ → (a b : Word w) → to (a + b) ≡ to a ℤ.+ to b
+-- +-correct {w} a b with toℕ a <? ⊤ (w ∸ 1) | toℕ b <? ⊤ (w ∸ 1)
+-- … | yes a<½ | yes b<½ rewrite to-< a a<½ | to-< b b<½ | to-< (a + b) (a+b-<-< a b a<½ b<½) = refl
+-- … | yes a<½ | no  b≮½ rewrite to-< a a<½ | to-≥ b (≮⇒≥ b≮½) = {!!}
+-- … | no  a≮½ | yes b<½ = {!!}
+-- … | no  a≮½ | no  b≮½ = {!!}
+
+-- +-correct a b with split a | split b
+-- … | inj₁ x | inj₁ y = {!!}
+-- … | inj₁ x | inj₂ y = {!!}
+-- … | inj₂ x | inj₁ y = {!!}
+-- … | inj₂ x | inj₂ y = {!!}
