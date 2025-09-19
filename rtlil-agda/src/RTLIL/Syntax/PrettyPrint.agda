@@ -52,6 +52,7 @@ instance
   PrettyConst : Pretty ann Constant
   PrettyConst .pPrintPrec _ _ (string c) = Doc.doubleQuotes (Doc.text c)
   PrettyConst .pPrintPrec _ _ (signed c) = Doc.int c
+  PrettyConst .pPrintPrec _ _ (width  c) = Doc.nat (c .value)
 
   PrettyConstId : Pretty ann (Identifier × Constant)
   PrettyConstId .pPrintPrec l p (id , c) = pPrintPrec l p id <+> pPrintPrec l p c
@@ -127,9 +128,9 @@ instance
   PrettySignedness .pPrintPrec _ _ Unsigned = Doc.Empty
 
   PrettyWidth : Pretty ann Width
-  PrettyWidth .pPrintPrec _ _ record { width = ℕ.suc ℕ.zero } = Doc.empty
-  PrettyWidth .pPrintPrec _ _ record { width = width@(ℕ.suc (ℕ.suc _)) } =
-    "width" <+> Doc.nat width
+  PrettyWidth .pPrintPrec _ _ record { value = ℕ.suc ℕ.zero } = Doc.empty
+  PrettyWidth .pPrintPrec _ _ record { value = w@(ℕ.suc (ℕ.suc _)) } =
+    "width" <+> Doc.nat w
 
 pOffset : ℕ.t → Doc.t ann
 pOffset ℕ.zero = Doc.Empty
@@ -138,13 +139,13 @@ pOffset n@(ℕ.suc _) = Doc.nat n
 instance
   PrettyWire : Pretty ann Wire
   PrettyWire .pPrintPrec l p wire = pPrintPrec l p attributes $+$
-    "wire" <+> pPrintPrec l p width
+    "wire" <+> pPrintPrec l p w
            <+> pPrintPrec l p io
            <+> pOffset offset
            <+> pPrintPrec l p upto
            <+> pPrintPrec l p (wire .Wire.signed)
            <+> pPrintPrec l p name
-    where open Wire wire
+    where open Wire wire renaming (width to w)
 
 ------------------------------------------------------------------------
 -- RTLIL.Syntax.Cell

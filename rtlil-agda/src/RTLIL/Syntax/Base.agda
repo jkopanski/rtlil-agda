@@ -3,6 +3,8 @@ open import Prelude
 
 module RTLIL.Syntax.Base where
 
+import Data.Refinement as Refinement renaming (Refinement to t)
+import Data.Irrelevant as Irrelevant renaming (Irrelevant to t)
 import Relation.Binary.Construct.On as On
 
 open import Agda.Builtin.FromNat using (Number)
@@ -11,6 +13,7 @@ open import Agda.Builtin.FromString using (IsString)
 open × using (_×_)
 open String renaming (_<_ to _<ₛ_; _≈_ to _≈ₛ_) using ()
 open Rel₀ using (yes; no)
+open Refinement using (Refinement-syntax; _,_)
 open Char using (_≟_)
 open IsString String.isString
 
@@ -47,12 +50,26 @@ _≈_ = _≈ₛ_ on toString
 module Map where
   open import Data.Tree.AVL.Map <-strictTotalOrder-≈ as Map renaming (Map to t) public
 
+Width : Set
+Width = [ value ∈ ℕ.t ∣ ℕ.NonZero value ]
+
+open Refinement using (value; proof; _,_) public
+open Irrelevant using ([_]) public
+
+instance
+  NumberWidth : Number Width
+  NumberWidth .Number.Constraint w = ℕ.NonZero w
+  NumberWidth .Number.fromNat w ⦃ w≢0 ⦄ = w , Irrelevant.[ w≢0 ]
+
 -- This can have all the verilog contsant expression, but I think in
 -- practice it's a string or a number.
 data Constant : Set where
   string : String.t → Constant
   signed : ℤ.t      → Constant
   -- real   : ?
+  -- in rtlil spec this would be regular int, but I want to be more
+  -- precise here
+  width : Width     → Constant
 
 instance
   IsStringConstant : IsString Constant
@@ -62,16 +79,6 @@ instance
   NumberConstant : Number Constant
   NumberConstant .Number.Constraint _ = 𝟙.0ℓ.⊤
   NumberConstant .Number.fromNat n = signed (ℤ.+ n)
-
-record Width : Set where
-  field
-    width : ℕ.t
-    .⦃ width≢0 ⦄ : ℕ.NonZero width
-
-instance
-  NumberWidth : Number Width
-  NumberWidth .Number.Constraint w = ℕ.NonZero w
-  NumberWidth .Number.fromNat w = record { width = w }
 
 record Has {ℓ c} (C : Set c) (A : Set ℓ) : Set (ℓ 𝕃.⊔ c) where
   field

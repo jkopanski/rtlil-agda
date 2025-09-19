@@ -10,9 +10,7 @@ open import RTLIL.Syntax
 
 open List using (_∷_; [])
 
-instance
-  _ = String.isString
-  _ = ℕ.number
+instance  _ = ℕ.number
 
 module Unsigned (w′ : ℕ.t) .⦃ w≢0 : ℕ.NonZero w′ ⦄ where
   w : Constant
@@ -21,10 +19,10 @@ module Unsigned (w′ : ℕ.t) .⦃ w≢0 : ℕ.NonZero w′ ⦄ where
   w+1 = signed (ℤ.+ (ℕ.suc w′))
 
   w-width : Width
-  w-width = record { width = w′ }
+  w-width = w′ , [ w≢0 ]
 
   w+1-width : Width
-  w+1-width = record { width = ℕ.suc w′ }
+  w+1-width = ℕ.suc w′ , [ _ ]
 
 ------------------------------------------------------------------------
 -- $add
