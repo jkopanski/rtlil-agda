@@ -35,9 +35,9 @@ module Unsigned (w′ : ℕ.t) .⦃ w≢0 : ℕ.NonZero w′ ⦄ where
     ; parameters = Parameters.empty
     ; connections = []
     ; wires =
-        Wire.iobus "\\M" w-width (Wire.input 1)
-      ∷ Wire.iobus "\\N" w-width (Wire.input 2)
-      ∷ Wire.iobus "\\OUT" w+1-width (Wire.output 3)
+        Wire.iobus "\\M" (Wire.direct w-width) (Wire.input 1)
+      ∷ Wire.iobus "\\N" (Wire.direct w-width) (Wire.input 2)
+      ∷ Wire.iobus "\\OUT" (Wire.direct w+1-width) (Wire.output 3)
       ∷ []
     ; cells =
         record

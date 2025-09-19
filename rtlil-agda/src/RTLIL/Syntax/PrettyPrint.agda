@@ -127,10 +127,10 @@ instance
   PrettySignedness .pPrintPrec _ _ Signed = "signed"
   PrettySignedness .pPrintPrec _ _ Unsigned = Doc.Empty
 
-  PrettyWidth : Pretty ann Width
-  PrettyWidth .pPrintPrec _ _ record { value = ℕ.suc ℕ.zero } = Doc.empty
-  PrettyWidth .pPrintPrec _ _ record { value = w@(ℕ.suc (ℕ.suc _)) } =
-    "width" <+> Doc.nat w
+  PrettySize : Pretty ann Size
+  PrettySize .pPrintPrec _ _ (direct (   ℕ.suc ℕ.zero     , _)) = Doc.empty
+  PrettySize .pPrintPrec _ _ (direct (w@(ℕ.suc (ℕ.suc _)) , _)) = "width" <+> Doc.nat w
+  PrettySize .pPrintPrec l p (reference id) = "width" <+> pPrintPrec l p id
 
 pOffset : ℕ.t → Doc.t ann
 pOffset ℕ.zero = Doc.Empty

@@ -24,13 +24,22 @@ data InOut : Set where
 data Signedness : Set where
   Signed Unsigned : Signedness
 
+data Size : Set where
+  direct    : Width → Size
+  reference : Identifier → Size
+
+instance
+  NumberSize : Number Size
+  NumberSize .Number.Constraint w = ℕ.NonZero w
+  NumberSize .Number.fromNat w ⦃ w≢0 ⦄ = direct (fromNat w)
+
 record Wire : Set where
   constructor mk
   field
     attributes : Attributes.t
     name       : Identifier
     io         : Maybe.t InOut
-    width      : Width
+    width      : Size
     offset     : ℕ.t
     upto       : BitNumbering
     signed     : Signedness
@@ -68,7 +77,7 @@ module msb where
     }
 
 
-  bus : Identifier → Width → Wire
+  bus : Identifier → Size → Wire
   bus i w = record
     { attributes = Attributes.empty
     ; name       = i
@@ -79,7 +88,7 @@ module msb where
     ; signed     = Unsigned
     }
 
-  iobus : Identifier → Width → InOut → Wire
+  iobus : Identifier → Size → InOut → Wire
   iobus i w io = record
     { attributes = Attributes.empty
     ; name       = i
@@ -112,7 +121,7 @@ iowire i io = record
   ; signed     = Unsigned
   }
 
-bus : Identifier → Width → Wire
+bus : Identifier → Size → Wire
 bus i w = record
   { attributes = Attributes.empty
   ; name       = i
@@ -123,7 +132,7 @@ bus i w = record
   ; signed     = Unsigned
   }
 
-iobus : Identifier → Width → InOut → Wire
+iobus : Identifier → Size → InOut → Wire
 iobus i w io = record
   { attributes = Attributes.empty
   ; name       = i
