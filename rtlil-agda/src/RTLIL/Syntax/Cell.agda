@@ -18,10 +18,10 @@ record Cell : Set where
     connections : List.t Connection.t
 
 instance
-  CellHasAttributes : Attributes.Has Cell
-  CellHasAttributes .Attributes.Has.get = Cell.attributes
-  CellHasAttributes .Attributes.Has.set a m = record m { attributes = a }
+  CellHasAttributes : Has Attributes.t Cell
+  CellHasAttributes .Has.get = Cell.attributes
+  CellHasAttributes .Has.set a m = record m { attributes = a }
 
-  CellHasParameters : Parameters.Has Cell
-  CellHasParameters .Parameters.Has.get = Cell.parameters
-  CellHasParameters .Parameters.Has.set a m = record m { parameters = a }
+  CellHasParameters : Has Parameters.t Cell
+  CellHasParameters .Has.get = Cell.parameters
+  CellHasParameters .Has.set a m = record m { parameters = a }

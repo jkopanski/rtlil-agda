@@ -26,10 +26,10 @@ record Module : Set where
     -- processes : Map.t Process
 
 instance
-  ModuleHasAttributes : Attributes.Has Module
-  ModuleHasAttributes .Attributes.Has.get = Module.attributes
-  ModuleHasAttributes .Attributes.Has.set a m = record m { attributes = a }
+  ModuleHasAttributes : Has Attributes.t Module
+  ModuleHasAttributes .Has.get = Module.attributes
+  ModuleHasAttributes .Has.set a m = record m { attributes = a }
 
-  ModuleHasParameters : Parameters.Has Module
-  ModuleHasParameters .Parameters.Has.get = Module.parameters
-  ModuleHasParameters .Parameters.Has.set a m = record m { parameters = a }
+  ModuleHasParameters : Has Parameters.t Module
+  ModuleHasParameters .Has.get = Module.parameters
+  ModuleHasParameters .Has.set a m = record m { parameters = a }

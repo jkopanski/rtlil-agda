@@ -9,43 +9,39 @@ open import Agda.Builtin.FromNat using (Number)
 open import Agda.Builtin.FromString using (IsString)
 
 open × using (_×_)
+open String renaming (_<_ to _<ₛ_; _≈_ to _≈ₛ_) using ()
+open Rel₀ using (yes; no)
+open Char using (_≟_)
+open IsString String.isString
 
-module _ where
+data Identifier : Set where
+  pub auto : String.t → Identifier
 
-  open String renaming (_<_ to _<ₛ_; _≈_ to _≈ₛ_) using ()
-  import Relation.Binary.Construct.On as On
-  open Rel₀ using (yes; no)
-  open Char using (_≟_)
-  open IsString String.isString
+toString : Identifier → String.t
+toString (pub  id) = "\\" String.++ id
+toString (auto id) = "$"  String.++ id
 
-  data Identifier : Set where
-    pub auto : String.t → Identifier
-
-  toString : Identifier → String.t
-  toString (pub  id) = "\\" String.++ id
-  toString (auto id) = "$"  String.++ id
-
-  instance
-    IsStringIdentifier : IsString Identifier
-    IsStringIdentifier .IsString.Constraint _ = 𝟙.0ℓ.⊤
+instance
+  IsStringIdentifier : IsString Identifier
+  IsStringIdentifier .IsString.Constraint _ = 𝟙.0ℓ.⊤
     -- 0 ℕ.< String.length a
-    IsStringIdentifier .IsString.fromString s with String.uncons s
-    … | Maybe.just (head , rest) with head ≟ '$'
-    …   | yes _ = auto rest
-    …   | no  _ with head ≟ '\\'
-    …              | yes _ = pub rest
-    …              | no  _ = pub s
+  IsStringIdentifier .IsString.fromString s with String.uncons s
+  … | Maybe.just (head , rest) with head ≟ '$'
+  …   | yes _ = auto rest
+  …   | no  _ with head ≟ '\\'
+  …              | yes _ = pub rest
+  …              | no  _ = pub s
     -- error out?
-    IsStringIdentifier .IsString.fromString s | Maybe.nothing = pub s
+  IsStringIdentifier .IsString.fromString s | Maybe.nothing = pub s
 
-  _≈_ : Rel Identifier 𝕃.0ℓ
-  _≈_ = _≈ₛ_ on toString
+_≈_ : Rel Identifier 𝕃.0ℓ
+_≈_ = _≈ₛ_ on toString
 
-  ≈-isEquivalence : Rel₂.IsEquivalence (_≈ₛ_ on toString)
-  ≈-isEquivalence = On.isEquivalence toString String.≈-isEquivalence
+≈-isEquivalence : Rel₂.IsEquivalence (_≈ₛ_ on toString)
+≈-isEquivalence = On.isEquivalence toString String.≈-isEquivalence
 
-  <-strictTotalOrder-≈ : Rel₂.StrictTotalOrder _ _ _
-  <-strictTotalOrder-≈ =
+<-strictTotalOrder-≈ : Rel₂.StrictTotalOrder _ _ _
+<-strictTotalOrder-≈ =
     On.strictTotalOrder String.<-strictTotalOrder-≈ toString
 
 module Map where
@@ -77,20 +73,9 @@ instance
   NumberWidth .Number.Constraint w = ℕ.NonZero w
   NumberWidth .Number.fromNat w = record { width = w }
 
--- record Attributes : Set where
---   field
---     map : Map.t Constant
+record Has {ℓ c} (C : Set c) (A : Set ℓ) : Set (ℓ 𝕃.⊔ c) where
+  field
+    get : A → C
+    set : C → A → A
 
--- open Attributes public
-
--- mkAttributes : List.t (Identifier × Constant) → Attributes
--- mkAttributes cs .map = Map.fromList cs
-
--- record Parameters : Set where
---   field
---     map : Map.t Constant
-
--- open Parameters public
-
--- mkParameters : List.t (Identifier × Constant) → Parameters
--- mkParameters cs .map = Map.fromList cs
+open Has ⦃ … ⦄ public

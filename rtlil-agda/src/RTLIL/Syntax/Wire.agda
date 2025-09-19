@@ -4,7 +4,7 @@ open import Prelude
 module RTLIL.Syntax.Wire where
 
 open import Agda.Builtin.FromNat
-open import RTLIL.Syntax.Base using (Constant; Identifier; module Map; Width)
+open import RTLIL.Syntax.Base using (Constant; Has; Identifier; module Map; Width)
 
 import RTLIL.Syntax.Attributes as Attributes renaming (Attributes to t)
 
@@ -40,9 +40,9 @@ open Wire
 instance
   _ = ℕ.number
 
-  WireHasAttributes : Attributes.Has Wire
-  WireHasAttributes .Attributes.Has.get = Wire.attributes
-  WireHasAttributes .Attributes.Has.set a m = record m { attributes = a }
+  WireHasAttributes : Has Attributes.t Wire
+  WireHasAttributes .Has.get = Wire.attributes
+  WireHasAttributes .Has.set a m = record m { attributes = a }
 
 module msb where
   wire : Identifier → Wire
