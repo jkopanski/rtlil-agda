@@ -24,6 +24,10 @@ toString : Identifier → String.t
 toString (pub  id) = "\\" String.++ id
 toString (auto id) = "$"  String.++ id
 
+getString : Identifier → String.t
+getString (pub  id) = id
+getString (auto id) = id
+
 instance
   IsStringIdentifier : IsString Identifier
   IsStringIdentifier .IsString.Constraint _ = 𝟙.0ℓ.⊤

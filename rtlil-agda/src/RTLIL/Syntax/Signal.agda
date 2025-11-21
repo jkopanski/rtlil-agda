@@ -20,6 +20,9 @@ data Signal : Set where
   refer  : Identifier → Selection → Signal
   concat : NonEmpty.t Signal      → Signal
 
+simple : Identifier → Signal
+simple id = refer id All
+
 instance
   IsStringSignal : IsString Signal
   IsStringSignal .IsString.Constraint _ = 𝟙.0ℓ.⊤

@@ -25,6 +25,8 @@ record Module : Set where
     -- memories : Map.t Memory
     -- processes : Map.t Process
 
+open Module public
+
 instance
   ModuleHasAttributes : Has Attributes.t Module
   ModuleHasAttributes .Has.get = Module.attributes

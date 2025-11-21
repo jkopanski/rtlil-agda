@@ -44,6 +44,7 @@ module ℕ where
   open import Data.Nat.Divisibility      public
   open import Data.Nat.DivMod            public
   open import Data.Nat.Literals          public
+  open import Data.Irrelevant
   open ≤-Reasoning
   open Rel₀ using (no; yes)
 
