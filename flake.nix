@@ -2,8 +2,9 @@
   description = "Yosys RTL Intermediate Language for Agda";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
-    utils.url = "github:numtide/flake-utils";
+    cheshire.url = "github:jkopanski/cheshire";
+    nixpkgs.follows = "cheshire/nixpkgs";
+    utils.follows = "cheshire/utils";
     prettyprint = {
       url = "github:agda/agda-pretty/v1.0";
       flake = false;
@@ -15,12 +16,16 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ self.overlays.default ];
+          overlays = [
+            inputs.cheshire.overlays.default
+            self.overlays.default
+          ];
         };
         agdaWithLibraries = pkgs.agda.withPackages {
           pkgs = (p: [
             p.standard-library
             p.prettyprint
+            inputs.cheshire.outputs.packages.${system}.default
           ]);
 
           ghc = pkgs.haskellPackages.ghcWithPackages (p: with p; [ clock ieee754 ]);
@@ -59,6 +64,27 @@
             buildInputs = with pkgs.agdaPackages; [
               standard-library
               prettyprint
+              inputs.cheshire.outputs.packages.${system}.default
+            ];
+
+            meta = {
+              description = "Yosys RTL Intermediate Language for Agda";
+              homepage = "https://git.sr.ht/~madnat/rtlil";
+            };
+          };
+
+          rtlil-cheshire = pkgs.agdaPackages.mkDerivation {
+            pname = "rtlil-cheshire";
+            version = "0.0.1";
+            src = ./rtlil-cheshire;
+
+            everythingFile = "./src/Everything.agda";
+
+            buildInputs = with pkgs.agdaPackages; [
+              standard-library
+              prettyprint
+              self.outputs.packages.${system}.rtlil-agda
+              inputs.cheshire.outputs.packages.${system}.default
             ];
 
             meta = {

@@ -1,0 +1,7 @@
+name: rtlil-cheshire
+depend: standard-library cheshire prettyprint
+include: src ../rtlil-agda/src
+
+flags:
+  --exact-split
+  -WnoUnsupportedIndexedMatch
