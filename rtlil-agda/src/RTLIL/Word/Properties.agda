@@ -311,8 +311,7 @@ truncate-nonZero {v} {w} word = toℕ-injective $ begin-equality
 -- Word (w * v) ↔ Word w × Word v
 
 remQuot-combine :
-  ∀ {w v} → .⦃ _ : NonZero v ⦄ →
-  (x : Word w) (y : Word v) →
+  ∀ {w v} → (x : Word w) (y : Word v) →
   remQuot v (combine x y) ≡ (x , y)
 remQuot-combine {w} {v} x y = ×.×-≡,≡→≡
   ( toℕ-injective
@@ -331,8 +330,8 @@ remQuot-combine {w} {v} x y = ×.×-≡,≡→≡
       toℕ y                         ∎)
   )
 
-combine-remQuot : ∀ {w} v → .⦃ _ : NonZero v ⦄ →
-  (x : Word (w ℕ.+ v)) →
+combine-remQuot :
+  ∀ {w} v → (x : Word (w ℕ.+ v)) →
   ×.uncurry combine (remQuot v x) ≡ x
 combine-remQuot {w} v (⟦ x ⟧< _) = toℕ-injective $ begin-equality
   x / ⊤ v ℕ.* ⊤ v ℕ.+ x % ⊤ v ≡⟨ +-comm (x / ⊤ v ℕ.* ⊤ v) (x % ⊤ v) ⟩
@@ -342,7 +341,7 @@ combine-remQuot {w} v (⟦ x ⟧< _) = toℕ-injective $ begin-equality
 ------------------------------------------------------------------------
 -- Bundles
 
-+↔× : ∀ {w v} → .⦃ NonZero v ⦄ → Word (w ℕ.+ v) ↔ (Word w × Word v)
++↔× : ∀ {w v} → Word (w ℕ.+ v) ↔ (Word w × Word v)
 +↔× {w} {v} = Function.mk↔ₛ′ (remQuot {w} v) (×.uncurry combine)
   (×.uncurry remQuot-combine)
   (combine-remQuot {w} v)

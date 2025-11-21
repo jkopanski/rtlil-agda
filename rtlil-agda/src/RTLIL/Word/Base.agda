@@ -127,7 +127,7 @@ combine {w} {v} x y = ⟦ toℕ x ℕ.* ⊤ v ℕ.+ toℕ y ⟧< (begin-strict
   ⊤ w ℕ.* ⊤ v                   ≡⟨ ⊤[w+v]≡⊤[w]*⊤[v] w v ⟨
   ⊤ (w ℕ.+ v)                   ∎)
 
-remQuot : ∀ {w} v → .⦃ NonZero v ⦄ → Word (w ℕ.+ v) → Word w × Word v
+remQuot : ∀ {w} v → Word (w ℕ.+ v) → Word w × Word v
 remQuot {w} v x .proj₁ = ⟦ toℕ x ℕ./ ⊤ v ⟧<
   m<n*o⇒m/o<n (<-≤-trans (toℕ<⊤ x) (≤-reflexive (⊤[w+v]≡⊤[w]*⊤[v] w v)))
 remQuot {w} v x .proj₂ = ⟦ toℕ x ℕ.% ⊤ v ⟧<
