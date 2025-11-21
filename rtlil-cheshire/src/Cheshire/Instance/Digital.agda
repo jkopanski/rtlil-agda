@@ -7,6 +7,9 @@ module Cheshire.Instance.Digital where
 open import Agda.Builtin.FromNat
 open import Agda.Builtin.FromString
 
+import Data.List.Fresh as List# renaming (List# to t)
+import Effect.Monad.State as State renaming (State to t)
+
 -- cheshire
 import Cheshire.Object.Signatures as Object
 import Cheshire.Signatures as Signatures
@@ -43,12 +46,12 @@ instance
   binaryProducts : ∀ {w} → Object.BinaryProducts (`Ob w)
   binaryProducts .Object.BinaryProducts._×_ = λ x y → {!`concat x y!}
 
-record Component (i : ℕ.t) (o : ℕ.t) : Set where
-  field
-    name : Identifier
-    input : `Ob i
-    output : `Ob o
-    -- module : Module.t
+-- record Component : Set where
+--   field
+--     name : Identifier
+--     input : `Ob {!!}
+--     output : `Ob {!!}
+--     -- module : Module.t
 
 -- signal : ∀ {w} → `Ob w → Signal.t
 -- signal o = Signal.simple (o .name)
@@ -59,8 +62,16 @@ record Component (i : ℕ.t) (o : ℕ.t) : Set where
 
 -- open Quiver 𝒬
 
+-- record Circuit {o} (O : Set o) : Set o where
+--   field
+--     fresh : ℕ.t
+--     info : List.t Component
+
+-- CircuitM : ∀ {a} → (A : Set a) → Set a
+-- CircuitM A = State.t Circuit A
+    
 𝒬 : Quiver 𝕃.0ℓ 𝕃.0ℓ
-𝒬 = mk⇒ {Ob = ℕ.t} λ u v → `Ob u → Circuit (`Ob v)
+𝒬 = mk⇒ {Ob = ℕ.t} λ u v → `Ob u → `Ob v
 
 -- record Interface : Set where
 --   constructor iface
