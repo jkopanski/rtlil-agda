@@ -40,26 +40,27 @@ instance
       }
     }
 
-terminal : Terminal
-terminal = record { ⊤ = 0 }
+  -- terminal : Terminal
+  -- terminal = record { ⊤ = 0 }
 
-products : BinaryProducts
-products = record { _×_ = ℕ._+_ }
+  -- products : BinaryProducts
+  -- products = record { _×_ = ℕ._+_ }
 
-coproducts : BinaryCoproducts
-coproducts = record { _⊎_ = ℕ.suc ∘₂ ℕ._⊔_ }
+  -- coproducts : BinaryCoproducts
+  -- coproducts = record { _⊎_ = ℕ.suc ∘₂ ℕ._⊔_ }
 
 Words : Cartesian 𝒬
 Words = record
   { id = Function.id
   ; _∘_ = Function._∘′_
-  ; terminal = terminal
+  ; terminal = record { ⊤ = 0 }
   ; ! = Function.const (Word.zero 0)
-  ; products = products
+  ; products = record { _×_ = ℕ._+_ }
   ; π₁ = λ {M} {N} → proj₁ ⊙ Word.remQuot N
   ; π₂ = λ {M} {N} → proj₂ ⊙ Word.remQuot N
   ; ⟨_,_⟩ = λ f g → uncurry Word.combine ⊙ Product.< f , g >
   }
+open Cartesian Words public
 
 isCartesian : IsCartesian 𝕃.0ℓ Words
 isCartesian = record
