@@ -12,6 +12,7 @@ import RTLIL.Word.Width as Width
 open import RTLIL.Word.Base
 open import Function.Consequences.Propositional
   using (inverseᵇ⇒bijective; strictlyInverseˡ⇒inverseˡ; strictlyInverseʳ⇒inverseʳ)
+open import Function.Construct.Composition using (_↔-∘_)
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
 open Func using (_↔_; _⤖_)
@@ -52,6 +53,9 @@ Word⤖Fin {w} = Func.mk⤖ $ inverseᵇ⇒bijective
 
 Word↔Fin : ∀ {w} → Word w ↔ Fin.t (2 ^ w)
 Word↔Fin {w} = Func.mk↔ₛ′ toFin fromFin (toFin∘fromFin≐id {w}) fromFin∘toFin≐id
+
+0↔⊤ : ∀ {ℓ} → Word 0 ↔ 𝟙.t {ℓ}
+0↔⊤ = Fin.1↔⊤ ↔-∘ Word↔Fin
 
 ------------------------------------------------------------------------
 -- misc properties
