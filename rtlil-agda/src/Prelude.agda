@@ -130,8 +130,14 @@ module ℕ where
           = m∸n+n≡m (≰⇒≥ m≰n)
 
 module Fin where
-  open import Data.Fin renaming (Fin to t) public
-  open import Data.Fin.Properties          public
+  open import Data.Fin renaming (Fin to t)               public
+  open import Data.Fin.Properties renaming (1↔⊤ to 1↔⊤*) public
+  open import Data.Fin.Patterns
+  open import Function                       using (_↔_; mk↔ₛ′)
+  open import Function.Construct.Composition using (_↔-∘_)
+  open import Function.Construct.Symmetry    using (↔-sym)
+  1↔⊤ : ∀ {ℓ} → t 1 ↔ 𝟙.t {ℓ}
+  1↔⊤ = ↔-sym 𝟙.⊤↔⊤* ↔-∘ 1↔⊤*
 
 module ℤ where
   open import Data.Integer renaming (ℤ to t) public
