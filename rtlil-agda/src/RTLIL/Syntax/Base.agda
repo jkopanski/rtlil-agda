@@ -30,7 +30,7 @@ getString (auto id) = id
 
 instance
   IsStringIdentifier : IsString Identifier
-  IsStringIdentifier .IsString.Constraint _ = 𝟙.0ℓ.⊤
+  IsStringIdentifier .IsString.Constraint _ = 𝟙*.⊤
     -- 0 ℕ.< String.length a
   IsStringIdentifier .IsString.fromString s with String.uncons s
   … | Maybe.just (head , rest) with head ≟ '$'
@@ -77,11 +77,11 @@ data Constant : Set where
 
 instance
   IsStringConstant : IsString Constant
-  IsStringConstant .IsString.Constraint _ = 𝟙.0ℓ.⊤
+  IsStringConstant .IsString.Constraint _ = 𝟙*.⊤
   IsStringConstant .IsString.fromString s = string s
 
   NumberConstant : Number Constant
-  NumberConstant .Number.Constraint _ = 𝟙.0ℓ.⊤
+  NumberConstant .Number.Constraint _ = 𝟙*.⊤
   NumberConstant .Number.fromNat n = signed (ℤ.+ n)
 
 record Has {ℓ c} (C : Set c) (A : Set ℓ) : Set (ℓ 𝕃.⊔ c) where

@@ -25,6 +25,6 @@ simple id = refer id All
 
 instance
   IsStringSignal : IsString Signal
-  IsStringSignal .IsString.Constraint _ = 𝟙.0ℓ.⊤
+  IsStringSignal .IsString.Constraint _ = 𝟙*.⊤
   IsStringSignal .IsString.fromString s =
     refer (IsString.fromString IsStringIdentifier s) All

@@ -8,9 +8,13 @@ module 𝕃 where
 module 𝟘 where open import Data.Empty renaming (⊥    to t)
 
 module 𝟙 where
-  module 0ℓ where open import Data.Unit public
   open import Data.Unit.Polymorphic renaming (⊤ to t; tt to tt-lift) public
-  pattern tt = 𝕃.lift 0ℓ.tt
+  open import Data.Unit renaming (tt to tt*)
+  pattern tt = 𝕃.lift tt*
+  open import Data.Unit.Polymorphic.Properties public
+
+module 𝟙* where
+  open import Data.Unit public
 
 module Rel₀ where
   open import Relation.Nullary public
