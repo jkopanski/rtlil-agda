@@ -41,11 +41,11 @@ instance
     -- error out?
   IsStringIdentifier .IsString.fromString s | Maybe.nothing = pub s
 
-_≈_ : Rel Identifier 𝕃.0ℓ
-_≈_ = _≈ₛ_ on toString
+identifier-setoid : Rel₂.Setoid 𝕃.0ℓ 𝕃.0ℓ
+identifier-setoid = On.setoid String.≈-setoid toString
 
-≈-isEquivalence : Rel₂.IsEquivalence (_≈ₛ_ on toString)
-≈-isEquivalence = On.isEquivalence toString String.≈-isEquivalence
+identifier-decSetoid : Rel₂.DecSetoid 𝕃.0ℓ 𝕃.0ℓ
+identifier-decSetoid = On.decSetoid String.≈-decSetoid toString
 
 <-strictTotalOrder-≈ : Rel₂.StrictTotalOrder _ _ _
 <-strictTotalOrder-≈ =

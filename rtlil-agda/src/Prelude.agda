@@ -27,6 +27,7 @@ module Rel₁ where
 module Rel₂ where
   open import Relation.Binary public
   open import Relation.Binary.PropositionalEquality public
+  open import Relation.Binary.PropositionalEquality.Properties public
 
 open Rel₀ using (¬_) public
 open Rel₁ using (Universal; IUniversal) public

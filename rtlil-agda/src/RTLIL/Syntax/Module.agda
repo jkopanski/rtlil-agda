@@ -4,6 +4,8 @@ open import RTLIL.Syntax.Base
 
 module RTLIL.Syntax.Module where
 
+import Relation.Binary.Construct.On as On
+
 import RTLIL.Syntax.Attributes as Attributes renaming (Attributes to t)
 import RTLIL.Syntax.Cell       as Cell       renaming (Cell       to t)
 import RTLIL.Syntax.Connection as Connection renaming (Connection to t)
@@ -35,3 +37,10 @@ instance
   ModuleHasParameters : Has Parameters.t Module
   ModuleHasParameters .Has.get = Module.parameters
   ModuleHasParameters .Has.set a m = record m { parameters = a }
+
+-- name needs to be unique for each module
+setoid : Rel₂.Setoid 𝕃.0ℓ 𝕃.0ℓ
+setoid = On.setoid identifier-setoid name
+
+decSetoid : Rel₂.DecSetoid 𝕃.0ℓ 𝕃.0ℓ
+decSetoid = On.decSetoid identifier-decSetoid name
