@@ -20,14 +20,14 @@ record Module : Set where
     parameters : Parameters.t
     connections : List.t Connection.t
 
-    wires : List.t Wire.t
-    cells : List.t Cell.t
+    wires : Map.t Wire.t
+    cells : Map.t Cell.t
 
     -- TODO:
     -- memories : Map.t Memory
     -- processes : Map.t Process
 
-open Module public
+open Module
 
 instance
   ModuleHasAttributes : Has Attributes.t Module

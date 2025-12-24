@@ -53,6 +53,10 @@ instance
   WireHasAttributes .Has.get = Wire.attributes
   WireHasAttributes .Has.set a m = record m { attributes = a }
 
+-- TODO: use Fresh?
+fromList : List.t Wire → Map.t Wire
+fromList = Map.fromList ∘ List.map (λ w → (w .name) , w)
+
 module msb where
   wire : Identifier → Wire
   wire i = record

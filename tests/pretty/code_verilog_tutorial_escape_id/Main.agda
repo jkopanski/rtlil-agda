@@ -29,8 +29,8 @@ dut = Design.mk (Maybe.just 1) $
     ∷ []
   ; parameters = Parameters.empty
   ; connections = []
-  ; wires =
-      Attributes.insert
+  ; wires = Wire.fromList
+    $ Attributes.insert
         ( "\\src"
         , "asicworld/verilog/code_verilog_tutorial_escape_id.v:11.10-11.14"
         )
@@ -60,10 +60,10 @@ dut = Design.mk (Maybe.just 1) $
         )
         (Wire.iowire "\\reset*" (Wire.input 5))
     ∷ []
-  ; cells = []
+  ; cells = Map.empty
   }
   ∷ []
 
 main : Main
 main = run $ do
-  putStrLn $ Doc.render {ann = 𝟙.0ℓ.⊤} $ Doc.pPrint dut
+  putStrLn $ Doc.render {ann = 𝟙*.t} $ Doc.pPrint dut

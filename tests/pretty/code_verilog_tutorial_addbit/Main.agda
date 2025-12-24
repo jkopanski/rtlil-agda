@@ -32,8 +32,8 @@ dut = Design.mk (Maybe.just 3) $
         ("\\co" ∷ "\\sum" ∷ [])
         ⇐ "$add$asicworld/verilog/code_verilog_tutorial_addbit.v:22$2_Y"
     ∷ []
-  ; wires =
-      Attributes.insert
+  ; wires = Wire.fromList
+    $ Attributes.insert
         ( "\\src"
         , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.24"
         )
@@ -69,8 +69,8 @@ dut = Design.mk (Maybe.just 3) $
         )
         (Wire.iowire "\\sum" (Wire.output 4))
     ∷ []
-  ; cells =
-      record
+  ; cells = Cell.fromList
+    $ record
         { attributes = Attributes.mk $
           ( "\\src"
           , "asicworld/verilog/code_verilog_tutorial_addbit.v:22.19-22.24"
@@ -116,4 +116,4 @@ dut = Design.mk (Maybe.just 3) $
 
 main : Main
 main = run $ do
-  putStrLn $ Doc.render {ann = 𝟙.0ℓ.⊤} $ Doc.pPrint dut
+  putStrLn $ Doc.render {ann = 𝟙*.t} $ Doc.pPrint dut

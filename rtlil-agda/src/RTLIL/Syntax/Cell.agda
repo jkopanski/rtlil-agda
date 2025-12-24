@@ -17,11 +17,17 @@ record Cell : Set where
     parameters  : Parameters.t
     connections : List.t Connection.t
 
+open Cell
+
+-- TODO: use Fresh?
+fromList : List.t Cell → Map.t Cell
+fromList = Map.fromList ∘ List.map (λ w → (w .name) , w)
+
 instance
   CellHasAttributes : Has Attributes.t Cell
-  CellHasAttributes .Has.get = Cell.attributes
+  CellHasAttributes .Has.get = attributes
   CellHasAttributes .Has.set a m = record m { attributes = a }
 
   CellHasParameters : Has Parameters.t Cell
-  CellHasParameters .Has.get = Cell.parameters
+  CellHasParameters .Has.get = parameters
   CellHasParameters .Has.set a m = record m { parameters = a }

@@ -28,8 +28,8 @@ dut = Design.mk (Maybe.just 1) $
     ∷ []
   ; parameters = Parameters.empty
   ; connections = []
-  ; wires =
-      Attributes.insert
+  ; wires = Wire.fromList
+    $ Attributes.insert
         ( "\\src"
         , "asicworld/verilog/code_verilog_tutorial_good_code.v:7.23-7.24"
         )
@@ -55,10 +55,10 @@ dut = Design.mk (Maybe.just 1) $
         )
         (Wire.iowire "\\sum" (Wire.output 4))
     ∷ []
-  ; cells = []
+  ; cells = Map.empty
   }
   ∷ []
 
 main : Main
 main = run $ do
-  putStrLn $ Doc.render {ann = 𝟙.0ℓ.⊤} $ Doc.pPrint dut
+  putStrLn $ Doc.render {ann = 𝟙*.t} $ Doc.pPrint dut

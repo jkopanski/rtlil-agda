@@ -38,7 +38,7 @@
           src = ./.;
           doCheck = true;
           checkPhase = ''
-            ${pkgs.haskellPackages.fix-whitespace}/bin/fix-whitespace --check
+            ${pkgs.haskellPackages.fix-whitespace.bin}/bin/fix-whitespace --check
           '';
           installPhase = ''mkdir "$out"'';
         };

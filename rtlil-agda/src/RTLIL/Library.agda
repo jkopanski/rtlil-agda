@@ -34,28 +34,28 @@ module Unsigned (w′ : ℕ.t) .⦃ w≢0 : ℕ.NonZero w′ ⦄ where
     ; attributes = Attributes.empty
     ; parameters = Parameters.empty
     ; connections = []
-    ; wires =
-        Wire.iobus "\\M" (Wire.direct w-width) (Wire.input 1)
+    ; wires = Wire.fromList
+      $ Wire.iobus "\\M" (Wire.direct w-width) (Wire.input 1)
       ∷ Wire.iobus "\\N" (Wire.direct w-width) (Wire.input 2)
       ∷ Wire.iobus "\\OUT" (Wire.direct w+1-width) (Wire.output 3)
       ∷ []
-    ; cells =
-        record
-         { attributes = Attributes.empty
-         ; type = "$add"
-         ; name = "$internal$unsigned$add"
-         ; parameters = Parameters.mk
-           $ ("\\A_SIGNED" , 0)
-           ∷ ("\\A_WIDTH"  , w)
-           ∷ ("\\B_SIGNED" , 0)
-           ∷ ("\\B_WIDTH"  , w)
-           ∷ ("\\Y_WIDTH"  , w+1)
-           ∷ []
-         ; connections =
-             "\\A" ⇐ "\\M"
-           ∷ "\\B" ⇐ "\\N"
-           ∷ "\\Y" ⇐ "\\OUT"
-           ∷ []
-         }
+    ; cells = Cell.fromList
+      $ record
+          { attributes = Attributes.empty
+          ; type = "$add"
+          ; name = "$internal$unsigned$add"
+          ; parameters = Parameters.mk
+            $ ("\\A_SIGNED" , 0)
+            ∷ ("\\A_WIDTH"  , w)
+            ∷ ("\\B_SIGNED" , 0)
+            ∷ ("\\B_WIDTH"  , w)
+            ∷ ("\\Y_WIDTH"  , w+1)
+            ∷ []
+          ; connections =
+              "\\A" ⇐ "\\M"
+            ∷ "\\B" ⇐ "\\N"
+            ∷ "\\Y" ⇐ "\\OUT"
+            ∷ []
+          }
       ∷ []
     }

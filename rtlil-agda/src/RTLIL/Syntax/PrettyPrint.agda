@@ -169,8 +169,8 @@ instance
   PrettyModule .pPrintPrec l p m = pPrint attributes
     $+$ "module" <+> pPrint name
     </> (pPrint parameters
-      $+$ Doc.vcat (List.map pPrint wires)
-      $+$ Doc.vcat (List.map pPrint cells)
+      $+$ Doc.vcat (List.map pPrint $ Map.values wires)
+      $+$ Doc.vcat (List.map pPrint $ Map.values cells)
       $+$ Doc.hsep (List.map pPrint connections))
     $+$ "end"
     where open Module m

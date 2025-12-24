@@ -54,6 +54,9 @@ identifier-decSetoid = On.decSetoid String.≈-decSetoid toString
 module Map where
   open import Data.Tree.AVL.Map <-strictTotalOrder-≈ as Map renaming (Map to t) public
 
+  values : ∀ {v} {V : Set v} → Map.Map V → List.t V
+  values = List.map proj₂ ∘ Map.toList
+
 Width : Set
 Width = [ value ∈ ℕ.t ∣ ℕ.NonZero value ]
 
