@@ -28,6 +28,10 @@ getString : Identifier → String.t
 getString (pub  id) = id
 getString (auto id) = id
 
+withString : (String.t → String.t) → Identifier → Identifier
+withString f (pub  id) = pub  (f id)
+withString f (auto id) = auto (f id)
+
 instance
   IsStringIdentifier : IsString Identifier
   IsStringIdentifier .IsString.Constraint _ = 𝟙*.t

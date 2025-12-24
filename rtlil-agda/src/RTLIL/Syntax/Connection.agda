@@ -14,8 +14,5 @@ record Connection : Set where
     sink   : Signal.t
     source : Signal.t
 
-sigSpec : Identifier × Signal.t → Connection
-sigSpec (id , sig) = Signal.simple id ⇐ sig
-
 simple : Identifier → Identifier → Connection
-simple sink source = sigSpec (sink , Signal.simple source)
+simple sink source = Signal.simple sink ⇐ Signal.simple source
