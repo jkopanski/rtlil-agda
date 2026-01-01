@@ -58,6 +58,9 @@ instance
 fromList : List.t Wire → Map.t Wire
 fromList = Map.fromList ∘ List.map (λ w → (w .name) , w)
 
+insert : Wire → Map.t Wire → Map.t Wire
+insert wire = Map.insert (wire .name) wire
+
 module msb where
   wire : Identifier → Wire
   wire i = record

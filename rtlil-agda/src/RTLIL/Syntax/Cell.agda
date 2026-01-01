@@ -25,6 +25,9 @@ open Cell
 fromList : List.t Cell → Map.t Cell
 fromList = Map.fromList ∘ List.map (λ w → (w .name) , w)
 
+insert : Cell → Map.t Cell → Map.t Cell
+insert cell = Map.insert (cell .name) cell
+
 instance
   CellHasAttributes : Has Attributes.t Cell
   CellHasAttributes .Has.get = attributes
