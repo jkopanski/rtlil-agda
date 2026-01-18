@@ -1,0 +1,38 @@
+#+title: RTLIL for Agda
+
+* Intro
+This project contains [[https://yosyshq.readthedocs.io/projects/yosys/en/stable/yosys_internals/formats/rtlil_rep.html][RTLIL (RTL Intermediate Language)]] abstract
+syntax Agda implementation.  I want to be able to emit RTLIL from
+Agda, thus enabling (digital) hardware description.  RTLIL was chosen
+instead of more popular Verilog as it is much simpler language.
+Furthermore one can easily compile to Verilog using Yosys if desired.
+Parsing RTLIL is out of scope for this project, as the goal is to
+construct hardware using Agda.
+
+* Packages
+** rtlil-agda
+Agda support for RTLIL.  Contains abstract syntax tree and pretty printer.
+
+** rtlil-cheshire
+Category theory instances for digital hardware (RTLIL).  Using my own
+[[https://github.com/jkopanski/cheshire/][category theory library - cheshire]].  See it's readme for motivation of
+rolling my own library.  Goal here is to provide meaning and reasoning
+capabilities for circuits described with RTLIL.
+
+
+* Development set up
+** Environment
+Project comes with nix (flake) based set up.  I think nix right now is
+the best Agda package manager.  One can enter the development shell with:
+
+#+begin_src
+
+nix develop
+
+#+end_src
+
+Or even better, set up [[https://direnv.net/][direnv]].  Besides Agda with all the necessary
+libraries, it provides bunch of utilities like: `yosys`,
+`fix-whitespace` and some custom scripts.
+
+** Testing
