@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Cheshire.Core
-
 module Cheshire.Instance.Words where
+
+open import Cheshire.Core
 
 -- stdlib
 import Data.Nat as ℕ renaming (ℕ to t)
@@ -19,7 +19,7 @@ import RTLIL.Word as Word renaming (Word to t)
 import RTLIL.Word.Properties as Wordsₚ
 
 open Product using (proj₁; proj₂; uncurry)
-open Function using (_⊙_; _∘₂_)
+open Function using (_∘₂_) renaming (_∘_ to _⊙_)
 open Inverseₚ using (↔⇒↣)
 open Rel₂ using (_≗_)
 open Signatures

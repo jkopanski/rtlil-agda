@@ -1,9 +1,7 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-
-open import Prelude
-
 module RTLIL.Word.Signed where
 
+open import Overture
 open import RTLIL.Word.Base
 open import RTLIL.Word.Width
 open import RTLIL.Word.Properties
@@ -11,8 +9,9 @@ open import RTLIL.Word.Properties
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
 open ℕ hiding (t; _+_)
-open Rel₀ using (no; yes)
 open ℤ using (+_; -[1+_])
+open Function using (_∘_)
+open Rel₀ using (no; yes)
 open ≤-Reasoning
 
 fromNeg : ∀ {w n} → .⦃ _ : NonZero w ⦄ → n < ½ w → Word w

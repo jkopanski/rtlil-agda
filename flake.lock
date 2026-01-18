@@ -2,17 +2,26 @@
   "nodes": {
     "cheshire": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
-        "stdlib-classes": "stdlib-classes",
-        "stdlib-meta": "stdlib-meta",
-        "utils": "utils"
+        "nixpkgs": [
+          "cheshire",
+          "overture",
+          "nixpkgs"
+        ],
+        "overture": [
+          "overture"
+        ],
+        "utils": [
+          "cheshire",
+          "overture",
+          "utils"
+        ]
       },
       "locked": {
-        "lastModified": 1765479144,
-        "narHash": "sha256-HpJDnwe4rW45iB5vlQu6fIS69wJpY43FHSgzstjCafU=",
+        "lastModified": 1768724709,
+        "narHash": "sha256-JLBeH1Aw67JjhZ3GF8tckPzEaa0fVaRXy8YZQ19iryg=",
         "owner": "jkopanski",
         "repo": "cheshire",
-        "rev": "aefbf47ad365e9e28216210fbc8bb4c194b1495e",
+        "rev": "e1782fd892a71c74a5873376212bfd91cd65493e",
         "type": "github"
       },
       "original": {
@@ -23,11 +32,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1765468806,
-        "narHash": "sha256-bmho1gMxFM50KId5wCya6b+XAxxtmJQzKfCnne2UQB8=",
+        "lastModified": 1768555036,
+        "narHash": "sha256-Wqc7jJw2Jt92icx/HR7njCk6bzEXyUgOESp8+3MDQbs=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f482661b6e79e475081ce7871728c15df4dad5ca",
+        "rev": "1d2851ebcd64734ef057e8c80e05dd5600323792",
         "type": "github"
       },
       "original": {
@@ -35,6 +44,27 @@
         "ref": "release-25.11",
         "repo": "nixpkgs",
         "type": "github"
+      }
+    },
+    "overture": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "stdlib-classes": "stdlib-classes",
+        "stdlib-meta": "stdlib-meta",
+        "utils": "utils"
+      },
+      "locked": {
+        "lastModified": 1768679428,
+        "narHash": "sha256-WdIVRZIzdA4MPt7Udu6/bJuVhDqcgzFpytxgF+Cy4KU=",
+        "owner": "~madnat",
+        "repo": "overture",
+        "rev": "051278f37e30fe24e52c0af1c35a992602c440d2",
+        "type": "sourcehut"
+      },
+      "original": {
+        "owner": "~madnat",
+        "repo": "overture",
+        "type": "sourcehut"
       }
     },
     "prettyprint": {
@@ -58,12 +88,13 @@
       "inputs": {
         "cheshire": "cheshire",
         "nixpkgs": [
-          "cheshire",
+          "overture",
           "nixpkgs"
         ],
+        "overture": "overture",
         "prettyprint": "prettyprint",
         "utils": [
-          "cheshire",
+          "overture",
           "utils"
         ]
       }

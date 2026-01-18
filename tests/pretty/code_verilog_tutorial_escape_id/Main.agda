@@ -1,14 +1,13 @@
 {-# OPTIONS --guardedness #-}
-open import Prelude
-
 module Main where
 
-import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
-
+open import Overture
 open import Agda.Builtin.FromNat
 open import Agda.Builtin.FromString
 open import IO.Base
 open import IO.Finite
+
+import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
 
 open List using (_∷_; [])
 open import RTLIL.Syntax

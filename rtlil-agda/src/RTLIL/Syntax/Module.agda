@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-open import RTLIL.Syntax.Base
-
 module RTLIL.Syntax.Module where
+
+open import Overture
+open import RTLIL.Syntax.Base
 
 import Relation.Binary.Construct.On as On
 

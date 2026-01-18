@@ -3,24 +3,25 @@
 -- Data.Nat.Bounded to agda-stdlib. See:
 -- https://github.com/agda/agda-stdlib/pull/2257
 
-open import Prelude
-
 module RTLIL.Word.Properties where
+
+open import Overture
+open import RTLIL.Word.Base
+open import Function.Construct.Composition using (_↔-∘_)
+open import Function.Consequences.Propositional
+  using (inverseᵇ⇒bijective; strictlyInverseˡ⇒inverseˡ; strictlyInverseʳ⇒inverseʳ)
+open import Tactic.Cong using (cong!; ⌞_⌟)
 
 import RTLIL.Word.Width as Width
 
-open import RTLIL.Word.Base
-open import Function.Consequences.Propositional
-  using (inverseᵇ⇒bijective; strictlyInverseˡ⇒inverseˡ; strictlyInverseʳ⇒inverseʳ)
-open import Function.Construct.Composition using (_↔-∘_)
-open import Tactic.Cong using (cong!; ⌞_⌟)
 
-open Func using (_↔_; _⤖_)
 open ℕ hiding (zero; t; _+_; _≟_)
+open × using (_×_)
+open Func using (_↔_; _⤖_)
+open Function using (_∘_)
 open Width
 open Rel₀ using (no; yes)
 open Rel₂ using (_≗_; _⇒_)
-open × using (_×_)
 open ≤-Reasoning
 
 ------------------------------------------------------------------------

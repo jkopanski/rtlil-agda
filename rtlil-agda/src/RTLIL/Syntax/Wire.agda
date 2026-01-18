@@ -1,12 +1,13 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-
 module RTLIL.Syntax.Wire where
 
+open import Overture
 open import Agda.Builtin.FromNat
-open import RTLIL.Syntax.Base using (Constant; Has; Identifier; module Map; Width)
+open import RTLIL.Syntax.Base
 
 import RTLIL.Syntax.Attributes as Attributes renaming (Attributes to t)
+
+open Function using (_∘_)
 
 data BitNumbering : Set where
   MSB LSB : BitNumbering

@@ -1,8 +1,7 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-
 module RTLIL.Syntax.Design where
 
+open import Overture
 open import RTLIL.Syntax.Base
 
 import RTLIL.Syntax.Module as Module renaming (Module to t)

@@ -1,5 +1,5 @@
 name: rtlil-agda
-depend: standard-library prettyprint
+depend: standard-library overture prettyprint
 include: src
 
 flags:

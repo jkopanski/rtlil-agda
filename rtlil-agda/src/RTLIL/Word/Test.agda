@@ -1,8 +1,7 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-
 module RTLIL.Word.Test where
 
+open import Overture
 open import RTLIL.Word.Base
 
 open ℕ using (_^_)

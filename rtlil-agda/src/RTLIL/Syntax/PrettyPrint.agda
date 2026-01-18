@@ -1,10 +1,7 @@
-open import Prelude
-open import Agda.Builtin.FromString
-
 module RTLIL.Syntax.PrettyPrint where
 
-import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
-
+open import Overture
+open import Agda.Builtin.FromString
 open import RTLIL.Syntax.Attributes
 open import RTLIL.Syntax.Base
 open import RTLIL.Syntax.Cell
@@ -17,9 +14,11 @@ open import RTLIL.Syntax.Wire
 open import RTLIL.Word.Base
 
 import RTLIL.Word.Bits as Bits
+import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
 
 open × using (_×_; _,_)
 open Doc using (Pretty; _<>_; _<+>_; _</>_; _$+$_; pPrintPrec)
+open Function using (_∘_)
 
 private
   variable
@@ -49,12 +48,12 @@ instance
   PrettyIdent : Pretty ann Identifier
   PrettyIdent .pPrintPrec _ _ id = Doc.text $ toString id
 
-  PrettyConst : Pretty ann Constant
-  PrettyConst .pPrintPrec _ _ (string c) = Doc.doubleQuotes (Doc.text c)
-  PrettyConst .pPrintPrec _ _ (signed c) = Doc.int c
-  PrettyConst .pPrintPrec _ _ (width  c) = Doc.nat (c .value)
+  PrettyConst : Pretty ann Constant.t
+  PrettyConst .pPrintPrec _ _ (Constant.string c) = Doc.doubleQuotes (Doc.text c)
+  PrettyConst .pPrintPrec _ _ (Constant.signed c) = Doc.int c
+  PrettyConst .pPrintPrec _ _ (Constant.width  c) = Doc.nat (c .value)
 
-  PrettyConstId : Pretty ann (Identifier × Constant)
+  PrettyConstId : Pretty ann (Identifier × Constant.t)
   PrettyConstId .pPrintPrec l p (id , c) = pPrintPrec l p id <+> pPrintPrec l p c
   {-# OVERLAPPING PrettyConstId #-}
 

@@ -1,21 +1,21 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-
 module RTLIL.Syntax.Base where
+
+open import Overture
+open import Agda.Builtin.FromNat using (Number)
+open import Agda.Builtin.FromString using (IsString)
 
 import Data.Refinement as Refinement renaming (Refinement to t)
 import Data.Irrelevant as Irrelevant renaming (Irrelevant to t)
 import Relation.Binary.Construct.On as On
 
-open import Agda.Builtin.FromNat using (Number)
-open import Agda.Builtin.FromString using (IsString)
-
 open × using (_×_)
+open Char using (_≟_)
+open Function using (_∘_)
+open IsString String.isString
 open String renaming (_<_ to _<ₛ_; _≈_ to _≈ₛ_) using ()
 open Rel₀ using (yes; no)
 open Refinement using (Refinement-syntax; _,_)
-open Char using (_≟_)
-open IsString String.isString
 
 data Identifier : Set where
   pub auto : String.t → Identifier
@@ -28,9 +28,9 @@ getString : Identifier → String.t
 getString (pub  id) = id
 getString (auto id) = id
 
-withString : (String.t → String.t) → Identifier → Identifier
-withString f (pub  id) = pub  (f id)
-withString f (auto id) = auto (f id)
+withString : Identifier → (String.t → String.t) → Identifier
+withString (pub  id) f = pub  (f id)
+withString (auto id) f = auto (f id)
 
 instance
   IsStringIdentifier : IsString Identifier
@@ -72,24 +72,25 @@ instance
   NumberWidth .Number.Constraint w = ℕ.NonZero w
   NumberWidth .Number.fromNat w ⦃ w≢0 ⦄ = w , Irrelevant.[ w≢0 ]
 
--- This can have all the verilog contsant expression, but I think in
--- practice it's a string or a number.
-data Constant : Set where
-  string : String.t → Constant
-  signed : ℤ.t      → Constant
-  -- real   : ?
-  -- in rtlil spec this would be regular int, but I want to be more
-  -- precise here
-  width : Width     → Constant
+module Constant where
+  -- This can have all the verilog contsant expression, but I think in
+  -- practice it's a string or a number.
+  data t : Set where
+    string : String.t → t
+    signed : ℤ.t      → t
+    -- real   : ?
+    -- in rtlil spec this would be regular int, but I want to be more
+    -- precise here
+    width : Width     → t
 
-instance
-  IsStringConstant : IsString Constant
-  IsStringConstant .IsString.Constraint _ = 𝟙*.t
-  IsStringConstant .IsString.fromString s = string s
+  instance
+    IsStringConstant : IsString t
+    IsStringConstant .IsString.Constraint _ = 𝟙*.t
+    IsStringConstant .IsString.fromString s = string s
 
-  NumberConstant : Number Constant
-  NumberConstant .Number.Constraint _ = 𝟙*.t
-  NumberConstant .Number.fromNat n = signed (ℤ.+ n)
+    NumberConstant : Number t
+    NumberConstant .Number.Constraint _ = 𝟙*.t
+    NumberConstant .Number.fromNat n = signed (ℤ.+ n)
 
 record Has {ℓ c} (C : Set c) (A : Set ℓ) : Set (ℓ 𝕃.⊔ c) where
   field

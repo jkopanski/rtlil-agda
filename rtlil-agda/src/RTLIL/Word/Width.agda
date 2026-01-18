@@ -1,14 +1,12 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-
 module RTLIL.Word.Width where
 
+open import Overture
 open import Data.Nat.Tactic.RingSolver using (solve; solve-∀)
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
 open ℕ hiding (t)
 open List using ([]; _∷_; [_])
-
 open ≤-Reasoning
 open Rel₀ using (no; yes)
 

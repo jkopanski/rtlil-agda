@@ -1,7 +1,4 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-
-open import Prelude
-
 module RTLIL.Syntax where
 
 open import RTLIL.Syntax.Base public

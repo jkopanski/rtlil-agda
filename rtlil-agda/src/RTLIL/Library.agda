@@ -1,8 +1,7 @@
 {-# OPTIONS --safe #-}
-open import Prelude
-
 module RTLIL.Library where
 
+open import Overture
 open import Agda.Builtin.FromNat
 open import Agda.Builtin.FromString
 
@@ -13,10 +12,10 @@ open List using (_∷_; [])
 instance  _ = ℕ.number
 
 module Unsigned (w′ : ℕ.t) .⦃ w≢0 : ℕ.NonZero w′ ⦄ where
-  w : Constant
-  w = signed (ℤ.+ w′)
-  w+1 : Constant
-  w+1 = signed (ℤ.+ (ℕ.suc w′))
+  w : Constant.t
+  w = Constant.signed (ℤ.+ w′)
+  w+1 : Constant.t
+  w+1 = Constant.signed (ℤ.+ (ℕ.suc w′))
 
   w-width : Width
   w-width = w′ , [ w≢0 ]

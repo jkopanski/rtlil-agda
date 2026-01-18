@@ -2,9 +2,13 @@
   description = "Yosys RTL Intermediate Language for Agda";
 
   inputs = {
-    cheshire.url = "github:jkopanski/cheshire";
-    nixpkgs.follows = "cheshire/nixpkgs";
-    utils.follows = "cheshire/utils";
+    overture.url = "sourcehut:~madnat/overture";
+    nixpkgs.follows = "overture/nixpkgs";
+    utils.follows = "overture/utils";
+    cheshire = {
+      url = "github:jkopanski/cheshire";
+      inputs.overture.follows = "overture";
+    };
     prettyprint = {
       url = "github:agda/agda-pretty/v1.0";
       flake = false;
@@ -17,7 +21,7 @@
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
-            inputs.cheshire.overlays.default
+            inputs.overture.overlays.default
             self.overlays.default
           ];
         };
@@ -25,6 +29,7 @@
           pkgs = (p: [
             p.standard-library
             p.prettyprint
+            inputs.overture.outputs.packages.${system}.default
             inputs.cheshire.outputs.packages.${system}.default
           ]);
 
@@ -64,6 +69,7 @@
             buildInputs = with pkgs.agdaPackages; [
               standard-library
               prettyprint
+              inputs.overture.outputs.packages.${system}.default
               inputs.cheshire.outputs.packages.${system}.default
             ];
 
@@ -83,8 +89,9 @@
             buildInputs = with pkgs.agdaPackages; [
               standard-library
               prettyprint
-              self.outputs.packages.${system}.rtlil-agda
+              inputs.overture.outputs.packages.${system}.default
               inputs.cheshire.outputs.packages.${system}.default
+              self.outputs.packages.${system}.rtlil-agda
             ];
 
             meta = {

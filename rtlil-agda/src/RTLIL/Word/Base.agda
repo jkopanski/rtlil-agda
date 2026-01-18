@@ -1,18 +1,18 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-
 module RTLIL.Word.Base where
+
+open import Overture
+open import Tactic.Cong using (cong!; ⌞_⌟)
 
 import Data.Refinement as Refinement renaming (Refinement to t)
 import Data.Irrelevant as Irrelevant renaming (Irrelevant to t)
 import RTLIL.Word.Width as Width
 
-open import Tactic.Cong using (cong!; ⌞_⌟)
-
 open × using (_×_)
 open Irrelevant using ([_])
 open ℕ hiding (zero; t; _+_)
 open ℤ using (+_; -[1+_])
+open Function using (_∘_)
 open Width
 open Refinement using (Refinement-syntax; _,_)
 open Rel₀ using (no; yes)

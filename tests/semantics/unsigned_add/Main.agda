@@ -1,7 +1,10 @@
 {-# OPTIONS --guardedness #-}
-open import Prelude
-
 module Main where
+
+open import Overture
+open import RTLIL.Syntax
+open import RTLIL.Syntax.PrettyPrint using (PrettyWord)
+open import RTLIL.Word.Test
 
 module IO where
   open import IO.Base   public
@@ -15,18 +18,15 @@ module Table where
   open TabularConfig public
   open TabularLine   public
 
-import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
-
-open import RTLIL.Syntax
-open import RTLIL.Syntax.PrettyPrint using (PrettyWord)
-open import RTLIL.Word.Test
-open IO using (_>>_)
-open List using (_∷_; []; [_])
-
 module Word where
   open import RTLIL.Word.Base public
 
 import RTLIL.Library as Lib
+import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
+
+open IO using (_>>_)
+open Function using (_∘_)
+open List using (_∷_; []; [_])
 
 dut = Lib.Unsigned.add 4
 
@@ -35,7 +35,7 @@ design = Design.mk Maybe.nothing List.[ dut ]
 
 instance _ = PrettyWord
 
-pretty : ∀ {A : Set} → ⦃ _ : Doc.Pretty 𝟙.0ℓ.⊤ A ⦄ → A → String.t
+pretty : ∀ {A : Set} → ⦃ _ : Doc.Pretty 𝟙*.t A ⦄ → A → String.t
 pretty = Doc.render ∘ Doc.pPrint
 
 main : IO.Main

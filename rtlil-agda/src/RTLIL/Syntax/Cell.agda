@@ -1,13 +1,15 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-open import RTLIL.Syntax.Base
-
 module RTLIL.Syntax.Cell where
+
+open import Overture
+open import RTLIL.Syntax.Base
 
 import RTLIL.Syntax.Attributes as Attributes renaming (Attributes to t)
 import RTLIL.Syntax.Connection as Connection renaming (Connection to t)
 import RTLIL.Syntax.Parameters as Parameters renaming (Parameters to t)
 import RTLIL.Syntax.Signal     as Signal     renaming (Signal     to t)
+
+open Function using (_∘_)
 
 record Cell : Set where
   field

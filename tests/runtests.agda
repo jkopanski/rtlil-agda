@@ -1,8 +1,7 @@
 {-# OPTIONS --guardedness #-}
-open import Prelude
-
 module runtests where
 
+open import Overture
 open import IO.Base
 open import Test.Golden
 

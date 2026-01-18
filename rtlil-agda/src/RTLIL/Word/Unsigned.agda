@@ -1,9 +1,7 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-
-open import Prelude
-
 module RTLIL.Word.Unsigned where
 
+open import Overture
 open import RTLIL.Word.Base
 open import RTLIL.Word.Width
 open import RTLIL.Word.Properties

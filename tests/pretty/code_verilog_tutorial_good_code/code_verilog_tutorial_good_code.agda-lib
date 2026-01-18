@@ -1,3 +1,3 @@
 name: code_verilog_tutorial_good_code
-depend: standard-library prettyprint
+depend: standard-library overture prettyprint
 include: ../../../rtlil-agda/src .

@@ -1,8 +1,8 @@
 {-# OPTIONS --safe --cubical-compatible #-}
-open import Prelude
-open import RTLIL.Syntax.Base
-
 module RTLIL.Syntax.Connection where
+
+open import Overture
+open import RTLIL.Syntax.Base
 
 import RTLIL.Syntax.Signal as Signal renaming (Signal to t)
 
