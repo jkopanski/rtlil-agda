@@ -8,11 +8,11 @@ open import Agda.Builtin.FromString using (IsString)
 import RTLIL.Syntax.Wire as Wire renaming (Wire to t)
 
 data Selection : Set where
-  All    :             Selection
-  Single : ℕ.t       → Selection
-  Range  : ℕ.t → ℕ.t → Selection
+  All    :                           Selection
+  Single : Constant.t              → Selection
+  Range  : Constant.t → Constant.t → Selection
 
-[_,_] : ℕ.t → ℕ.t → Selection
+[_,_] : Constant.t → Constant.t → Selection
 [_,_] = Range
 
 -- | SigSpec in the spec

@@ -49,9 +49,9 @@ instance
   PrettyIdent .pPrintPrec _ _ id = Doc.text $ toString id
 
   PrettyConst : Pretty ann Constant.t
-  PrettyConst .pPrintPrec _ _ (Constant.string c) = Doc.doubleQuotes (Doc.text c)
-  PrettyConst .pPrintPrec _ _ (Constant.signed c) = Doc.int c
-  PrettyConst .pPrintPrec _ _ (Constant.width  c) = Doc.nat (c .value)
+  PrettyConst .pPrintPrec _ _ (Constant.string   c) = Doc.doubleQuotes (Doc.text c)
+  PrettyConst .pPrintPrec _ _ (Constant.signed   c) = Doc.int c
+  PrettyConst .pPrintPrec _ _ (Constant.unsigned c) = Doc.nat c
 
   PrettyConstId : Pretty ann (Identifier × Constant.t)
   PrettyConstId .pPrintPrec l p (id , c) = pPrintPrec l p id <+> pPrintPrec l p c
@@ -83,8 +83,8 @@ spaceOut p = Doc.space <> p <> Doc.space
 instance
   PrettySelection : Pretty ann Selection
   PrettySelection .pPrintPrec _ _ All         = Doc.empty
-  PrettySelection .pPrintPrec _ _ (Single s)  = Doc.brackets $ Doc.nat s
-  PrettySelection .pPrintPrec _ _ (Range m n) = Doc.brackets $ Doc.nat m <+> Doc.colon <+> Doc.nat n
+  PrettySelection .pPrintPrec l p (Single s)  = Doc.brackets $ pPrintPrec l p s
+  PrettySelection .pPrintPrec l p (Range m n) = Doc.brackets $ pPrintPrec l p m <+> Doc.colon <+> pPrintPrec l p n
 
   {-# TERMINATING #-}
   PrettySignal : Pretty ann Signal

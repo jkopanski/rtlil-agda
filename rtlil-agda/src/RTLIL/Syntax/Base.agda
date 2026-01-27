@@ -76,12 +76,22 @@ module Constant where
   -- This can have all the verilog contsant expression, but I think in
   -- practice it's a string or a number.
   data t : Set where
-    string : String.t → t
-    signed : ℤ.t      → t
+    string   : String.t → t
+    signed   : ℤ.t      → t
+    -- RTLIL only has ints, but I think I'll only ever use nats
+    unsigned : ℕ.t      → t
     -- real   : ?
     -- in rtlil spec this would be regular int, but I want to be more
-    -- precise here
-    width : Width     → t
+    -- precise here.
+    -- It doesn't work out that nice
+    -- width : Width → t
+    -- identifier : Identifier → t
+
+  fromWidth : Width -> t
+  fromWidth = unsigned ∘ value
+
+  fromIdentifier : Identifier → t
+  fromIdentifier = string ∘ toString
 
   instance
     IsStringConstant : IsString t
@@ -90,7 +100,7 @@ module Constant where
 
     NumberConstant : Number t
     NumberConstant .Number.Constraint _ = 𝟙*.t
-    NumberConstant .Number.fromNat n = signed (ℤ.+ n)
+    NumberConstant .Number.fromNat n = unsigned n
 
 record Has {ℓ c} (C : Set c) (A : Set ℓ) : Set (ℓ 𝕃.⊔ c) where
   field
