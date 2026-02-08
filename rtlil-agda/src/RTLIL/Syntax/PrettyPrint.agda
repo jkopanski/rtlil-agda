@@ -89,6 +89,7 @@ instance
   {-# TERMINATING #-}
   PrettySignal : Pretty ann Signal
   PrettySignal .pPrintPrec l p (const c)    = pPrintPrec l p c
+  PrettySignal .pPrintPrec l p (simple id)  = pPrintPrec l p id
   PrettySignal .pPrintPrec l p (refer id s) = pPrintPrec l p id <+> pPrintPrec l p s
   PrettySignal .pPrintPrec l p (concat s)   =
     Doc.braces $ spaceOut

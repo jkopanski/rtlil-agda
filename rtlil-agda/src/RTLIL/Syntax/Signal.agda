@@ -12,21 +12,19 @@ data Selection : Set where
   Single : Constant.t              → Selection
   Range  : Constant.t → Constant.t → Selection
 
-[_,_] : Constant.t → Constant.t → Selection
-[_,_] = Range
+[_⋯_] : Constant.t → Constant.t → Selection
+[_⋯_] = Range
 
 -- | SigSpec in the spec
 data Signal : Set where
-  const  : Constant.t             → Signal
-  refer  : Identifier → Selection → Signal
-  concat : NonEmpty.t Signal      → Signal
+  const  : Constant.t         → Signal
+  simple : Identifier         → Signal
+  refer  : Signal → Selection → Signal
+  concat : NonEmpty.t Signal  → Signal
 
 prod : Signal → Signal → Signal
 prod a b = concat (a ∷⁺ NonEmpty.[ b ])
   where open NonEmpty using (_∷⁺_)
-
-simple : Identifier → Signal
-simple id = refer id All
 
 wire : Wire.t → Signal
 wire wire = simple (wire .Wire.t.name)
@@ -35,4 +33,4 @@ instance
   IsStringSignal : IsString Signal
   IsStringSignal .IsString.Constraint _ = 𝟙*.t
   IsStringSignal .IsString.fromString s =
-    refer (IsString.fromString IsStringIdentifier s) All
+    simple (IsString.fromString IsStringIdentifier s)
