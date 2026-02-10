@@ -64,8 +64,6 @@
             version = "0.0.1";
             src = ./rtlil-agda;
 
-            everythingFile = "./src/Everything.agda";
-
             buildInputs = with pkgs.agdaPackages; [
               standard-library
               prettyprint
@@ -83,8 +81,6 @@
             pname = "rtlil-cheshire";
             version = "0.0.1";
             src = ./rtlil-cheshire;
-
-            everythingFile = "./src/Everything.agda";
 
             buildInputs = with pkgs.agdaPackages; [
               standard-library
