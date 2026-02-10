@@ -1,0 +1,11 @@
+image: alpine/edge
+secrets:
+  - 025c03bc-e7de-41f7-8b6e-ea14ce999e2f
+environment:
+  REPO: rtlil-agda
+  GH_USER: jkopanski
+tasks:
+  - push-to-github: |
+      cd ~/"${REPO}"
+      git config --global credential.helper store
+      git push --mirror "https://github.com/${GH_USER}/${REPO}"
