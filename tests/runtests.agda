@@ -18,6 +18,7 @@ prettyTests = mkTestPool "Pretty printing"
 semanticTests : TestPool
 semanticTests = mkTestPool "Operational semantics"
   $ "unsigned_add"
+  ∷ "contrived"
   ∷ []
 
 main : Main
