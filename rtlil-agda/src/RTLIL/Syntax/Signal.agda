@@ -29,6 +29,12 @@ prod a b = concat (a ∷⁺ NonEmpty.[ b ])
 wire : Wire.t → Signal
 wire wire = simple (wire .Wire.t.name)
 
+identifier : Signal → Maybe.t Identifier
+identifier (const _)   = Maybe.nothing
+identifier (simple id) = Maybe.just id
+identifier (refer s _) = identifier s
+identifier (concat _)  = Maybe.nothing
+
 instance
   IsStringSignal : IsString Signal
   IsStringSignal .IsString.Constraint _ = 𝟙*.t

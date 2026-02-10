@@ -29,6 +29,16 @@ record Module : Set where
 
 open Module
 
+empty : Identifier → Module
+empty id = record
+  { attributes = Attributes.empty
+  ; parameters = Parameters.empty
+  ; name = id
+  ; connections = List.[]
+  ; wires = Map.empty
+  ; cells = Map.empty
+  }
+
 instance
   ModuleHasAttributes : Has Attributes.t Module
   ModuleHasAttributes .Has.get = Module.attributes
