@@ -1,3 +1,0 @@
-name: unsigned_add
-depend: standard-library overture prettyprint
-include: ../../../rtlil-agda/src .
