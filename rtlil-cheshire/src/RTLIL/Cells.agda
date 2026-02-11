@@ -30,13 +30,16 @@ open Quiver 𝒬
 
 private
   -- Convention used through yosys internal rtliil library cells
-  a b y : Identifier
+  a b s y : Identifier
   a = "\\A"
   b = "\\B"
+  s = "\\S"
   y = "\\Y"
-  a-width b-width y-width : Identifier
+  width′ a-width b-width s-width y-width : Identifier
+  width′   = "\\WIDTH"
   a-width = "\\A_WIDTH"
   b-width = "\\B_WIDTH"
+  s-width = "\\S_WIDTH"
   y-width = "\\Y_WIDTH"
   a-signed b-signed y-signed : Identifier
   a-signed = "\\A_SIGNED"
@@ -53,6 +56,26 @@ private
 
 -- WARNING:
 -- YOU HAVE TO SPECIFY ALL THE INTERNAL CELLS PARAMETERS
+
+unary : Identifier → (u : ℕ.t) → (w : ℕ.t) → u ⇒ w
+unary ident u w i = do
+  name ← fresh (withString ident ("$RTLIL$internal" String.++_))
+  out ← freshOb (withString name (String._++ "$output")) w
+  instantiate record
+        { attributes = Attributes.empty
+        ; type = ident
+        ; name = name
+        ; parameters = Parameters.mk
+          $ (a-width , Constant.unsigned u)
+          ∷ (y-width , Constant.unsigned w)
+          ∷ (a-signed , 0)
+          ∷ []
+        ; connections =
+            Signal.simple a ⇐ signal i
+          ∷ Signal.simple y ⇐ signal out
+          ∷ []
+        }
+  pure out
 
 binary : Identifier → (u : ℕ.t) → (w : ℕ.t) → (v : ℕ.t) → u × w ⇒ v
 binary ident u w v i = do
@@ -77,11 +100,24 @@ binary ident u w v i = do
         }
   pure out
 
+-- yosys unary cells:
+-- https://yosyshq.readthedocs.io/projects/yosys/en/stable/cell/word_unary.html#unary-operators
+not : w ⇒ w
+not {w} = unary "$not" w w
+
+not-meaning : Words.𝒬 .Hom w w
+not-meaning = Word.opposite
+
+-- yosys binary cells:
+-- https://yosyshq.readthedocs.io/projects/yosys/en/stable/cell/word_binary.html#binary-operators
 and : w × w ⇒ w
 and {w} = binary "$and" w w w
 
 add : w × w ⇒ ℕ.suc w
 add {w} = binary "$add" w w (ℕ.suc w)
+
+add-meaning : Words.𝒬 .Hom (w × w) (ℕ.suc w)
+add-meaning {w} = Prod.uncurry Word._+_ ⊙ Word.remQuot w
 
 contrived : (w × w) × (w × w) ⇒ ℕ.2+ w
 contrived = add ∘ (add ⁂ add)
