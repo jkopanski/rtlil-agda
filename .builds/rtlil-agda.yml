@@ -26,6 +26,7 @@ tasks:
       cd rtlil-agda
       cachix use famisoft
       nix build .#rtlil-agda
+      nix build .#rtlil-cheshire
   - tests: |
       cd rtlil-agda
       cachix use famisoft
