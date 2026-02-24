@@ -38,6 +38,12 @@ infix 4 _≟_
 _≟_ : ∀ {w} → Rel₂.DecidableEquality (Word w)
 i ≟ j = Rel₀.map′ toℕ-injective toℕ-cong (toℕ i ℕ.≟ toℕ j)
 
+zero? : ∀ {w} → Rel₁.Decidable (_≡ zero w)
+zero? {w} = _≟ zero w
+
+last? : ∀ {w} → Rel₁.Decidable (_≡ last w)
+last? {w} = _≟ last w
+
 ------------------------------------------------------------------------
 -- Bundles
 
@@ -130,6 +136,9 @@ toℕ-1-extend′ {w} word = begin-equality
 
 0-extend<⊤[w⊔v] : ∀ {w} v → (word : Word w) → toℕ (0-extend (suc (v ∸ w)) word) < ⊤ (w ⊔ v)
 0-extend<⊤[w⊔v] {w} v word = m<⊤w⇒m<⊤[w⊔v] v (toℕ<⊤ word)
+
+0-extend<⊤w : ∀ v {w} → (word : Word w) → toℕ (0-extend v word) < ⊤ w
+0-extend<⊤w v word = ≤-<-trans (≤-reflexive (toℕ-0-extend v word)) (toℕ<⊤ word)
 
 1-extend-by-0 : ∀ {w} → (word : Word w) → 1-extend 0 word ≡ word
 1-extend-by-0 {w} word rewrite ⊤-zero = toℕ-injective (+-identityʳ (toℕ word))
@@ -255,18 +264,6 @@ join-is-join-1 {w} (inj₂ i) = toℕ-injective $ begin-equality
   toℕ i ℕ.+ (⊤ (suc (w ∸ w)) ∸ 1) * ⊤ w ≡⟨ cong! (n∸n≡0 w) ⟩
   toℕ i ℕ.+ (⊤ (suc 0) ∸ 1) * ⊤ w       ≡⟨⟩
   toℕ i ℕ.+ (⊤ 1 ∸ 1) * ⊤ w             ∎
-
-------------------------------------------------------------------------
--- Properties of opposite
-------------------------------------------------------------------------
-
-opposite-involutive : ∀ {w} → (i : Word w) → opposite (opposite i) ≡ i
-opposite-involutive {w} word@(⟦ i ⟧< _) = toℕ-injective $ begin-equality
-  ⊤ w ∸ suc (⊤ w ∸ suc i)   ≡⟨ cong (⊤ w ∸_) (+-∸-assoc 1 i<⊤) ⟨
-  ⊤ w ∸ (suc (⊤ w) ∸ suc i) ≡⟨ refl ⟩
-  ⊤ w ∸ (⊤ w ∸ i)           ≡⟨ m∸[m∸n]≡n (<⇒≤ i<⊤) ⟩
-  i                         ∎
-  where i<⊤ = toℕ<⊤ word
 
 ------------------------------------------------------------------------
 -- Properties of truncate

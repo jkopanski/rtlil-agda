@@ -4,6 +4,7 @@ module RTLIL.Word.Unsigned where
 open import Overture
 open import RTLIL.Word.Base
 open import RTLIL.Word.Width
+open import RTLIL.Word.Operations
 open import RTLIL.Word.Properties
 
 open ℕ hiding (t; _+_)

@@ -52,6 +52,9 @@ toℕ<⊤ {w} (⟦ value ⟧< v<⊤) = Rel₀.recompute (value <? ⊤ w) v<⊤
 zero : (w : ℕ.t) → Word w
 zero w = word< (>-nonZero⁻¹ (⊤ w))
 
+one : ∀ {w} → ⦃ _ : ℕ.NonZero w ⦄ → Word w
+one {w} = word< (nonTrivial⇒n>1 (⊤ w))
+
 last : (w : ℕ.t) → Word w
 last w = word< (≤-reflexive (sym (suc-pred-⊤ w)))
 
@@ -109,14 +112,6 @@ join w v =
     , cast (cong suc $ sym (m⊔n≡m∸n+n w v)) ∘ 1-extend (suc (w ∸ v))
     ]
 
-opposite : ∀ {w} → Word w → Word w
-opposite {w} (⟦ value ⟧< v<⊤) = ⟦ ⊤ w ∸ suc value ⟧< (begin-strict
-  ⊤ w ∸ suc value    ≡⟨ pred[m∸n]≡m∸[1+n] (⊤ w) value ⟨
-  pred (⊤ w ∸ value) ≤⟨ pred-mono-≤ (m∸n≤m (⊤ w) value) ⟩
-  pred (⊤ w)         ≡⟨ refl ⟩
-  ⊤ w ∸ 1            <⟨ ∸-monoʳ-< z<s (>-nonZero⁻¹ (⊤ w)) ⟩
-  ⊤ w ∸ 0            ∎)
-
 combine : ∀ {w v} → Word w → Word v → Word (w ℕ.+ v)
 combine {w} {v} x y = ⟦ toℕ x ℕ.* ⊤ v ℕ.+ toℕ y ⟧< (begin-strict
   toℕ x ℕ.* ⊤ v ℕ.+ toℕ y       <⟨ +-monoʳ-< (toℕ x * ⊤ v) (toℕ<⊤ y) ⟩
@@ -132,30 +127,3 @@ remQuot {w} v x .proj₁ = ⟦ toℕ x ℕ./ ⊤ v ⟧<
   m<n*o⇒m/o<n (<-≤-trans (toℕ<⊤ x) (≤-reflexive (⊤[w+v]≡⊤[w]*⊤[v] w v)))
 remQuot {w} v x .proj₂ = ⟦ toℕ x ℕ.% ⊤ v ⟧<
   m%n<n (toℕ x) (⊤ v)
-
-infixl 6 _+_
--- Addition is deliberately chosen to accept the same width
--- operands. It's up to the user to perform appropriate extension
--- (signed or not).  The same goes for the resulting type, there is no
--- information loss, it's user responsibility to truncate the result
--- if needed.
-_+_ : ∀ {w} → Word w → Word w → Word (suc w)
-_+_ {w} x y = ⟦ toℕ x ℕ.+ toℕ y ⟧< (begin-strict
-  toℕ x ℕ.+ toℕ y <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
-  ⊤ w ℕ.+ ⊤ w     ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc w) ⟨
-  ⊤ (suc w)       ∎)
-
-infixl 6 _+′_
--- This one is more general but it will require casting of the word
--- width. I'm not sure if this is a good trade-off.
-_+′_ : ∀ {w v} → Word w → Word v → Word (suc (w ℕ.⊔ v))
-_+′_ {w} {v} x y = ⟦ toℕ x ℕ.+ toℕ y ⟧<
-  (begin-strict
-    toℕ x ℕ.+ toℕ y
-  <⟨ +-mono-< (toℕ<⊤ x) (toℕ<⊤ y) ⟩
-    ⊤ w ℕ.+ ⊤ v
-  ≤⟨ +-mono-≤ (⊤-mono-≤ (m≤m⊔n w v)) (⊤-mono-≤ (m≤n⊔m w v)) ⟩
-    ⊤ (w ℕ.⊔ v) ℕ.+ ⊤ (w ℕ.⊔ v)
-  ≡⟨ ⊤≡⊤[w-1]+⊤[w-1] (suc (w ℕ.⊔ v)) ⟨
-    ⊤ (suc (w ℕ.⊔ v))
-  ∎)
