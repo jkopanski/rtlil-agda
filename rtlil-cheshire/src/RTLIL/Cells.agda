@@ -16,6 +16,7 @@ import Cheshire.Signatures as Signatures
 
 -- rtlil-agda
 import RTLIL.Word as Word renaming (Word to t)
+import RTLIL.Word.Properties as Wordₚ
 open import RTLIL.Syntax
 
 -- rtlil-cheshire
@@ -24,7 +25,6 @@ import Cheshire.Instance.Words as Words renaming (Words to t)
 
 open List using ([]; _∷_)
 open RTLIL
-open Signatures
 open Object (𝒬 .Ob)
 open Quiver 𝒬
 
@@ -121,6 +121,29 @@ neg {w} = updateInternalParameter a-signed 1 $ unary "$neg" w w
 
 neg-meaning : ⦃ _ : ℕ.NonZero w ⦄ → Words.𝒬 .Hom w w
 neg-meaning {w} = Word.truncate 1 ⊙ (Word._+ Word.one) ⊙ Word.opposite
+
+reduce_and : w ⇒ 1
+reduce_and {w} = unary "$reduce_and" w 1
+
+reduce_and-meaning : Words.𝒬 .Hom w 1
+reduce_and-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isYes ⊙ Wordₚ.last?
+
+reduce_or : w ⇒ 1
+reduce_or {w} = unary "$reduce_or" w 1
+
+reduce_or-meaning : Words.𝒬 .Hom w 1
+reduce_or-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
+reduce_bool : w ⇒ 1
+reduce_bool {w} = updateInternalParameter a-signed 1 $ unary "$reduce_bool" w 1
+
+reduce_bool-meaning : Words.𝒬 .Hom w 1
+reduce_bool-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
+
+logic_not : w ⇒ 1
+logic_not {w} = unary "$logic_not" w 1
+
+logic_not-meaning : Words.𝒬 .Hom w 1
+logic_not-meaning = not-meaning ⊙ reduce_bool-meaning
 
 -- yosys binary cells:
 -- https://yosyshq.readthedocs.io/projects/yosys/en/stable/cell/word_binary.html#binary-operators

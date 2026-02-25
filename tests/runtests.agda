@@ -19,6 +19,10 @@ semanticTests : TestPool
 semanticTests = mkTestPool "Operational semantics"
   $ "not"
   ∷ "neg"
+  ∷ "reduce_and"
+  ∷ "reduce_or"
+  ∷ "reduce_bool"
+  ∷ "logic_not"
   ∷ "add"
   ∷ "contrived"
   ∷ []

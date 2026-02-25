@@ -64,6 +64,9 @@ Word↔Fin {w} = Func.mk↔ₛ′ toFin fromFin (toFin∘fromFin≐id {w}) fromF
 0↔⊤ : ∀ {ℓ} → Word 0 ↔ 𝟙.t {ℓ}
 0↔⊤ = Fin.1↔⊤ ↔-∘ Word↔Fin
 
+1↔Bool : Word 1 ↔ 𝟚.t
+1↔Bool = Fin.2↔Bool ↔-∘ Word↔Fin
+
 ------------------------------------------------------------------------
 -- misc properties
 
