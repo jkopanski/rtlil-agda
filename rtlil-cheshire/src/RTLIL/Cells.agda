@@ -57,6 +57,14 @@ private
 -- WARNING:
 -- YOU HAVE TO SPECIFY ALL THE INTERNAL CELLS PARAMETERS
 
+-- update parameter on internal yosys cell
+updateInternalParameter : Identifier → Constant.t → w ⇒ v → w ⇒ v
+updateInternalParameter ident const comp i = do
+  out ← comp i
+  withCircuit $ λ m → record m
+    { cells = Map.map (Parameters.insert (ident , const)) (m .Module.t.cells) }
+  pure out
+
 unary : Identifier → (u : ℕ.t) → (w : ℕ.t) → u ⇒ w
 unary ident u w i = do
   name ← fresh (withString ident ("$RTLIL$internal" String.++_))
@@ -107,6 +115,12 @@ not {w} = unary "$not" w w
 
 not-meaning : Words.𝒬 .Hom w w
 not-meaning = Word.opposite
+
+neg : w ⇒ w
+neg {w} = updateInternalParameter a-signed 1 $ unary "$neg" w w
+
+neg-meaning : ⦃ _ : ℕ.NonZero w ⦄ → Words.𝒬 .Hom w w
+neg-meaning {w} = Word.truncate 1 ⊙ (Word._+ Word.one) ⊙ Word.opposite
 
 -- yosys binary cells:
 -- https://yosyshq.readthedocs.io/projects/yosys/en/stable/cell/word_binary.html#binary-operators

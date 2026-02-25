@@ -18,6 +18,7 @@ prettyTests = mkTestPool "Pretty printing"
 semanticTests : TestPool
 semanticTests = mkTestPool "Operational semantics"
   $ "not"
+  ∷ "neg"
   ∷ "add"
   ∷ "contrived"
   ∷ []

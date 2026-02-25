@@ -1,0 +1,3 @@
+name: neg
+depend: standard-library cheshire overture prettyprint
+include: ../../../rtlil-agda/src ../../../rtlil-cheshire/src .
