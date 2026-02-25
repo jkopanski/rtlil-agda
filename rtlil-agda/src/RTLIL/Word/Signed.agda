@@ -4,15 +4,15 @@ module RTLIL.Word.Signed where
 open import Overture
 open import RTLIL.Word.Base
 open import RTLIL.Word.Width
+open import RTLIL.Word.Operations
 open import RTLIL.Word.Properties
 
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
 open ℕ hiding (t; _+_)
-open ℤ using (+_; -[1+_])
+open ℤ using (+_; -_; -[1+_]; +[1+_]; _⊖_; +<+; +≤+; -<+; 0ℤ)
 open Function using (_∘_)
 open Rel₀ using (no; yes)
-open ≤-Reasoning
 
 fromNeg : ∀ {w n} → .⦃ _ : NonZero w ⦄ → n < ½ w → Word w
 fromNeg {w} {n} n<½ = word< top-[1+n]<top
@@ -67,7 +67,7 @@ m∸[n∸m]≡2m∸n {m} {n} m≤n with k ← n ∸ m in n∸m≡k = begin-equal
     2 * m ∸ (m ℕ.+ (n ∸ m))
   ≡⟨ cong! (m+[n∸m]≡n m≤n) ⟩
     2 * m ∸ n
-  ∎
+  ∎ where open ≤-Reasoning
 
 to-≥ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ → (word : Word w) → (toℕ word ≥ ⊤ (w ∸ 1)) →
@@ -76,14 +76,14 @@ to-≥ w@{suc w-1} word v≥½ rewrite split-≥ word v≥½ = cong -[1+_] $ beg
   ⊤ w-1 ∸ suc (toℕ word ∸ ⊤ w-1)    ≡⟨ pred[m∸n]≡m∸[1+n] (⊤ w-1) _ ⟨
   pred (⊤ w-1 ∸ (toℕ word ∸ ⊤ w-1)) ≡⟨ cong pred (m∸[n∸m]≡2m∸n v≥½) ⟩
   pred (2 * ⊤ w-1 ∸ toℕ word)       ≡⟨ cong! (⊤-suc w-1) ⟨
-  pred (⊤ w ∸ toℕ word)             ∎
+  pred (⊤ w ∸ toℕ word)             ∎ where open ≤-Reasoning
 
 instance
   extend-nonZero : ∀ {w v} → .⦃ _ : NonZero w ⦄ → NonZero (v ℕ.+ w)
   extend-nonZero {w} {v} = >-nonZero $ begin-strict
     0       <⟨ >-nonZero⁻¹ _ ⟩
     w       ≤⟨ m≤n+m w v ⟩
-    v ℕ.+ w ∎
+    v ℕ.+ w ∎ where open ≤-Reasoning
 
 extend : ∀ {w} → .⦃ _ : NonZero w ⦄ → (v : ℕ.t) → Word w → Word (v ℕ.+ w)
 extend w@{suc _} v word with toℕ word <? ⊤ (w ∸ 1)
@@ -106,7 +106,7 @@ extend-<-⊤ {w} v word w<½ rewrite extend-< v word w<½ = begin-strict
   toℕ word          <⟨ w<½ ⟩
   ⊤ (w ∸ 1)         ≤⟨ ⊤[w]≤⊤[v+w] (w ∸ 1) v ⟩
   ⊤ (v ℕ.+ (w ∸ 1)) ≡⟨ cong ⊤ (+-∸-assoc v (>-nonZero⁻¹ w)) ⟨
-  ⊤ (v ℕ.+ w ∸ 1)   ∎
+  ⊤ (v ℕ.+ w ∸ 1)   ∎ where open ≤-Reasoning
 
 extend-≥ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
@@ -132,7 +132,7 @@ extend-≥-⊤ {w} ⦃ w≢0 ⦄ v word w≥½ rewrite extend-≥ v word w≥½ 
     ⊤ (w ∸ 1) ℕ.+ (⊤ v ∸ 1) * ⊤ w
  ≤⟨ +-monoˡ-≤ ((⊤ v ∸ 1) * ⊤ w) w≥½ ⟩
     toℕ word ℕ.+ (⊤ v ∸ 1) * ⊤ w
-  ∎
+  ∎ where open ≤-Reasoning
 
 to-extend :
   (v : ℕ.t) → ∀ {w} → .⦃ _ : NonZero w ⦄ → (word : Word w) →
@@ -163,7 +163,7 @@ to-extend v {w} ⦃ w≢0 ⦄ word
             ⊤ (v ℕ.+ w) ∸ (⊤ (v ℕ.+ w) ∸ ⊤ w) ∸ toℕ word
           ≡⟨ cong! (m∸[m∸n]≡n (⊤[w]≤⊤[v+w] w v)) ⟩
             ⊤ w ∸ toℕ word
-          ∎
+          ∎ where open ≤-Reasoning
 
 opaque
   unfolding ⊤
