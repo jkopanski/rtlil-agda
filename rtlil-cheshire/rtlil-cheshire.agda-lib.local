@@ -1,5 +1,5 @@
 name: rtlil-cheshire
-depend: standard-library cheshire prettyprint
+depend: standard-library overture cheshire
 include: src ../rtlil-agda/src
 
 flags:

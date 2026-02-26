@@ -1,0 +1,7 @@
+name: rtlil-cheshire
+depend: standard-library overture cheshire rtlil-agda
+include: src
+
+flags:
+  --exact-split
+  -WnoUnsupportedIndexedMatch
