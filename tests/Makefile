@@ -11,3 +11,6 @@ test: runtests
 
 retest: runtests
 	./_build/runtests $(AGDA_EXEC) $(INTERACTIVE) --timing --failure-file failures --only-file failures --only $(only)
+
+clean:
+	rm -rf _build

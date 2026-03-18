@@ -17,11 +17,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768724709,
-        "narHash": "sha256-JLBeH1Aw67JjhZ3GF8tckPzEaa0fVaRXy8YZQ19iryg=",
+        "lastModified": 1775768313,
+        "narHash": "sha256-AYJmby8rvokHAr79Nlsq64cJ99ABC2afmVjgWdVj6vk=",
         "owner": "jkopanski",
         "repo": "cheshire",
-        "rev": "e1782fd892a71c74a5873376212bfd91cd65493e",
+        "rev": "6128720dc2641f074950155641050a7eecd2055f",
         "type": "github"
       },
       "original": {
@@ -54,11 +54,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1768679428,
-        "narHash": "sha256-WdIVRZIzdA4MPt7Udu6/bJuVhDqcgzFpytxgF+Cy4KU=",
+        "lastModified": 1768941255,
+        "narHash": "sha256-9ZTNBh41WpDVUCfnFRMGxDzjgqB+CQDhl4RRUCvPiis=",
         "owner": "~madnat",
         "repo": "overture",
-        "rev": "051278f37e30fe24e52c0af1c35a992602c440d2",
+        "rev": "55bfe2a7eb50012d27faec0dfd3db38af56c9aac",
         "type": "sourcehut"
       },
       "original": {
