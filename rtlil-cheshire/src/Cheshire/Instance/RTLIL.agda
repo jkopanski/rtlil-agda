@@ -20,18 +20,18 @@ open import Data.List.Fresh.Relation.Unary.All.Properties using (fromAll)
 
 -- cheshire
 import Cheshire.Object.Signatures as Object
-import Cheshire.Signatures as Signatures
+import Cheshire.Category as Category renaming (Category to t)
+import Cheshire.Cartesian as Cartesian renaming (Cartesian to t)
 
 -- rtlil-agda
 import RTLIL.Word as Word renaming (Word to t)
 open import RTLIL.Syntax
 
 -- rtlil-cheshire
-import Cheshire.Instance.Words as Words renaming (Words to t)
+import Cheshire.Instance.Words as Words
 
 open Function renaming (_∘_ to _⊙_)
 open Membership Module.setoid using (_∈_)
-open Signatures
 open Signal using ([_⋯_])
 
 instance
@@ -189,26 +189,32 @@ a@(`wire {w} _) `× `⊤ rewrite ℕ.+-identityʳ w = a
 𝒬 : Quiver 𝕃.0ℓ 𝕃.0ℓ
 𝒬 = mk⇒ {Ob = ℕ.t} λ i o → `Ob i → CircuitM (`Ob o)
 open Object (𝒬 .Ob)
-open Quiver 𝒬
 
-RTLIL : Cartesian 𝒬
-RTLIL = record
-  { id = pure ⊙ id
-  ; _∘_ = λ g f i → g =<< f i
-  ; terminal = record { ⊤ = 0 }
-  ; ! = const $ pure `⊤
-  ; products = record { _×_ = ℕ._+_ }
-  ; π₁ = pure ⊙ `proj₁
-  ; π₂ = pure ⊙ `proj₂
-  ; ⟨_,_⟩ = λ f g c → do
-      a ← f c
-      b ← g c
-      pure (a `× b)
-  }
-open Cartesian RTLIL public
+module Signatures where
 
-instance
-  _ = terminal; _ = products
+  category : Category.Signature 𝒬
+  category = record
+    { id = pure ⊙ id
+    ; _∘_ = λ g f i → g =<< f i
+    }
+
+  cartesian : Cartesian.Signature category
+  cartesian = record
+    { terminal = record { ⊤ = 0 }
+    ; ! = const $ pure `⊤
+    ; products = record { _×_ = ℕ._+_ }
+    ; π₁ = pure ⊙ `proj₁
+    ; π₂ = pure ⊙ `proj₂
+    ; ⟨_,_⟩ = λ f g c → do
+        a ← f c
+        b ← g c
+        pure (a `× b)
+    }
+
+  open Category.Signature category public
+  open Cartesian.Signature cartesian public
+
+open Signatures
 
 design : ∀ {w v} → Identifier → w ⇒ v → Design.t
 design {w} {v} id f =

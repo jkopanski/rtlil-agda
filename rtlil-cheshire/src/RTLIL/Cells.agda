@@ -11,8 +11,9 @@ import Effect.Monad.State.Instances
 import Effect.Monad.Identity.Instances
 
 -- cheshire
+import Cheshire.Category as Category
+import Cheshire.Cartesian as Cartesian
 import Cheshire.Object.Signatures as Object
-import Cheshire.Signatures as Signatures
 
 -- rtlil-agda
 import RTLIL.Word as Word renaming (Word to t)
@@ -20,13 +21,13 @@ import RTLIL.Word.Properties as Wordₚ
 open import RTLIL.Syntax
 
 -- rtlil-cheshire
-import Cheshire.Instance.RTLIL as RTLIL renaming (RTLIL to t)
-import Cheshire.Instance.Words as Words renaming (Words to t)
+import Cheshire.Instance.RTLIL as RTLIL
+import Cheshire.Instance.Words as Words
 
 open List using ([]; _∷_)
 open RTLIL
+open Signatures
 open Object (𝒬 .Ob)
-open Quiver 𝒬
 
 private
   -- Convention used through yosys internal rtliil library cells
