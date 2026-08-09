@@ -10,7 +10,7 @@
       inputs.overture.follows = "overture";
     };
     prettyprint = {
-      url = "github:agda/agda-pretty/v1.0";
+      url = "github:jkopanski/agda-pretty";
       flake = false;
     };
   };

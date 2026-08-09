@@ -113,8 +113,7 @@ insert′ : Module.t → Modules → Modules
 insert′ m modules with m ∈? modules
 … | Rel₀.yes _ = modules
 … | Rel₀.no m∉ =
-    -- the Q param of the ¬Any⇒All seems to be unused?
-    let is-fresh = fromAll (¬Any⇒All {Q = λ _ → 𝟙*.t} (m ≟_) m∉)
+    let is-fresh = fromAll (¬Any⇒All (m ≟_) m∉)
     in List.Fresh.cons m modules is-fresh
   where open Rel₂.DecSetoid Module.decSetoid
 

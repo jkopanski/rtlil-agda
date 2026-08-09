@@ -11,8 +11,8 @@ import Effect.Monad.State.Instances
 import Effect.Monad.Identity.Instances
 
 -- cheshire
-import Cheshire.Category as Category
-import Cheshire.Cartesian as Cartesian
+import Cheshire.Category as Category renaming (Category to t)
+import Cheshire.Cartesian as Cartesian renaming (Cartesian to t)
 import Cheshire.Object.Signatures as Object
 
 -- rtlil-agda
@@ -27,7 +27,7 @@ import Cheshire.Instance.Words as Words
 open List using ([]; _∷_)
 open RTLIL
 open Signatures
-open Object (𝒬 .Ob)
+open Object
 
 private
   -- Convention used through yosys internal rtliil library cells
@@ -49,7 +49,7 @@ private
 
 instance
   _ = ℕ.number; _ = String.isString
-  _ = terminal; _ = products
+  _ = RTLIL.Signatures.terminal; _ = RTLIL.Signatures.products
 
 private
   variable
@@ -161,6 +161,7 @@ contrived : (w × w) × (w × w) ⇒ ℕ.2+ w
 contrived = add ∘ (add ⁂ add)
 
 contrived-meaning : Words.𝒬 .Hom ((w × w) × (w × w)) (ℕ.2+ w)
-contrived-meaning = wadd Words.∘ (wadd Words.⁂ wadd)
+contrived-meaning = wadd W.∘ (wadd W.⁂ wadd)
   where wadd : ∀ {u} → Words.𝒬 .Hom (u ℕ.+ u) (ℕ.suc u)
         wadd {u} = Prod.uncurry Word._+_ ⊙ Word.remQuot u
+        module W = Cartesian.t Words.cartesian

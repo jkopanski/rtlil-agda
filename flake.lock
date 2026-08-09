@@ -17,11 +17,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787222692,
-        "narHash": "sha256-AKL+rjzGx2wDBv60wNFA9Op4tst331gRuWopzBw+4Yk=",
+        "lastModified": 1786486352,
+        "narHash": "sha256-je+BBIS/mkyDs4aSgAClHi6Xeezcwh3u8ktDh0SgpS4=",
         "owner": "jkopanski",
         "repo": "cheshire",
-        "rev": "2ebccf3cdc4dcfafba988c8443de06f5340ba781",
+        "rev": "aa7efcef8d2354e10e5f3645a4ef074f5e93fcd4",
         "type": "github"
       },
       "original": {
