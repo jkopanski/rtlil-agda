@@ -13,6 +13,7 @@ import Effect.Monad.Identity.Instances
 -- cheshire
 import Cheshire.Category as Category renaming (Category to t)
 import Cheshire.Cartesian as Cartesian renaming (Cartesian to t)
+import Cheshire.Monoidal.Signature as Monoidal renaming (Monoidal to t)
 import Cheshire.Object.Signatures as Object
 
 -- rtlil-agda
@@ -25,9 +26,11 @@ import Cheshire.Instance.RTLIL as RTLIL
 import Cheshire.Instance.Words as Words
 
 open List using ([]; _∷_)
-open RTLIL
-open Signatures
 open Object
+open RTLIL
+
+open Category.Signature RTLIL.Signatures.category
+open Monoidal.t RTLIL.Signatures.monoidal
 
 private
   -- Convention used through yosys internal rtliil library cells
@@ -158,7 +161,7 @@ add-meaning : Words.𝒬 .Hom (w × w) (ℕ.suc w)
 add-meaning {w} = Prod.uncurry Word._+_ ⊙ Word.remQuot w
 
 contrived : (w × w) × (w × w) ⇒ ℕ.2+ w
-contrived = add ∘ (add ⁂ add)
+contrived = add ∘ (add ⊗₁ add)
 
 contrived-meaning : Words.𝒬 .Hom ((w × w) × (w × w)) (ℕ.2+ w)
 contrived-meaning = wadd W.∘ (wadd W.⁂ wadd)

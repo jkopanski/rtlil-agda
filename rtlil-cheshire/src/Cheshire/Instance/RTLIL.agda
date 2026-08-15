@@ -20,8 +20,13 @@ open import Data.List.Fresh.Relation.Unary.All.Properties using (fromAll)
 
 -- cheshire
 import Cheshire.Object.Signatures as Object
-import Cheshire.Category as Category renaming (Category to t)
-import Cheshire.Cartesian as Cartesian renaming (Cartesian to t)
+import Cheshire.Category.Signature as Category renaming (Category to t)
+import Cheshire.Monoidal.Signature as Monoidal renaming (Monoidal to t)
+import Cheshire.Monoidal.Braided.Signature as Braided renaming (Braided to t)
+import Cheshire.Monoidal.CounitalCopy.Signature as Counital renaming (CounitalCopy to t)
+import Cheshire.Monoidal.Traced.Signature as Traced renaming (Traced to t)
+import Cheshire.Bifunctor.Signature as Bifunctor renaming (Bifunctor to t)
+import Cheshire.Construction.Product.Signatures as Product
 
 -- rtlil-agda
 import RTLIL.Word as Word renaming (Word to t)
@@ -30,7 +35,7 @@ open import RTLIL.Syntax
 -- rtlil-cheshire
 import Cheshire.Instance.Words as Words
 
-open Function renaming (_∘_ to _⊙_)
+open Function using () renaming (_∘_ to _⊙_)
 open Membership Module.setoid using (_∈_)
 open Signal using ([_⋯_])
 
@@ -191,29 +196,70 @@ open Object (𝒬 .Ob)
 
 module Signatures where
 
-  category : Category.Signature 𝒬
+  category : Category.t 𝒬
   category = record
-    { id = pure ⊙ id
+    { id = pure ⊙ Function.id
     ; _∘_ = λ g f i → g =<< f i
     }
 
-  cartesian : Cartesian.Signature category
-  cartesian = record
-    { terminal = record { ⊤ = 0 }
-    ; ! = const $ pure `⊤
-    ; products = record { _×_ = ℕ._+_ }
-    ; π₁ = pure ⊙ `proj₁
-    ; π₂ = pure ⊙ `proj₂
-    ; ⟨_,_⟩ = λ f g c → do
-        a ← f c
-        b ← g c
-        pure (a `× b)
+  monoidal : Monoidal.t category
+  monoidal = record
+    { unit = 0
+    ; ⊗ = record
+      { H = record
+        { F₀ = Prod.uncurry ℕ._+_
+        ; F₁ = F
+        }
+      ; appˡ = λ _ → record { F₀ = Function.id; F₁ = _$_ }
+      ; appʳ = λ _ → record { F₀ = Function.id; F₁ = _$_ }
+      ; ₁ˡ = λ f → F (f , id)
+      ; ₁ʳ = λ g → F (id , g)
+      }
+    } where
+        open Category.t category
+        F : ∀ {A B} → Product.𝒬 𝒬 𝒬 .Hom A B → 𝒬 .Hom (Prod.uncurry ℕ._+_ A) (Prod.uncurry ℕ._+_ B)
+        F (f , g) ob = do
+          a ← f (`proj₁ ob)
+          b ← g (`proj₂ ob)
+          pure (a `× b)
+
+  braided : Braided.t monoidal
+  braided = record
+    { braiding = record
+      { F⇒G = record { η = λ (c , d) → λ ob → pure (`proj₂ {c} {d} ob `× `proj₁ ob) }
+      ; F⇐G = record { η = λ (d , c) → λ ob → pure (`proj₂ {c} {d} ob `× `proj₁ ob) }
+      }
     }
 
-  open Category.Signature category public
-  open Cartesian.Signature cartesian public
+  counital : Counital.t monoidal
+  counital = record
+    { Δ = λ ob → pure (ob `× ob)
+    ; δ = λ _ → pure `⊤
+    }
 
-open Signatures
+  instance
+    terminal : Terminal
+    terminal = record { ⊤ = 0 }
+
+    products : BinaryProducts
+    products = record { _×_ = ℕ._+_ }
+
+  -- cartesian : Cartesian.Signature category
+  -- cartesian = record
+  --   { terminal = record { ⊤ = 0 }
+  --   ; ! = const $ pure `⊤
+  --   ; products = record { _×_ = ℕ._+_ }
+  --   ; π₁ = pure ⊙ `proj₁
+  --   ; π₂ = pure ⊙ `proj₂
+  --   ; ⟨_,_⟩ = λ f g c → do
+  --       a ← f c
+  --       b ← g c
+  --       pure (a `× b)
+  --   }
+
+  open Category.t category public
+
+open Category.t Signatures.category
 
 design : ∀ {w v} → Identifier → w ⇒ v → Design.t
 design {w} {v} id f =
