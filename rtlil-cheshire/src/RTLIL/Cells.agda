@@ -112,6 +112,16 @@ binary ident u w v i = do
         }
   pure out
 
+-- not an internal cell but usefull primitives
+pullup : .⦃ ℕ.NonZero w ⦄ → ⊤ ⇒ w
+pullup {w} _ =
+  pure (`wire (Signal.const (unsigned (Word.toℕ (Word.last w)))))
+  where open Constant.t
+
+pulldown : ⊤ ⇒ w
+pulldown {ℕ.zero}  _ = pure `⊤
+pulldown {ℕ.suc _} _ = pure (`wire (Signal.const 0))
+
 -- yosys unary cells:
 -- https://yosyshq.readthedocs.io/projects/yosys/en/stable/cell/word_unary.html#unary-operators
 not : w ⇒ w
@@ -123,7 +133,7 @@ not-meaning = Word.opposite
 neg : w ⇒ w
 neg {w} = updateInternalParameter a-signed 1 $ unary "$neg" w w
 
-neg-meaning : ⦃ _ : ℕ.NonZero w ⦄ → Words.𝒬 .Hom w w
+neg-meaning : .⦃ _ : ℕ.NonZero w ⦄ → Words.𝒬 .Hom w w
 neg-meaning {w} = Word.truncate 1 ⊙ (Word._+ Word.one) ⊙ Word.opposite
 
 reduce_and : w ⇒ 1

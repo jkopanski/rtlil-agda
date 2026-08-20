@@ -1,6 +1,7 @@
 {-# OPTIONS --guardedness #-}
 module Main where
 
+open import Cheshire.Core using (Quiver)
 open import Agda.Builtin.FromString
 open import Overture
 open import RTLIL.Syntax
@@ -25,21 +26,29 @@ module Word where
 import Text.PrettyPrint.Annotated as Doc renaming (Doc to t)
 
 import Cheshire.Instance.RTLIL as Rtl
-import RTLIL.Cells as Cells
+import Cheshire.Instance.Combinational as Combinational
 
+open Quiver using (Hom)
 open IO using (_>>_)
 open Function using (_∘_)
 open List using (_∷_; []; [_])
+open Combinational using (module Syntax)
+
+module R = Combinational.Realization
+module M = Combinational.Meaning
 
 instance _ = PrettyWord
 
 pretty : ∀ {A : Set} → ⦃ _ : Doc.Pretty 𝟙*.t A ⦄ → A → String.t
 pretty = Doc.render ∘ Doc.pPrint
 
+device : ∀ {w} → Syntax.𝒬 .Hom w w
+device = Syntax.not
+
 main : IO.Main
 main =
   let w = 4
-      dut = Rtl.design {w} {w} "dut" Cells.not
+      dut = Rtl.design "dut" (R.₁ $ device {w})
   in IO.run $ do
     IO.writeFile "dut.il" $ pretty dut
     -- TODO: should this be in the pretty print somewhere?
@@ -48,7 +57,7 @@ main =
     let words = all w
         tt = Function.flip List.map words $ λ where
             i →   pretty i
-                ∷ (pretty $ Cells.not-meaning {w} i)
+                ∷ (pretty $ M.₁ device i)
                 ∷ []
         header = "\\INPUT" ∷ "\\OUTPUT" ∷ []
         table = header ∷ tt

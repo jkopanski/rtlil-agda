@@ -52,7 +52,7 @@ toℕ<⊤ {w} (⟦ value ⟧< v<⊤) = Rel₀.recompute (value <? ⊤ w) v<⊤
 zero : (w : ℕ.t) → Word w
 zero w = word< (>-nonZero⁻¹ (⊤ w))
 
-one : ∀ {w} → ⦃ _ : ℕ.NonZero w ⦄ → Word w
+one : ∀ {w} → .⦃ _ : ℕ.NonZero w ⦄ → Word w
 one {w} = word< (nonTrivial⇒n>1 (⊤ w))
 
 last : (w : ℕ.t) → Word w
