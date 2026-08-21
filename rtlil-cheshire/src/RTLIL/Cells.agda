@@ -147,6 +147,13 @@ reduce_or {w} = unary "$reduce_or" w 1
 
 reduce_or-meaning : Words.𝒬 .Hom w 1
 reduce_or-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
+
+reduce_xor : w ⇒ 1
+reduce_xor {w} = unary "$reduce_xor" w 1
+
+reduce_xnor : w ⇒ 1
+reduce_xnor {w} = unary "$reduce_xnor" w 1
+
 reduce_bool : w ⇒ 1
 reduce_bool {w} = updateInternalParameter a-signed 1 $ unary "$reduce_bool" w 1
 
@@ -164,11 +171,89 @@ logic_not-meaning = not-meaning ⊙ reduce_bool-meaning
 and : w × w ⇒ w
 and {w} = binary "$and" w w w
 
+or : w × w ⇒ w
+or {w} = binary "$or" w w w
+
+xor : w × w ⇒ w
+xor {w} = binary "$xor" w w w
+
+xnor : w × w ⇒ w
+xnor {w} = binary "$xnor" w w w
+
+shl : w × w ⇒ w
+shl {w} = binary "$shl" w w w
+
+shr : w × w ⇒ w
+shr{w} = binary "$shr" w w w
+
+sshl : w × w ⇒ w
+sshl {w} = binary "$sshl" w w w
+
+sshr : w × w ⇒ w
+sshr {w} = binary "$sshr" w w w
+
+shift : w × w ⇒ w
+shift {w} = binary "$shift" w w w
+
+shiftx : w × w ⇒ w
+shiftx {w} = binary "$shiftx" w w w
+
+logic_and : w × w ⇒ 1
+logic_and {w} = binary "$logic_and" w w 1
+
+logic_or : w × w ⇒ 1
+logic_or {w} = binary "$logic_or" w w 1
+
+eqx : w × w ⇒ 1
+eqx {w} = binary "$eqx" w w 1
+
+nex : w × w ⇒ 1
+nex {w} = binary "$nex" w w 1
+
+lt : w × w ⇒ 1
+lt {w} = binary "$lt" w w 1
+
+le : w × w ⇒ 1
+le {w} = binary "$le" w w 1
+
+eq : w × w ⇒ 1
+eq {w} = binary "$eq" w w 1
+
+ne : w × w ⇒ 1
+ne {w} = binary "$ne" w w 1
+
+ge : w × w ⇒ 1
+ge {w} = binary "$ge" w w 1
+
+gt : w × w ⇒ 1
+gt {w} = binary "$gt" w w 1
+
+pow : w × w ⇒ ℕ.suc w
+pow {w} = binary "$pow" w w (ℕ.suc w)
+
 add : w × w ⇒ ℕ.suc w
 add {w} = binary "$add" w w (ℕ.suc w)
 
 add-meaning : Words.𝒬 .Hom (w × w) (ℕ.suc w)
 add-meaning {w} = Prod.uncurry Word._+_ ⊙ Word.remQuot w
+
+sub : w × w ⇒ ℕ.suc w
+sub {w} = binary "$sub" w w (ℕ.suc w)
+
+mul : w × w ⇒ ℕ.suc w
+mul {w} = binary "$mul" w w (ℕ.suc w)
+
+div : w × w ⇒ ℕ.suc w
+div {w} = binary "$div" w w (ℕ.suc w)
+
+mod : w × w ⇒ ℕ.suc w
+mod {w} = binary "$mod" w w (ℕ.suc w)
+
+divfloor : w × w ⇒ ℕ.suc w
+divfloor {w} = binary "$divfloor" w w (ℕ.suc w)
+
+modfloor : w × w ⇒ ℕ.suc w
+modfloor {w} = binary "$modfloor" w w (ℕ.suc w)
 
 contrived : (w × w) × (w × w) ⇒ ℕ.2+ w
 contrived = add ∘ (add ⊗₁ add)
