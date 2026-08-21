@@ -8,4 +8,4 @@ import Cheshire.Instance.Combinational as Combinational
 open Combinational using (module Syntax)
 
 main : IO.Main
-main = Test.Harness.combinational 8 (Syntax.add {4})
+main = Test.Harness.combinational 4 Syntax.zero?
