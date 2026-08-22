@@ -7,17 +7,19 @@ module RTLIL.Word.Properties where
 
 open import Overture
 open import RTLIL.Word.Base
+open import Data.Product.Algebra using (×-cong)
 open import Function.Construct.Composition using (_↔-∘_)
+open import Function.Construct.Identity using (↔-id)
+open import Function.Construct.Symmetry using (↔-sym)
 open import Function.Consequences.Propositional
   using (inverseᵇ⇒bijective; strictlyInverseˡ⇒inverseˡ; strictlyInverseʳ⇒inverseʳ)
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
 import RTLIL.Word.Width as Width
 
-
 open ℕ hiding (zero; t; _+_; _≟_)
 open × using (_×_)
-open Func using (_↔_; _⤖_)
+open Func using (_↔_; _⤖_; mk⤖; mk↔ₛ′)
 open Function using (_∘_)
 open Width
 open Rel₀ using (no; yes)
@@ -43,29 +45,6 @@ zero? {w} = _≟ zero w
 
 last? : ∀ {w} → Rel₁.Decidable (_≡ last w)
 last? {w} = _≟ last w
-
-------------------------------------------------------------------------
--- Bundles
-
-toFin∘fromFin≐id : ∀ {w : ℕ.t} → toFin {w} ∘ fromFin ≗ Function.id
-toFin∘fromFin≐id {w} i = Fin.fromℕ<-toℕ i (Fin.toℕ<n i)
-
-fromFin∘toFin≐id : ∀ {w : ℕ.t} → fromFin ∘ toFin {w} ≗ Function.id
-fromFin∘toFin≐id (⟦ value ⟧< value<⊤) = toℕ-injective (Fin.toℕ-fromℕ< (⊤⇒2ʷ ≤-isPreorder value<⊤))
-
-Word⤖Fin : ∀ {w} → Word w ⤖ Fin.t (2 ^ w)
-Word⤖Fin {w} = Func.mk⤖ $ inverseᵇ⇒bijective
-  $ strictlyInverseˡ⇒inverseˡ {f⁻¹ = fromFin} toFin (toFin∘fromFin≐id {w})
-  , strictlyInverseʳ⇒inverseʳ {f⁻¹ = fromFin} toFin fromFin∘toFin≐id
-
-Word↔Fin : ∀ {w} → Word w ↔ Fin.t (2 ^ w)
-Word↔Fin {w} = Func.mk↔ₛ′ toFin fromFin (toFin∘fromFin≐id {w}) fromFin∘toFin≐id
-
-0↔⊤ : ∀ {ℓ} → Word 0 ↔ 𝟙.t {ℓ}
-0↔⊤ = Fin.1↔⊤ ↔-∘ Word↔Fin
-
-1↔Bool : Word 1 ↔ 𝟚.t
-1↔Bool = Fin.2↔Bool ↔-∘ Word↔Fin
 
 ------------------------------------------------------------------------
 -- misc properties
@@ -346,7 +325,53 @@ combine-remQuot {w} v (⟦ x ⟧< _) = toℕ-injective $ begin-equality
 ------------------------------------------------------------------------
 -- Bundles
 
+toFin∘fromFin≐id : ∀ {w : ℕ.t} → toFin {w} ∘ fromFin ≗ Function.id
+toFin∘fromFin≐id {w} i = Fin.fromℕ<-toℕ i (Fin.toℕ<n i)
+
+fromFin∘toFin≐id : ∀ {w : ℕ.t} → fromFin ∘ toFin {w} ≗ Function.id
+fromFin∘toFin≐id (⟦ value ⟧< value<⊤) = toℕ-injective (Fin.toℕ-fromℕ< (⊤⇒2ʷ ≤-isPreorder value<⊤))
+
+Word⤖Fin : ∀ {w} → Word w ⤖ Fin.t (2 ^ w)
+Word⤖Fin {w} = mk⤖ $ inverseᵇ⇒bijective
+  $ strictlyInverseˡ⇒inverseˡ {f⁻¹ = fromFin} toFin (toFin∘fromFin≐id {w})
+  , strictlyInverseʳ⇒inverseʳ {f⁻¹ = fromFin} toFin fromFin∘toFin≐id
+
+Word↔Fin : ∀ {w} → Word w ↔ Fin.t (2 ^ w)
+Word↔Fin {w} = mk↔ₛ′ toFin fromFin (toFin∘fromFin≐id {w}) fromFin∘toFin≐id
+
+0↔⊤ : ∀ {ℓ} → Word 0 ↔ 𝟙.t {ℓ}
+0↔⊤ = Fin.1↔⊤ ↔-∘ Word↔Fin
+
+1↔Bool : Word 1 ↔ 𝟚.t
+1↔Bool = Fin.2↔Bool ↔-∘ Word↔Fin
+
+tag : ∀ {w} → 𝟚.t → Word w → Word w ⊎ Word w
+tag 𝟚.true  = inj₂
+tag 𝟚.false = inj₁
+
+untag : ∀ {w} → Word w ⊎ Word w → 𝟚.t × Word w
+untag = ⊎.[ 𝟚.false ,_ , 𝟚.true ,_ ]
+
+tagged↔untagged : ∀ {w} → (Word w ⊎ Word w) ↔ (𝟚.t × Word w)
+tagged↔untagged = mk↔ₛ′
+  untag
+  (×.uncurry′ tag)
+  (λ where (𝟚.false , _) → refl
+           (𝟚.true  , _) → refl)
+  λ where (inj₁ _) → refl
+          (inj₂ _) → refl
+
+Word↔tagged : ∀ {w} → Word (suc w) ↔ (Word w ⊎ Word w)
+Word↔tagged = mk↔ₛ′ split join-1 split-join-1 join-1-split
+
+Word↔Vecᵣ : ∀ {w} → Word w ↔ Vec.Rec.t 𝟚.t w
+Word↔Vecᵣ {ℕ.zero} = 0↔⊤
+Word↔Vecᵣ {suc 0}  = 1↔Bool
+Word↔Vecᵣ {2+ _} =
+  ×-cong (↔-id 𝟚.t) Word↔Vecᵣ ↔-∘
+  (tagged↔untagged ↔-∘ Word↔tagged)
+
 +↔× : ∀ {w v} → Word (w ℕ.+ v) ↔ (Word w × Word v)
-+↔× {w} {v} = Function.mk↔ₛ′ (remQuot {w} v) (×.uncurry combine)
++↔× {w} {v} = mk↔ₛ′ (remQuot {w} v) (×.uncurry combine)
   (×.uncurry remQuot-combine)
   (combine-remQuot {w} v)
