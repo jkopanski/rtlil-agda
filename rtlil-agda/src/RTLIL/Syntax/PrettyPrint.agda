@@ -35,7 +35,7 @@ PrettyWord : ∀ {w} → Pretty ann (Word w)
 PrettyWord {ann} {w = w} .pPrintPrec _ _ word =
   let bits = Bits.to word
       width = Doc.nat w <> "'"
-  in Vec.foldr (λ _ → Doc.t ann) (λ bit acc → acc <> pBit bit) width bits
+  in width <> Vec.Rec.foldr "0" pBit (λ _ bit → pBit bit <>_) _ bits
   where
       pBit : 𝟚.t → Doc.t ann
       pBit 𝟚.false = Doc.nat 0
