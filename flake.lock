@@ -53,11 +53,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1786272252,
-        "narHash": "sha256-kCXGScQ6eQANy+nNpIhVZRxFQo3NaB4SVrQMS5I/+GI=",
+        "lastModified": 1787406383,
+        "narHash": "sha256-cwY0v7/jzZnoj/2eZQSs6ZXlmgMJavQdoANiy7BCC/o=",
         "owner": "~madnat",
         "repo": "overture",
-        "rev": "d93e5cff68c827e23818036510cf89ec9720c23c",
+        "rev": "17b0d0741dc24d91294f222e8e350555cec279cf",
         "type": "sourcehut"
       },
       "original": {
