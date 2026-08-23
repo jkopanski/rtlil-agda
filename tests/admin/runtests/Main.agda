@@ -1,5 +1,5 @@
 {-# OPTIONS --guardedness #-}
-module runtests where
+module Main where
 
 open import Overture
 open import IO.Base

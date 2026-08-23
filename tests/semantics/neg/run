@@ -1,5 +1,5 @@
-$1 --compile-dir=../../_build -c Main.agda > log
-./../../_build/Main > output
+. ../../_config/config.sh
+goldenTest "$1" "neg"
 
 yosys -Q -T \
   -p "eval -table INPUT" \
@@ -7,6 +7,3 @@ yosys -Q -T \
   | tail -n +11 \
   | sed 's/^[[:space:]]//g' | grep -v '^-' | sed 's/ |//g' | tr -s '\n' \
   > expected
-
-rm ../../_build/Main
-rm ../../_build/MAlonzo/Code/Main*

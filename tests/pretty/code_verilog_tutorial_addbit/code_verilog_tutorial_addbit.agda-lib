@@ -1,3 +1,0 @@
-name: code_verilog_tutorial_escape_id
-depend: standard-library overture prettyprint
-include: ../../../rtlil-agda/src .

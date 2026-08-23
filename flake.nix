@@ -25,15 +25,22 @@
             self.overlays.default
           ];
         };
+        # testrunner defaults to 912 so the get right deps I just set
+        # the ghc version
+        ghc = pkgs.haskell.packages.ghc912.ghcWithPackages (p: with p; [
+          cabal-install
+          clock ieee754
+          # testrunner deps
+          bytestring directory filemanip filepath process random_1_3_1 text
+        ]);
         agdaWithLibraries = pkgs.agda.withPackages {
+          inherit ghc;
           pkgs = (p: [
             p.standard-library
             p.prettyprint
             inputs.overture.outputs.packages.${system}.default
             inputs.cheshire.outputs.packages.${system}.default
           ]);
-
-          ghc = pkgs.haskellPackages.ghcWithPackages (p: with p; [ clock ieee754 ]);
         };
 
       in {
@@ -51,6 +58,7 @@
         devShells.default = pkgs.mkShell {
           buildInputs = [
             agdaWithLibraries
+            ghc
             pkgs.haskellPackages.fix-whitespace
             pkgs.yosys
             pkgs.xdot

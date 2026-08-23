@@ -1,6 +1,10 @@
-_build/
+_build
+dist-newstyle
+logs/
+runtests
 failures
-log
 output
 dut.il
+*.agda-lib
+*.cabal
 
