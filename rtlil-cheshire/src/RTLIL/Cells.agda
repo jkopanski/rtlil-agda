@@ -6,6 +6,7 @@ open import Cheshire.Core
 -- stdlib
 open import Agda.Builtin.FromNat
 open import Agda.Builtin.FromString
+import Algebra.Lattice as Algebra renaming (BooleanAlgebra to Boolean)
 import Data.Product as Prod
 import Effect.Monad.State.Instances
 import Effect.Monad.Identity.Instances
@@ -18,6 +19,7 @@ import Cheshire.Object.Signatures as Object
 
 -- rtlil-agda
 import RTLIL.Word as Word renaming (Word to t)
+import RTLIL.Word.Bits as Bits renaming (Bits to t)
 import RTLIL.Word.Properties as Wordₚ
 open import RTLIL.Syntax
 
@@ -57,6 +59,8 @@ instance
 private
   variable
     w v : ℕ.t
+  module ↔Bool = Func.Inverse Wordₚ.1↔Bool
+  module ↔Prod {w} v = Func.Inverse (Wordₚ.+↔× {w} {v})
 
 -- WARNING:
 -- YOU HAVE TO SPECIFY ALL THE INTERNAL CELLS PARAMETERS
@@ -140,13 +144,13 @@ reduce_and : w ⇒ 1
 reduce_and {w} = unary "$reduce_and" w 1
 
 reduce_and-meaning : Words.𝒬 .Hom w 1
-reduce_and-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isYes ⊙ Wordₚ.last?
+reduce_and-meaning = ↔Bool.from ⊙ Rel₀.isYes ⊙ Wordₚ.last?
 
 reduce_or : w ⇒ 1
 reduce_or {w} = unary "$reduce_or" w 1
 
 reduce_or-meaning : Words.𝒬 .Hom w 1
-reduce_or-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
+reduce_or-meaning = ↔Bool.from ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
 
 reduce_xor : w ⇒ 1
 reduce_xor {w} = unary "$reduce_xor" w 1
@@ -158,7 +162,7 @@ reduce_bool : w ⇒ 1
 reduce_bool {w} = updateInternalParameter a-signed 1 $ unary "$reduce_bool" w 1
 
 reduce_bool-meaning : Words.𝒬 .Hom w 1
-reduce_bool-meaning = Func.Inverse.from Wordₚ.1↔Bool ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
+reduce_bool-meaning = ↔Bool.from ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
 
 logic_not : w ⇒ 1
 logic_not {w} = unary "$logic_not" w 1
@@ -171,14 +175,29 @@ logic_not-meaning = not-meaning ⊙ reduce_bool-meaning
 and : w × w ⇒ w
 and {w} = binary "$and" w w w
 
+and-meaning : Words.𝒬 .Hom (w × w) w
+and-meaning {w} = Bits.from ⊙ (Prod.uncurry (_∧_ Function.on Bits.to)) ⊙ ↔Prod.to w
+  where open Algebra.Boolean (Bits.t w)
+
 or : w × w ⇒ w
 or {w} = binary "$or" w w w
+
+or-meaning : Words.𝒬 .Hom (w × w) w
+or-meaning {w} = Bits.from ⊙ (Prod.uncurry (_∨_ Function.on Bits.to)) ⊙ ↔Prod.to w
+  where open Algebra.Boolean (Bits.t w)
 
 xor : w × w ⇒ w
 xor {w} = binary "$xor" w w w
 
+xor-meaning : Words.𝒬 .Hom (w × w) w
+xor-meaning {w} = Bits.from ⊙ (Prod.uncurry (Bits._⊕_ w Function.on Bits.to)) ⊙ ↔Prod.to w
+  where open Algebra.Boolean (Bits.t w)
+
 xnor : w × w ⇒ w
 xnor {w} = binary "$xnor" w w w
+
+xnor-meaning : Words.𝒬 .Hom (w × w) w
+xnor-meaning {w} = not-meaning ⊙ xor-meaning
 
 shl : w × w ⇒ w
 shl {w} = binary "$shl" w w w

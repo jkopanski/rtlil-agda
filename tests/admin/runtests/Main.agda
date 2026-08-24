@@ -22,6 +22,10 @@ semanticTests = mkTestPool "Operational semantics"
   ∷ "last"
   ∷ "zero"
   ∷ "nzero"
+  ∷ "and"
+  ∷ "or"
+  ∷ "xor"
+  ∷ "xnor"
   ∷ "add"
   ∷ []
 

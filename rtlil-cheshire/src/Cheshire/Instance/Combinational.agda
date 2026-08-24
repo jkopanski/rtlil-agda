@@ -29,8 +29,10 @@ module Syntax where
     neg : .⦃ ℕ.NonZero w ⦄ → w ↠ w
     last?        : w ↠ 1
     zero? ¬zero? : w ↠ 1
+    -- bitwise
+    and or xor xnor : w × w ↠ w
+    -- arithmetic
     add : w × w ↠ ℕ.suc w
-    -- and or xor xnor : {!!} ↠ {!!}
 
   𝒬 : Quiver 𝕃.0ℓ 𝕃.0ℓ
   𝒬 = mk⇒ _↠_
@@ -55,6 +57,10 @@ module Meaning where
   F last?  = Cells.reduce_and-meaning
   F zero?  = Cells.logic_not-meaning
   F ¬zero? = Cells.reduce_or-meaning
+  F and  = Cells.and-meaning
+  F or   = Cells.or-meaning
+  F xor  = Cells.xor-meaning
+  F xnor = Cells.xnor-meaning
   F add = Cells.add-meaning
 
   H : Morphism.t Syntax.𝒬 Words.𝒬
@@ -81,6 +87,10 @@ module Realization where
   F last?  = Cells.reduce_and
   F zero?  = Cells.logic_not
   F ¬zero? = Cells.reduce_or
+  F and  = Cells.and
+  F or   = Cells.or
+  F xor  = Cells.xor
+  F xnor = Cells.xnor
   F add = Cells.add
 
   H : Morphism.t Syntax.𝒬 RTLIL.𝒬

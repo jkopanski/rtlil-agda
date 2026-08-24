@@ -1,0 +1,9 @@
+. ../../_config/config.sh
+goldenTest "$1" "xor"
+
+yosys -Q -T \
+  -p "eval -table INPUT" \
+  --frontend rtlil dut.il \
+  | tail -n +11 \
+  | sed 's/^[[:space:]]//g' | grep -v '^-' | sed 's/ |//g' | tr -s '\n' \
+  > expected
