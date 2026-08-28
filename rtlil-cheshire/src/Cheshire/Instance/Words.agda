@@ -1,114 +1,100 @@
 {-# OPTIONS --safe --cubical-compatible #-}
 module Cheshire.Instance.Words where
 
+open import Overture
 open import Cheshire.Core
-
--- stdlib
-import Data.Nat as ℕ renaming (ℕ to t)
-import Data.Nat.Properties as ℕₚ
-import Data.Product as Product
-import Function.Properties.Inverse as Inverseₚ
 
 -- cheshire
 import Cheshire.Category as Category renaming (Category to t; IsCategory to Structure)
 import Cheshire.Cartesian as Cartesian renaming (Cartesian to t; IsCartesian to Structure)
 import Cheshire.Object.Signatures as Object
+import Cheshire.Homomorphism as Homomorphism
+import Cheshire.Construction.Sub.Object as Sub
+import Cheshire.Instance.Sets 𝕃.0ℓ as Sets renaming (Sets to t)
+import Cheshire.Morphism as Morphisms
 
 -- rtlil-agda
 import RTLIL.Word as Word renaming (Word to t)
 import RTLIL.Word.Properties as Wordsₚ
 
-open Product using (proj₁; proj₂; uncurry)
-open Function using (_∘₂_) renaming (_∘_ to _⊙_)
-open Inverseₚ using (↔⇒↣)
-open Rel₂ using (_≗_)
+open Object
+open Homomorphism using (Morphism)
+open Morphisms.Bundles Sets.category using (_≅_)
+
+U : ℕ.t → Set 𝕃.0ℓ
+U = Word.t
 
 𝒬 : Quiver 𝕃.0ℓ 𝕃.0ℓ
-𝒬 = mk⇒ {Ob = ℕ.t} λ u v → Word.t u → Word.t v
-open Object (𝒬 .Ob)
+𝒬 = Sub.𝒬 Sets.𝒬 U
 
 instance
-  eq : Equivalence 𝒬 𝕃.0ℓ
-  eq = record
-    { _≈_ = Rel₂._≗_
-    ; equiv = record
-      { refl = λ _ → Rel₂.refl
-      ; trans = λ eq₁ eq₂ x → Rel₂.trans (eq₁ x) (eq₂ x)
-      ; sym = λ eq x → Rel₂.sym (eq x)
-      }
+  terminal : Terminal (𝒬 .Ob)
+  terminal = record { ⊤ = 0 }
+
+  products : BinaryProducts (𝒬 .Ob)
+  products = record { _×_ = ℕ._+_ }
+
+H : Morphism 𝒬 Sets.𝒬
+H = Sub.H Sets.𝒬 U
+
+tH : Homomorphism.Terminal H
+tH .Homomorphism.Terminal.⊤-iso = record
+  { from = const (Word.zero 0)
+  ; to = λ _ → 𝟙.tt
+  }
+
+pH : Homomorphism.BinaryProducts H
+pH .Homomorphism.BinaryProducts.×-iso w u = record
+  { from = ×.uncurry Word.combine
+  ; to = Word.remQuot u
+  }
+
+⊤-iso : ⊤ ≅ U ⊤
+⊤-iso = record
+  { Homomorphism.Terminal.⊤-iso tH
+  ; isIso = record
+    { isoˡ = λ _ → Rel₂.refl
+    ; isoʳ = 0↔⊤.strictlyInverseʳ
     }
+  } where module 0↔⊤ = Function.Inverse {b = 𝕃.0ℓ} Wordsₚ.0↔⊤
 
-  -- terminal : Terminal
-  -- terminal = record { ⊤ = 0 }
 
-  -- products : BinaryProducts
-  -- products = record { _×_ = ℕ._+_ }
+×-iso : ∀ A B → U A × U B ≅ U (A × B)
+×-iso w u = record
+  { Homomorphism.BinaryProducts.×-iso pH
+  ; isIso = record
+    { isoˡ = +↔×.strictlyInverseˡ
+    ; isoʳ = +↔×.strictlyInverseʳ
+    }
+  } where module +↔× = Function.Inverse (Wordsₚ.+↔× {w} {u})
 
-  -- coproducts : BinaryCoproducts
-  -- coproducts = record { _⊎_ = ℕ.suc ∘₂ ℕ._⊔_ }
+Words : Cartesian.t 𝕃.zero 𝕃.0ℓ 𝕃.0ℓ
+Words = Sub.Bundles.cartesian Sets.t U ⊤-iso ×-iso
 
 module Signatures where
 
   category : Category.Signature 𝒬
-  category = record
-    { id = Function.id
-    ; _∘_ = Function._∘′_
-    }
+  category = Cartesian.t.category Words
 
   cartesian : Cartesian.Signature category
-  cartesian = record
-    { terminal = record { ⊤ = 0 }
-    ; ! = Function.const (Word.zero 0)
-    ; products = record { _×_ = ℕ._+_ }
-    ; π₁ = λ {M} {N} → proj₁ ⊙ Word.remQuot N
-    ; π₂ = λ {M} {N} → proj₂ ⊙ Word.remQuot N
-    ; ⟨_,_⟩ = λ f g → uncurry Word.combine ⊙ Product.< f , g >
-    }
+  cartesian = Cartesian.t.cartesian Words
 
 module Structures where
-  category : Category.Structure eq Signatures.category
-  category = record
-    { assoc = λ _ → Rel₂.refl
-    ; identityˡ = λ _ → Rel₂.refl
-    ; identityʳ = λ _ → Rel₂.refl
-    ; ∘-resp-≈ = λ {_ _ _ f h g i} f≗h g≗i x → Rel₂.trans (f≗h (g x)) (Rel₂.cong h (g≗i x))
-    }
 
-  cartesian : Cartesian.Structure category Signatures.cartesian
-  cartesian = record
-    { !-unique = λ _ _ → injective Rel₂.refl
-    ; project₁ = λ { {h = h} {i} x → Rel₂.cong proj₁ (Wordsₚ.remQuot-combine (h x) (i x)) }
-    ; project₂ = λ { {h = h} {i} x → Rel₂.cong proj₂ (Wordsₚ.remQuot-combine (h x) (i x)) }
-    ; unique = uniq
-    } where
-      open Rel₂.≡-Reasoning -- ℕₚ.≤-Reasoning
-      open Function.Inverse (Wordsₚ.0↔⊤ {𝕃.0ℓ})
-      open Function.Injection (↔⇒↣ (Wordsₚ.0↔⊤ {𝕃.0ℓ}))
-      uniq :
-        ∀ {o m n} {h : Word.t o → Word.t (m ℕ.+ n)}
-        {i : Word.t o → Word.t m} {j : Word.t o → Word.t n} →
-        proj₁ ⊙ Word.remQuot n ⊙ h ≗ i →
-        proj₂ ⊙ Word.remQuot n ⊙ h ≗ j →
-        uncurry Word.combine ⊙ Product.< i , j > ≗ h
-      uniq {_} {_} {n} {h} {i} {j} h≗i h≗j w =
-        begin
-          Word.combine (i w) (j w)
-        ≡⟨ Rel₂.cong₂ Word.combine (h≗i w) (h≗j w) ⟨
-          Word.combine (proj₁ (Word.remQuot n (h w))) (proj₂ (Word.remQuot n (h w)))
-        ≡⟨ Wordsₚ.combine-remQuot n (h w) ⟩
-          h w
-        ∎
+  instance
+    eq : Equivalence 𝒬 𝕃.0ℓ
+    eq = Cartesian.t.eq Words
 
-category : Category.t 𝕃.0ℓ 𝕃.0ℓ 𝕃.0ℓ
-category = record
-  { 𝒬 = 𝒬
-  ; category = Signatures.category
-  ; isCategory = Structures.category
-  }
+  is-category : Category.Structure eq Signatures.category
+  is-category = Cartesian.t.isCategory Words
 
-cartesian : Cartesian.t 𝕃.0ℓ 𝕃.0ℓ 𝕃.0ℓ
-cartesian = record
-  { Category.t category
-  ; cartesian = Signatures.cartesian
-  ; isCartesian = Structures.cartesian
-  }
+  is-cartesian : Cartesian.Structure is-category Signatures.cartesian
+  is-cartesian = Cartesian.t.isCartesian Words
+
+module Bundles where
+
+  category : Category.t 𝕃.0ℓ 𝕃.0ℓ 𝕃.0ℓ
+  category = record { Cartesian.t Words }
+
+  cartesian : Cartesian.t 𝕃.0ℓ 𝕃.0ℓ 𝕃.0ℓ
+  cartesian = Words

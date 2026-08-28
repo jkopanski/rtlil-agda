@@ -70,7 +70,7 @@ module Meaning where
 
 instance
   eq : Equivalence Syntax.𝒬 𝕃.0ℓ
-  eq = Morphism.equivalence Words.eq Meaning.H
+  eq = Morphism.equivalence Words.Structures.eq Meaning.H
 
 module Realization where
 

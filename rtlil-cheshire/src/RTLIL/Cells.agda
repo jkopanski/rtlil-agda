@@ -25,7 +25,7 @@ open import RTLIL.Syntax
 
 -- rtlil-cheshire
 import Cheshire.Instance.RTLIL as RTLIL
-import Cheshire.Instance.Words as Words
+import Cheshire.Instance.Words as Words renaming (Words to t)
 
 open List using ([]; _∷_)
 open Object
@@ -281,4 +281,4 @@ contrived-meaning : Words.𝒬 .Hom ((w × w) × (w × w)) (ℕ.2+ w)
 contrived-meaning = wadd W.∘ (wadd W.⁂ wadd)
   where wadd : ∀ {u} → Words.𝒬 .Hom (u ℕ.+ u) (ℕ.suc u)
         wadd {u} = Prod.uncurry Word._+_ ⊙ Word.remQuot u
-        module W = Cartesian.t Words.cartesian
+        module W = Cartesian.t Words.t
