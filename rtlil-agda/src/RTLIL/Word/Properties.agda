@@ -322,6 +322,7 @@ combine-remQuot {w} v (⟦ x ⟧< _) = toℕ-injective $ begin-equality
   x % ⊤ v ℕ.+ x / ⊤ v ℕ.* ⊤ v ≡⟨ m≡m%n+[m/n]*n x (⊤ v) ⟨
   x                           ∎
 
+
 ------------------------------------------------------------------------
 -- Bundles
 
@@ -375,3 +376,23 @@ Word↔Vecᵣ {2+ _} =
 +↔× {w} {v} = mk↔ₛ′ (remQuot {w} v) (×.uncurry combine)
   (×.uncurry remQuot-combine)
   (combine-remQuot {w} v)
+
+assocʳ-combine :
+  ∀ {u w v} → (x : Word u) (y : Word w) (z : Word v) →
+  assocʳ u w v (combine (combine x y) z) ≡ combine x (combine y z)
+assocʳ-combine {u} {w} {v} (⟦ x ⟧< _) (⟦ y ⟧< _) (⟦ z ⟧< _) = toℕ-injective $ begin-equality
+  (x * ⊤ w + y) * ⊤ v + z           ≡⟨ Rel₂.cong (_+ z) (*-distribʳ-+ (⊤ v) (x * ⊤ w) y) ⟩
+  (⌞ x * ⊤ w * ⊤ v ⌟ + y * ⊤ v) + z ≡⟨ cong! (*-assoc x (⊤ w) (⊤ v)) ⟩
+  (x * ⌞ ⊤ w * ⊤ v ⌟ + y * ⊤ v) + z ≡⟨ cong! (⊤[w+v]≡⊤[w]*⊤[v] w v) ⟨
+  (x * ⊤ (w + v) + y * ⊤ v) + z     ≡⟨ +-assoc (x * ⊤ (w + v)) (y * ⊤ v) z ⟩
+  x * ⊤ (w + v) + (y * ⊤ v + z)     ∎ where open ℕ using (_+_)
+
+assocˡ-combine :
+  ∀ {u w v} → (x : Word u) (y : Word w) (z : Word v) →
+  assocˡ u w v (combine x (combine y z)) ≡ combine (combine x y) z
+assocˡ-combine {u} {w} {v} (⟦ x ⟧< _) (⟦ y ⟧< _) (⟦ z ⟧< _) = toℕ-injective $ begin-equality
+  x * ⊤ (w + v) + (y * ⊤ v + z)   ≡⟨ +-assoc (x * ⊤ (w + v)) (y * ⊤ v) z ⟨
+  x * ⊤ (w + v) + y * ⊤ v + z     ≡⟨ cong! (⊤[w+v]≡⊤[w]*⊤[v] w v) ⟩
+  x * ⌞ ⊤ w * ⊤ v ⌟ + y * ⊤ v + z ≡⟨ cong! (*-assoc x (⊤ w) (⊤ v)) ⟨
+  ⌞ x * ⊤ w * ⊤ v ⌟ + y * ⊤ v + z ≡⟨ cong! (*-distribʳ-+ (⊤ v) (x * ⊤ w) y) ⟨
+  (x * ⊤ w + y) * ⊤ v + z         ∎ where open ℕ using (_+_)

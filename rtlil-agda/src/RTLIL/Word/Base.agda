@@ -127,3 +127,9 @@ remQuot {w} v x .proj₁ = ⟦ toℕ x ℕ./ ⊤ v ⟧<
   m<n*o⇒m/o<n (<-≤-trans (toℕ<⊤ x) (≤-reflexive (⊤[w+v]≡⊤[w]*⊤[v] w v)))
 remQuot {w} v x .proj₂ = ⟦ toℕ x ℕ.% ⊤ v ⟧<
   m%n<n (toℕ x) (⊤ v)
+
+assocʳ : ∀ u w v → Word ((u ℕ.+ w) ℕ.+ v) → Word (u ℕ.+ (w ℕ.+ v))
+assocʳ u w v = cast (+-assoc u w v)
+
+assocˡ : ∀ u w v → Word (u ℕ.+ (w ℕ.+ v)) → Word ((u ℕ.+ w) ℕ.+ v)
+assocˡ u w v = cast (sym (+-assoc u w v))
