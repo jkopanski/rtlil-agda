@@ -2,7 +2,6 @@
 module RTLIL.Word.Width where
 
 open import Overture
-open import Data.Nat.Tactic.RingSolver using (solve; solve-∀)
 open import Tactic.Cong using (cong!; ⌞_⌟)
 
 open ℕ hiding (t)
