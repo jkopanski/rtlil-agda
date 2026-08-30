@@ -190,8 +190,9 @@ xor : w × w ⇒ w
 xor {w} = binary "$xor" w w w
 
 xor-meaning : Words.𝒬 .Hom (w × w) w
-xor-meaning {w} = Bits.from ⊙ (Prod.uncurry (Bits._⊕_ w Function.on Bits.to)) ⊙ ↔Prod.to w
+xor-meaning {w} = Bits.from ⊙ (Prod.uncurry (_⊕_ Function.on Bits.to)) ⊙ ↔Prod.to w
   where open Algebra.Boolean (Bits.t w)
+        open Bits.Properties w
 
 xnor : w × w ⇒ w
 xnor {w} = binary "$xnor" w w w
