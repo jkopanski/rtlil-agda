@@ -34,34 +34,20 @@ instance
   products : BinaryProducts (𝒬 .Ob)
   products = record { _×_ = ℕ._+_ }
 
-H : Morphism 𝒬 Sets.𝒬
-H = Sub.H Sets.𝒬 U
-
-tH : Homomorphism.Terminal H
-tH .Homomorphism.Terminal.⊤-iso = record
-  { from = const (Word.zero 0)
-  ; to = λ _ → 𝟙.tt
-  }
-
-pH : Homomorphism.BinaryProducts H
-pH .Homomorphism.BinaryProducts.×-iso w u = record
-  { from = ×.uncurry Word.combine
-  ; to = Word.remQuot u
-  }
-
 ⊤-iso : ⊤ ≅ U ⊤
 ⊤-iso = record
-  { Homomorphism.Terminal.⊤-iso tH
+  { from = const (Word.zero 0)
+  ; to = λ _ → 𝟙.tt
   ; isIso = record
     { isoˡ = λ _ → Rel₂.refl
     ; isoʳ = 0↔⊤.strictlyInverseʳ
     }
   } where module 0↔⊤ = Function.Inverse {b = 𝕃.0ℓ} Wordsₚ.0↔⊤
 
-
 ×-iso : ∀ A B → U A × U B ≅ U (A × B)
 ×-iso w u = record
-  { Homomorphism.BinaryProducts.×-iso pH
+  { from = ×.uncurry Word.combine
+  ; to = Word.remQuot u
   ; isIso = record
     { isoˡ = +↔×.strictlyInverseˡ
     ; isoʳ = +↔×.strictlyInverseʳ
@@ -70,6 +56,10 @@ pH .Homomorphism.BinaryProducts.×-iso w u = record
 
 Words : Cartesian.t 𝕃.zero 𝕃.0ℓ 𝕃.0ℓ
 Words = Sub.Bundles.cartesian Sets.t U ⊤-iso ×-iso
+
+H : Homomorphism.Cartesian′ Sets.eq (Cartesian.t.cartesian Words) Sets.cartesian
+-- for some reason agda barfs at isIso when I pass ⊤-iso as an argument
+H = Sub.Structures.cartesianFunctor Sets.𝒬 U Sets.cartesian Sets.is-cartesian (record { _≅_ ⊤-iso }) ×-iso
 
 module Signatures where
 

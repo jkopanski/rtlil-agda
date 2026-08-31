@@ -40,24 +40,10 @@ instance
   products : BinaryProducts (𝒬 .Ob)
   products .BinaryProducts._×_ = ℕ._+_
 
-H : Morphism 𝒬 Sets.𝒬
-H = Sub.H Sets.𝒬 U
-
-tH : Homomorphism.Terminal H
-tH .Homomorphism.Terminal.⊤-iso = record
-  { from = λ where 𝟙.tt → 𝟙.tt
-  ; to = λ where 𝟙.tt → 𝟙.tt
-  }
-
-pH : Homomorphism.BinaryProducts H
-pH .Homomorphism.BinaryProducts.×-iso w u = record
-  { from = ×.uncurry (Vec.Rec.append w u)
-  ; to = Vec.Rec.splitAt w u
-  }
-
 ⊤-iso : ⊤ ≅ U ⊤
 ⊤-iso = record
-  { Homomorphism.Terminal.⊤-iso tH
+  { from = λ _ → 𝟙.tt
+  ; to = λ _ → 𝟙.tt
   ; isIso = record
     { isoˡ = λ _ → ≡-refl
     ; isoʳ = λ _ → ≡-refl
@@ -66,7 +52,8 @@ pH .Homomorphism.BinaryProducts.×-iso w u = record
 
 ×-iso : ∀ A B → U A × U B ≅ U (A × B)
 ×-iso w u = record
-  { Homomorphism.BinaryProducts.×-iso pH
+  { from = ×.uncurry (Vec.Rec.append w u)
+  ; to = Vec.Rec.splitAt w u
   ; isIso = record
     { isoˡ = ×.uncurry (Vec.Rec.splitAt-append-identity w u)
     ; isoʳ = Vec.Rec.append-splitAt-identity w u
@@ -76,6 +63,10 @@ pH .Homomorphism.BinaryProducts.×-iso w u = record
 -- We can project everything from this, but perhaps it is convenient to define everything?
 Bits : Cartesian.t 𝕃.0ℓ 𝕃.0ℓ 𝕃.0ℓ
 Bits = Sub.Bundles.cartesian Sets.t U ⊤-iso ×-iso
+
+H : Homomorphism.Cartesian′ Sets.eq (Cartesian.t.cartesian Bits) Sets.cartesian
+-- for some reason agda barfs at isIso when I pass ⊤-iso as an argument
+H = Sub.Structures.cartesianFunctor Sets.𝒬 U Sets.cartesian Sets.is-cartesian (record { _≅_ ⊤-iso }) ×-iso
 
 module Signatures where
 
