@@ -7,6 +7,8 @@ open import Cheshire.Core
 -- cheshire
 import Cheshire.Cartesian as Cartesian renaming (Cartesian to t; IsCartesian to Structure)
 import Cheshire.Homomorphism as Homomorphism renaming (Homomorphism to t)
+import Cheshire.Natural as Natural
+import Cheshire.Kan as Kan
 
 -- rtlil-agda
 module Word where
@@ -15,7 +17,7 @@ module Word where
   import RTLIL.Word.Bits as B
   module Bits = B
 
-import Cheshire.Instance.Sets as Sets renaming (Sets to t)
+import Cheshire.Instance.Sets 𝕃.0ℓ as Sets renaming (Sets to t)
 import Cheshire.Instance.Bits as Bits renaming (Bits to t)
 import Cheshire.Instance.Words as Words renaming (Words to t)
 
@@ -24,6 +26,7 @@ open Word↔Bits
 
 open Function using (_∘₂_)
 open Rel₂.≡-Reasoning
+open Natural.Signatures.Transformation
 
 toBits : Homomorphism.Cartesian
   Words.Structures.eq Bits.Structures.eq
@@ -132,3 +135,65 @@ fromBits = record
     ; F-resp-⟨⟩ = λ {w} {v} f g word → Word.Bits.append-homo w v (f (to word) , g (to word))
     }
   }
+
+module To   = Homomorphism.Cartesian toBits
+module From = Homomorphism.Cartesian fromBits
+
+LiftBits : Kan.Lift.Lift
+  { A = record { Cartesian.t Bits.t } } { B = record { Cartesian.t Words.t } } { C = record { Cartesian.t Sets.t } }
+  (record { Homomorphism.Cartesian′ Words.H }) record { Homomorphism.Cartesian′ Bits.H }
+LiftBits = record { signature = lift ; structure = isLift } where
+  lift = record
+    { L = From.morphism
+    ; η = record { η = Function.λ- from }
+    ; σ = λ M α → record { η = λ w → α .η w ⊙ to }
+    }
+  isLift = record
+    { σ-unique = λ {_} {α} σ′ eq → λ {w} word → begin
+        η σ′ w word             ≡⟨ ≡-cong (η σ′ w) (strictlyInverseʳ word) ⟨
+        η σ′ w (from (to word)) ≡⟨ eq (to word) ⟨
+        η α w (to word)         ∎
+    ; commutes = λ _ α → λ {w} vec → ≡-sym $ ≡-cong (η α w) (strictlyInverseˡ vec)
+    }
+
+RiftBits : Kan.Lift.Rift
+  { A = record { Cartesian.t Bits.t } } { B = record { Cartesian.t Words.t } } { C = record { Cartesian.t Sets.t } }
+  (record { Homomorphism.Cartesian′ Words.H }) (record { Homomorphism.Cartesian′ Bits.H })
+RiftBits = record { signature = rift ; structure = isRift } where
+  rift = record
+    { R = From.morphism
+    ; ε = record { η = Function.λ- to }
+    ; δ = λ M α → record { η = λ w → from ⊙ α .η w }
+    }
+  isRift = record
+    { δ-unique = λ {_} {α} δ′ eq → λ {w} word → begin
+        η δ′ w word             ≡⟨ strictlyInverseʳ (η δ′ w word) ⟨
+        from (to (η δ′ w word)) ≡⟨ ≡-cong from (eq word) ⟨
+        from (η α w word)       ∎
+    ; commutes = λ _ α → λ {w} word → ≡-sym $ strictlyInverseˡ (η α w word)
+    }
+
+LiftWords : Kan.Lift.Lift
+  { A = record { Cartesian.t Words.t } } { B = record { Cartesian.t Bits.t } } { C = record { Cartesian.t Sets.t } }
+  (record { Homomorphism.Cartesian′ Bits.H }) (record { Homomorphism.Cartesian′ Words.H })
+LiftWords = record { signature = lift ; structure = isLift } where
+  lift = record
+    { L = To.morphism
+    ; η = record { η = Function.λ- to }
+    ; σ = λ M α → record { η = λ w → α .η w ⊙ from }
+    }
+  isLift = record
+    { σ-unique = λ {_} {α} σ′ eq → λ {w} vec → begin
+        η σ′ w vec             ≡⟨ ≡-cong (η σ′ w) (strictlyInverseˡ vec) ⟨
+        η σ′ w (to (from vec)) ≡⟨ eq (from vec) ⟨
+        η α w (from vec)       ∎
+    ; commutes = λ _ α → λ {w} word → ≡-sym $ ≡-cong (η α w) (strictlyInverseʳ word)
+    }
+
+RiftWords : Kan.Lift.Signatures.Rift Bits.H.morphism Words.H.morphism
+RiftWords = record
+  { R = To.morphism
+  ; ε = record { η = Function.λ- from }
+  ; δ = λ M α → record { η = λ w → to ⊙ α .η w }
+  }
+

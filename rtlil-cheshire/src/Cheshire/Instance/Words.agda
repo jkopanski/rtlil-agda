@@ -61,6 +61,8 @@ H : Homomorphism.Cartesian′ Sets.eq (Cartesian.t.cartesian Words) Sets.cartesi
 -- for some reason agda barfs at isIso when I pass ⊤-iso as an argument
 H = Sub.Structures.cartesianFunctor Sets.𝒬 U Sets.cartesian Sets.is-cartesian (record { _≅_ ⊤-iso }) ×-iso
 
+module H = Homomorphism.Cartesian′ H
+
 module Signatures where
 
   category : Category.Signature 𝒬
