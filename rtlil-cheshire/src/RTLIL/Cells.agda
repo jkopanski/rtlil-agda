@@ -1,7 +1,7 @@
 {-# OPTIONS --safe --cubical-compatible --guardedness #-}
 module RTLIL.Cells where
 
-open import Cheshire.Core
+open import Cheshire.Core hiding (¬_)
 
 -- stdlib
 open import Agda.Builtin.FromNat
@@ -18,14 +18,11 @@ import Cheshire.Monoidal.Signature as Monoidal renaming (Monoidal to t)
 import Cheshire.Object.Signatures as Object
 
 -- rtlil-agda
-import RTLIL.Word as Word renaming (Word to t)
-import RTLIL.Word.Bits as Bits renaming (Bits to t)
-import RTLIL.Word.Properties as Wordₚ
+import RTLIL.Word as Word
 open import RTLIL.Syntax
 
 -- rtlil-cheshire
 import Cheshire.Instance.RTLIL as RTLIL
-import Cheshire.Instance.Words as Words renaming (Words to t)
 
 open List using ([]; _∷_)
 open Object
@@ -59,8 +56,8 @@ instance
 private
   variable
     w v : ℕ.t
-  module ↔Bool = Func.Inverse Wordₚ.1↔Bool
-  module ↔Prod {w} v = Func.Inverse (Wordₚ.+↔× {w} {v})
+  -- module ↔Bool = Func.Inverse Word.1↔Bool
+  -- module ↔Prod {w} v = Func.Inverse (Word.+↔× {w} {v})
 
 -- WARNING:
 -- YOU HAVE TO SPECIFY ALL THE INTERNAL CELLS PARAMETERS
@@ -131,26 +128,14 @@ pulldown {ℕ.suc _} _ = pure (`wire (Signal.const 0))
 not : w ⇒ w
 not {w} = unary "$not" w w
 
-not-meaning : Words.𝒬 .Hom w w
-not-meaning = Word.opposite
-
 neg : w ⇒ w
 neg {w} = updateInternalParameter a-signed 1 $ unary "$neg" w w
-
-neg-meaning : .⦃ _ : ℕ.NonZero w ⦄ → Words.𝒬 .Hom w w
-neg-meaning {w} = Word.truncate 1 ⊙ (Word._+ Word.one) ⊙ Word.opposite
 
 reduce_and : w ⇒ 1
 reduce_and {w} = unary "$reduce_and" w 1
 
-reduce_and-meaning : Words.𝒬 .Hom w 1
-reduce_and-meaning = ↔Bool.from ⊙ Rel₀.isYes ⊙ Wordₚ.last?
-
 reduce_or : w ⇒ 1
 reduce_or {w} = unary "$reduce_or" w 1
-
-reduce_or-meaning : Words.𝒬 .Hom w 1
-reduce_or-meaning = ↔Bool.from ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
 
 reduce_xor : w ⇒ 1
 reduce_xor {w} = unary "$reduce_xor" w 1
@@ -161,44 +146,22 @@ reduce_xnor {w} = unary "$reduce_xnor" w 1
 reduce_bool : w ⇒ 1
 reduce_bool {w} = updateInternalParameter a-signed 1 $ unary "$reduce_bool" w 1
 
-reduce_bool-meaning : Words.𝒬 .Hom w 1
-reduce_bool-meaning = ↔Bool.from ⊙ Rel₀.isNo ⊙ Wordₚ.zero?
-
 logic_not : w ⇒ 1
 logic_not {w} = unary "$logic_not" w 1
-
-logic_not-meaning : Words.𝒬 .Hom w 1
-logic_not-meaning = not-meaning ⊙ reduce_bool-meaning
 
 -- yosys binary cells:
 -- https://yosyshq.readthedocs.io/projects/yosys/en/stable/cell/word_binary.html#binary-operators
 and : w × w ⇒ w
 and {w} = binary "$and" w w w
 
-and-meaning : Words.𝒬 .Hom (w × w) w
-and-meaning {w} = Bits.from ⊙ (Prod.uncurry (_∧_ Function.on Bits.to)) ⊙ ↔Prod.to w
-  where open Algebra.Boolean (Bits.t w)
-
 or : w × w ⇒ w
 or {w} = binary "$or" w w w
-
-or-meaning : Words.𝒬 .Hom (w × w) w
-or-meaning {w} = Bits.from ⊙ (Prod.uncurry (_∨_ Function.on Bits.to)) ⊙ ↔Prod.to w
-  where open Algebra.Boolean (Bits.t w)
 
 xor : w × w ⇒ w
 xor {w} = binary "$xor" w w w
 
-xor-meaning : Words.𝒬 .Hom (w × w) w
-xor-meaning {w} = Bits.from ⊙ (Prod.uncurry (_⊕_ Function.on Bits.to)) ⊙ ↔Prod.to w
-  where open Algebra.Boolean (Bits.t w)
-        open Bits.Properties w
-
 xnor : w × w ⇒ w
 xnor {w} = binary "$xnor" w w w
-
-xnor-meaning : Words.𝒬 .Hom (w × w) w
-xnor-meaning {w} = not-meaning ⊙ xor-meaning
 
 shl : w × w ⇒ w
 shl {w} = binary "$shl" w w w
@@ -254,9 +217,6 @@ pow {w} = binary "$pow" w w (ℕ.suc w)
 add : w × w ⇒ ℕ.suc w
 add {w} = binary "$add" w w (ℕ.suc w)
 
-add-meaning : Words.𝒬 .Hom (w × w) (ℕ.suc w)
-add-meaning {w} = Prod.uncurry Word._+_ ⊙ Word.remQuot w
-
 sub : w × w ⇒ ℕ.suc w
 sub {w} = binary "$sub" w w (ℕ.suc w)
 
@@ -278,8 +238,8 @@ modfloor {w} = binary "$modfloor" w w (ℕ.suc w)
 contrived : (w × w) × (w × w) ⇒ ℕ.2+ w
 contrived = add ∘ (add ⊗₁ add)
 
-contrived-meaning : Words.𝒬 .Hom ((w × w) × (w × w)) (ℕ.2+ w)
-contrived-meaning = wadd W.∘ (wadd W.⁂ wadd)
-  where wadd : ∀ {u} → Words.𝒬 .Hom (u ℕ.+ u) (ℕ.suc u)
-        wadd {u} = Prod.uncurry Word._+_ ⊙ Word.remQuot u
-        module W = Cartesian.t Words.t
+-- contrived-meaning : Words.𝒬 .Hom ((w × w) × (w × w)) (ℕ.2+ w)
+-- contrived-meaning = wadd W.∘ (wadd W.⁂ wadd)
+--   where wadd : ∀ {u} → Words.𝒬 .Hom (u ℕ.+ u) (ℕ.suc u)
+--         wadd {u} = Prod.uncurry Word._+_ ⊙ Word.remQuot u
+--         module W = Cartesian.t Words.t
