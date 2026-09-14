@@ -26,6 +26,10 @@ semanticTests = mkTestPool "Operational semantics"
   ∷ "or"
   ∷ "xor"
   ∷ "xnor"
+  ∷ "reduce_and"
+  ∷ "reduce_or"
+  ∷ "reduce_xor"
+  ∷ "reduce_xnor"
   ∷ "add"
   ∷ []
 
