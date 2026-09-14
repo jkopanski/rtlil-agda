@@ -17,7 +17,11 @@ open import Tactic.Cong using (cong!; ⌞_⌟)
 
 import RTLIL.Word.Width as Width
 
-open ℕ hiding (zero; t; _+_; _≟_)
+open ℕ hiding
+  ( zero; t; _+_; _≟_
+  ; _≤_; _≥_; _<_; _>_; _≰_; _≮_; _≤?_; _<?_
+  ; ≤-reflexive; ≤-refl; ≤-trans; ≤-antisym; ≤-total; ≤-irrelevant
+  )
 open × using (_×_)
 open Func using (_↔_; _⤖_; mk⤖; mk↔ₛ′)
 open Function using (_∘_)
@@ -50,8 +54,8 @@ last? {w} = _≟ last w
 -- misc properties
 
 w∸½<½ :
-  ∀ {w} → .⦃ _ : NonZero w ⦄ → (word : Word w) → toℕ word ≥ ⊤ (w ∸ 1) →
-  toℕ word ∸ ⊤ (w ∸ 1) < ⊤ (w ∸ 1)
+  ∀ {w} → .⦃ _ : NonZero w ⦄ → (word : Word w) → toℕ word ℕ.≥ ⊤ (w ∸ 1) →
+  toℕ word ∸ ⊤ (w ∸ 1) ℕ.< ⊤ (w ∸ 1)
 w∸½<½ w@{suc w-1} word v≥½ = begin-strict
   toℕ word ∸ ⊤ w-1 <⟨ ∸-monoˡ-< (toℕ<⊤ word) v≥½ ⟩
   ⊤ w ∸ ⊤ w-1      ≡⟨ ⊤∸⊤[w-1]≡⊤[w-1] w ⟩
@@ -62,7 +66,7 @@ w∸½<½ w@{suc w-1} word v≥½ = begin-strict
 ------------------------------------------------------------------------
 
 toℕ-#b :
-  ∀ {w m} {witness : Rel₀.True (m <? 2 ^ w)} →
+  ∀ {w m} {witness : Rel₀.True (m ℕ.<? 2 ^ w)} →
   toℕ (_#b_ w m {witness}) ≡ m
 toℕ-#b {w} {m} {witness} rewrite sym (⊤-def w) = refl
 
@@ -77,7 +81,7 @@ toℕ-cast _ _ = refl
 
 cast-irrelevant :
   ∀ {w v} → .(eq : w ≡ v) → (word : Word w) →
-  cast eq word ≡ ⟦ toℕ word ⟧< <-≤-trans (toℕ<⊤ word) (≤-reflexive (cong ⊤ eq))
+  cast eq word ≡ ⟦ toℕ word ⟧< <-≤-trans (toℕ<⊤ word) (ℕ.≤-reflexive (cong ⊤ eq))
 cast-irrelevant _ _ = refl
 
 cast-is-id :
@@ -116,17 +120,17 @@ toℕ-1-extend′ {w} word = begin-equality
 0-extend-by-0 : ∀ {w} → (word : Word w) → 0-extend 0 word ≡ word
 0-extend-by-0 {w} word = toℕ-injective refl
 
-0-extend<⊤[w⊔v] : ∀ {w} v → (word : Word w) → toℕ (0-extend (suc (v ∸ w)) word) < ⊤ (w ⊔ v)
+0-extend<⊤[w⊔v] : ∀ {w} v → (word : Word w) → toℕ (0-extend (suc (v ∸ w)) word) ℕ.< ⊤ (w ⊔ v)
 0-extend<⊤[w⊔v] {w} v word = m<⊤w⇒m<⊤[w⊔v] v (toℕ<⊤ word)
 
-0-extend<⊤w : ∀ v {w} → (word : Word w) → toℕ (0-extend v word) < ⊤ w
-0-extend<⊤w v word = ≤-<-trans (≤-reflexive (toℕ-0-extend v word)) (toℕ<⊤ word)
+0-extend<⊤w : ∀ v {w} → (word : Word w) → toℕ (0-extend v word) ℕ.< ⊤ w
+0-extend<⊤w v word = ≤-<-trans (ℕ.≤-reflexive (toℕ-0-extend v word)) (toℕ<⊤ word)
 
 1-extend-by-0 : ∀ {w} → (word : Word w) → 1-extend 0 word ≡ word
 1-extend-by-0 {w} word rewrite ⊤-zero = toℕ-injective (+-identityʳ (toℕ word))
 
-1-extend≥⊤[w⊔v] : ∀ w v → (word : Word v) → ⊤ (w ⊔ v) ≤ toℕ (1-extend (suc (w ∸ v)) word)
-1-extend≥⊤[w⊔v] w v word with w ≤? v
+1-extend≥⊤[w⊔v] : ∀ w v → (word : Word v) → ⊤ (w ⊔ v) ℕ.≤ toℕ (1-extend (suc (w ∸ v)) word)
+1-extend≥⊤[w⊔v] w v word with w ℕ.≤? v
 … | yes w≤v = begin
   ⊤ (w ⊔ v)                                ≡⟨ cong ⊤ (m≤n⇒m⊔n≡n w≤v) ⟩
   ⊤ v                                      ≡⟨ +-identityˡ (⊤ v) ⟩
@@ -185,24 +189,24 @@ truncate-1-extend v {w} word = toℕ-injective $
 
 split-< :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
-  (word : Word w) → (v<½ : toℕ word < ⊤ (w ∸ 1)) →
+  (word : Word w) → (v<½ : toℕ word ℕ.< ⊤ (w ∸ 1)) →
   split word ≡ inj₁ (⟦ toℕ word ⟧< v<½)
-split-< {suc w-1} word v<½ with toℕ word <? ⊤ w-1
+split-< {suc w-1} word v<½ with toℕ word ℕ.<? ⊤ w-1
 … | yes _   = refl
 … | no  v≮½ = Rel₀.contradiction v<½ v≮½
 
 split-≥ :
   ∀ {w} → .⦃ _ : NonZero w ⦄ →
-  (word : Word w) → (v≥½ : toℕ word ≥ ⊤ (w ∸ 1)) →
+  (word : Word w) → (v≥½ : toℕ word ℕ.≥ ⊤ (w ∸ 1)) →
   split word ≡ inj₂ (⟦ toℕ word ∸ ⊤ (w ∸ 1) ⟧< w∸½<½ word v≥½)
-split-≥ {suc w-1} word v≥½ with toℕ word <? ⊤ w-1
+split-≥ {suc w-1} word v≥½ with toℕ word ℕ.<? ⊤ w-1
 … | yes v<½ = Rel₀.contradiction v≥½ (<⇒≱ v<½)
 … | no  v≮½ = refl
 
 split-0-extend :
   ∀ {w} → (word : Word w) →
   split (0-extend 1 word) ≡ inj₁ word
-split-0-extend {w} word with (toℕ word) <? ⊤ w
+split-0-extend {w} word with (toℕ word) ℕ.<? ⊤ w
 … | yes v<⊤ = refl
 … | no  v≮⊤ = Rel₀.contradiction (toℕ<⊤ word) v≮⊤
 
@@ -211,9 +215,9 @@ split-1-extend :
   split (1-extend 1 word) ≡ inj₂ word
 split-1-extend {w} word
   with ex@(⟦ value ⟧< ex<⊤[1+w]) ← 1-extend 1 word
-     | toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w <? ⊤ w
+     | toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ℕ.<? ⊤ w
 … | yes v<⊤ = Rel₀.contradiction v<⊤ v≮⊤
-  where v≮⊤ : toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ≮ ⊤ w
+  where v≮⊤ : toℕ word ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ℕ.≮ ⊤ w
         v≮⊤ = ≤⇒≯ $ begin
           ⊤ w                   ≡⟨ +-identityˡ (⊤ w) ⟨
           0 ℕ.+ ⊤ w             ≤⟨ +-monoˡ-≤ (⊤ w) z≤n ⟩
@@ -231,7 +235,7 @@ split-join-1 (inj₁ i) = split-0-extend i
 split-join-1 (inj₂ i) = split-1-extend i
 
 join-1-split : ∀ {w} → (i : Word (suc w)) → join-1 (split i) ≡ i
-join-1-split {w} i with toℕ i <? ⊤ w
+join-1-split {w} i with toℕ i ℕ.<? ⊤ w
 … | yes _  = refl
 … | no i≮⊤ = toℕ-injective $ begin-equality
   toℕ i ∸ ⊤ w ℕ.+ (⊤ 1 ∸ 1) * ⊤ w ≡⟨ cong! (⊤-def 1) ⟩
@@ -253,7 +257,7 @@ join-is-join-1 {w} (inj₂ i) = toℕ-injective $ begin-equality
 
 truncate-< :
   ∀ {v w} → (word : Word w) →
-  (w<⊤[w-v] : toℕ word < ⊤ (w ∸ v)) →
+  (w<⊤[w-v] : toℕ word ℕ.< ⊤ (w ∸ v)) →
   truncate v word ≡ ⟦ toℕ word ⟧< w<⊤[w-v]
 truncate-< {v} {w} word w<⊤[w-v] = toℕ-injective $ m<n⇒m%n≡m w<⊤[w-v]
 
@@ -264,7 +268,7 @@ truncate-0 word = toℕ-injective (m<n⇒m%n≡m (toℕ<⊤ word))
 
 truncate-1-≥ :
   ∀ {w} → (word : Word w) → .⦃ _ : NonZero w ⦄ →
-  (w≥⊤[w-1] : toℕ word ≥ ⊤ (w ∸ 1)) →
+  (w≥⊤[w-1] : toℕ word ℕ.≥ ⊤ (w ∸ 1)) →
   truncate 1 word ≡ ⟦ toℕ word ∸ ⊤ (w ∸ 1) ⟧< w∸½<½ word w≥⊤[w-1]
 truncate-1-≥ {w} word w≥⊤[w-1] = toℕ-injective $ begin-equality
   toℕ word % ⊤ (w ∸ 1)               ≡⟨ m≤n⇒[n∸m]%m≡n%m w≥⊤[w-1] ⟨
@@ -286,7 +290,7 @@ truncate-nonZero {v} {w} word = toℕ-injective $ begin-equality
     (toℕ word % ⊤ (w ∸ 1)) % ⊤ (w ∸ v)
   ≡⟨ %-congʳ (cong ⊤ (truncate-cast-eq w v)) ⟨
     toℕ word % ⊤ (w ∸ 1) % ⊤ (w ∸ 1 ∸ (v ∸ 1))
-  ∎ where w-v≤w-1 : w ∸ v ≤ w ∸ 1
+  ∎ where w-v≤w-1 : w ∸ v ℕ.≤ w ∸ 1
           w-v≤w-1 = ∸-monoʳ-≤ w (>-nonZero⁻¹ v)
 
 ------------------------------------------------------------------------
@@ -396,3 +400,34 @@ assocˡ-combine {u} {w} {v} (⟦ x ⟧< _) (⟦ y ⟧< _) (⟦ z ⟧< _) = toℕ
   x * ⌞ ⊤ w * ⊤ v ⌟ + y * ⊤ v + z ≡⟨ cong! (*-assoc x (⊤ w) (⊤ v)) ⟨
   ⌞ x * ⊤ w * ⊤ v ⌟ + y * ⊤ v + z ≡⟨ cong! (*-distribʳ-+ (⊤ v) (x * ⊤ w) y) ⟨
   (x * ⊤ w + y) * ⊤ v + z         ∎ where open ℕ using (_+_)
+
+------------------------------------------------------------------------
+-- Properties of _≤_
+------------------------------------------------------------------------
+-- Relational properties
+
+≤-reflexive : ∀ {w} → _≡_ ⇒ (_≤_ {w})
+≤-reflexive refl = ℕ.≤-refl
+
+≤-refl : ∀ {w} → Rel₂.Reflexive (_≤_ {w})
+≤-refl = ℕ.≤-reflexive refl
+
+≤-trans : ∀ {w} → Rel₂.Transitive (_≤_ {w})
+≤-trans = ℕ.≤-trans
+
+≤-antisym : ∀ {w} → Rel₂.Antisymmetric _≡_ (_≤_ {w})
+≤-antisym x≤y y≤x = toℕ-injective (ℕ.≤-antisym x≤y y≤x)
+
+≤-total : ∀ {w} → Rel₂.Total (_≤_ {w})
+≤-total x y = ℕ.≤-total (toℕ x) (toℕ y)
+
+≤-irrelevant : ∀ {w v} → Rel₂.Irrelevant (_≤_ {w} {v})
+≤-irrelevant = ℕ.≤-irrelevant
+
+infix 4 _≤?_ _<?_
+
+_≤?_ : ∀ {w v} → Rel₂.Decidable (_≤_ {w} {v})
+a ≤? b = toℕ a ℕ.≤? toℕ b
+
+_<?_ : ∀ {w v} → Rel₂.Decidable (_<_ {w} {v})
+m <? n = suc (toℕ m) ℕ.≤? toℕ n

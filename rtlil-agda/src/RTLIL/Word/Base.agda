@@ -3,14 +3,16 @@ module RTLIL.Word.Base where
 
 open import Overture
 open import Tactic.Cong using (cong!; ⌞_⌟)
+open import Relation.Binary.Indexed.Heterogeneous using (IRel)
 
+import Data.Nat.Bounded.Base as Bounded renaming (Fin to t)
 import Data.Refinement as Refinement renaming (Refinement to t)
 import Data.Irrelevant as Irrelevant renaming (Irrelevant to t)
 import RTLIL.Word.Width as Width
 
 open × using (_×_)
 open Irrelevant using ([_])
-open ℕ hiding (zero; t; _+_)
+open ℕ hiding (zero; t; _+_; _≤_; _≥_; _<_; _>_; _≰_; _≮_)
 open ℤ using (+_; -[1+_])
 open Function using (_∘_)
 open Width
@@ -19,16 +21,15 @@ open Rel₀ using (no; yes)
 open ≤-Reasoning
 
 Word : ℕ.t → Set
-Word w = [ value ∈ ℕ.t ∣ value < ⊤ w ]
--- Refinement.t ℕ.t (_< ⊤ w)
+Word w = Bounded.t (⊤ w)
 
 pattern ⟦_⟧<_ v v<⊤ = v , [ v<⊤ ]
 
 {-# DISPLAY Irrelevant.[_] t = t #-}
 {-# DISPLAY Refinement._,_ v v<⊤ = ⟦ v ⟧< v<⊤ #-}
 
-word< : ∀ {w value} → .(value < ⊤ w) → Word w
-word< {_} {value} <⊤ = ⟦ value ⟧< <⊤
+word< : ∀ {w value} → .(value ℕ.< ⊤ w) → Word w
+word< = Bounded.fromℕ<
 
 infix 10 _#b_
 -- kind of a similar to verilog 8'b4,
@@ -38,7 +39,7 @@ _#b_ w m {m<⊤} rewrite sym (⊤-def w) =
   word< {w} {m} (Rel₀.toWitness m<⊤)
 
 toℕ : ∀ {w} → Word w → ℕ.t
-toℕ = Refinement.value
+toℕ = Bounded.toℕ
 
 toFin : ∀ {w} → Word w → Fin.t (2 ^ w)
 toFin {w} (⟦ _ ⟧< value<⊤) = Fin.fromℕ< (⊤⇒2ʷ ≤-isPreorder value<⊤)
@@ -46,7 +47,7 @@ toFin {w} (⟦ _ ⟧< value<⊤) = Fin.fromℕ< (⊤⇒2ʷ ≤-isPreorder value<
 fromFin : ∀ {w} → Fin.t (2 ^ w) → Word w
 fromFin {w} i = Fin.toℕ i , [ 2ʷ⇒⊤ ≤-isPreorder (Fin.toℕ<n i) ]
 
-toℕ<⊤ : ∀ {w} → (word : Word w) → toℕ word < ⊤ w
+toℕ<⊤ : ∀ {w} → (word : Word w) → toℕ word ℕ.< ⊤ w
 toℕ<⊤ {w} (⟦ value ⟧< v<⊤) = Rel₀.recompute (value <? ⊤ w) v<⊤
 
 zero : (w : ℕ.t) → Word w
@@ -59,8 +60,7 @@ last : (w : ℕ.t) → Word w
 last w = word< (≤-reflexive (sym (suc-pred-⊤ w)))
 
 cast : ∀ {w v} → .(w ≡ v) → Word w → Word v
-cast {w} {v} w≡v (⟦ value ⟧< v<⊤) =
-  ⟦ value ⟧< <-≤-trans v<⊤ (≤-reflexive (cong ⊤ w≡v))
+cast w≡v = Bounded.cast (cong ⊤ w≡v)
 
 0-extend : (v : ℕ.t) → ∀ {w} → Word w → Word (v ℕ.+ w)
 0-extend v {w} (⟦ word ⟧< word<⊤ ) =
@@ -133,3 +133,26 @@ assocʳ u w v = cast (+-assoc u w v)
 
 assocˡ : ∀ u w v → Word (u ℕ.+ (w ℕ.+ v)) → Word ((u ℕ.+ w) ℕ.+ v)
 assocˡ u w v = cast (sym (+-assoc u w v))
+
+------------------------------------------------------------------------
+-- Order relations
+
+infix 4 _≤_ _≥_ _<_ _>_ _≰_ _≮_
+
+_≤_ : IRel Word 𝕃.0ℓ
+_≤_ = Bounded._≤_
+
+_≥_ : IRel Word 𝕃.0ℓ
+_≥_ = Bounded._≥_
+
+_<_ : IRel Word 𝕃.0ℓ
+_<_ = Bounded._<_
+
+_>_ : IRel Word 𝕃.0ℓ
+_>_ = Bounded._>_
+
+_≰_ : ∀ {w} → Rel (Word w) 𝕃.0ℓ
+_≰_ = Bounded._≰_
+
+_≮_ : ∀ {n} → Rel (Word n) 𝕃.0ℓ
+_≮_ = Bounded._≮_
