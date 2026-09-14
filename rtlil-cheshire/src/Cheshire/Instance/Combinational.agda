@@ -100,7 +100,7 @@ module Meaning where
      where open Algebra.Boolean (Word.Bits.t v)
   F {_} {v} xor  = Lift.L.₁ (Word.Bits.uncurry _⊕_)
      where open Word.Bits.Properties v
-  F {_} {v} xnor = Lift.L.₁ (¬_ ⊙ Word.Bits.uncurry _⊕_) -- Cells.xnor-meaning
+  F {_} {v} xnor = Lift.L.₁ (¬_ ⊙ Word.Bits.uncurry _⊕_)
     where open Word.Bits.Properties v
           open Algebra.Boolean (Word.Bits.t v)
   -- bitwise folds
